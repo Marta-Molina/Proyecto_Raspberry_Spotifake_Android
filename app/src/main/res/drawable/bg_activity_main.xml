@@ -1,0 +1,66 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--fondo base negro -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+        </shape>
+    </item>
+
+    <!--mancha morado -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="500"
+                android:centerX="0.2"
+                android:centerY="0.3"
+                android:startColor="#FF4B0082"
+                android:centerColor="#AA4B0082"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+    <!--mancha fucsia -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="400"
+                android:centerX="0.7"
+                android:centerY="0.2"
+                android:startColor="#FFFF00FF"
+                android:centerColor="#88FF00FF"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+    <!--mancha morado oscuro -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="600"
+                android:centerX="0.5"
+                android:centerY="0.7"
+                android:startColor="#CC4B0082"
+                android:centerColor="#66000000"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+    <!--mancha fucsia suave -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="350"
+                android:centerX="0.8"
+                android:centerY="0.6"
+                android:startColor="#BBFF00FF"
+                android:centerColor="#55000000"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+</layer-list>
+

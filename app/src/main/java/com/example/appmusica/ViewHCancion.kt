@@ -1,5 +1,6 @@
 package com.example.appmusica
 
+import android.app.AlertDialog
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -39,4 +40,18 @@ class ViewHCancion(
             deleteOnClick(position) // Llamada a la función de eliminación
         }
     }
+
+
+    //confirmación para eliminar
+    private fun showDeleteConfirmationDialog(position: Int) {
+        val builder = AlertDialog.Builder(itemView.context)
+        builder.setTitle("Confirmar eliminación")
+        builder.setMessage("¿Estás seguro de que deseas eliminar esta canción?")
+        builder.setPositiveButton("Eliminar") { _, _ ->
+            deleteOnClick(position)  // Eliminar la canción si el usuario confirma
+        }
+        builder.setNegativeButton("Cancelar", null)
+        builder.show()
+    }
+
 }

@@ -1,0 +1,43 @@
+<!-- activity_edit_cancion.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre de la canción" />
+
+    <EditText
+        android:id="@+id/editTextArtista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Artista" />
+
+    <EditText
+        android:id="@+id/editTextAlbum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Álbum" />
+
+    <EditText
+        android:id="@+id/editTextDuracion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Duración" />
+
+    <EditText
+        android:id="@+id/editTextImagen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="URL de la imagen" />
+
+    <Button
+        android:id="@+id/btnUpdateCancion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Actualizar Canción" />
+</LinearLayout>

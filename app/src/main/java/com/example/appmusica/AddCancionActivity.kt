@@ -1,5 +1,6 @@
 package com.example.appmusica
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -25,14 +26,28 @@ class AddCancionActivity : AppCompatActivity() {
             val duracion = binding.editTextDuracion.text.toString()
             val imagen = binding.editTextImagen.text.toString()
 
+            // Verificar que los campos no estén vacíos
             if (nombre.isNotEmpty() && artista.isNotEmpty() && album.isNotEmpty() && duracion.isNotEmpty() && imagen.isNotEmpty()) {
                 val nuevaCancion = Cancion(nombre, artista, album, duracion, imagen)
+                // Agregar la nueva canción al repositorio
                 Repository.listCanciones.add(nuevaCancion)
                 Toast.makeText(this, "Canción agregada", Toast.LENGTH_SHORT).show()
-                finish()  // Regresa a la MainActivity
+
+                // Devolver el resultado a MainActivity
+                val intent = Intent().apply {
+                    putExtra("nuevaCancion", nuevaCancion) // Pasar la canción agregada
+                }
+                setResult(RESULT_OK, intent) // Indicar que fue exitoso
+                finish()  // Cerrar la actividad
             } else {
                 Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
+
+
+
+
+
+

@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.databinding.ActivityMainBinding
 import com.example.appmusica.models.Cancion
+import com.example.appmusica.objects_models.Repository
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,14 +23,35 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         controller = Controller(this) // Crear el controlador
-        controller.setAdapter()
+        controller.setAdapter() // Configurar el RecyclerView con las canciones
+
+        // Configurar el LayoutManager del RecyclerView
+        binding.myRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Configurar el FloatingActionButton para abrir AddCancionActivity
+        binding.fabAdd.setOnClickListener {
+            val intent = Intent(this, AddCancionActivity::class.java)
+            startActivityForResult(intent, 1000) // Asegúrate de usar un código de solicitud único para esta acción
+        }
     }
 
-    // Sobrescribir onActivityResult para manejar el resultado de la actividad de edición
+    // Sobrescribir onActivityResult para manejar el resultado de la actividad de agregar canción
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Verificar si el código de solicitud coincide con el que hemos definido
+        // Si es la actividad de agregar canción
+        if (requestCode == 1000 && resultCode == RESULT_OK) {
+            // Obtener la nueva canción desde el Intent
+            val nuevaCancion: Cancion? = data?.getParcelableExtra("nuevaCancion")
+
+            // Si la canción no es nula, agregarla al repositorio y actualizar la lista
+            nuevaCancion?.let {
+                Repository.listCanciones.add(it)  // Añadir la canción al repositorio
+                controller.setAdapter()  // Actualizar el RecyclerView
+            }
+        }
+
+        // Si es la actividad de editar canción
         if (requestCode == Controller.REQUEST_CODE_UPDATE && resultCode == RESULT_OK) {
             // Aquí debes actualizar la canción en la lista con los nuevos datos
             data?.let {
@@ -50,3 +72,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+

@@ -37,7 +37,7 @@ class ViewHCancion(
             updateOnClick(position) // Llamada a la función de actualización
         }
         binding.btnDelete.setOnClickListener {
-            deleteOnClick(position) // Llamada a la función de eliminación
+            showDeleteConfirmationDialog(position) // Llamada a la función de eliminación con confirmación
         }
     }
 

@@ -1,51 +1,52 @@
 <!-- item_cancion.xml -->
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    android:background="#CCFFFFFF"
+    android:background="#78FFFFFF"
     app:cardCornerRadius="30dp"
     app:cardElevation="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#B8FFFFFF">
 
         <ImageView
             android:id="@+id/ivCancion"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/black"
             android:contentDescription="Imagen de la canción"
-            android:background="@color/black"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtviewNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            tools:text="Nombre de la canción"
-            app:layout_constraintStart_toEndOf="@id/ivCancion"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/ivCancion"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nombre de la canción" />
 
         <TextView
             android:id="@+id/txtviewArtista"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:textColor="@color/black"
             android:textSize="18sp"
-            tools:text="Artista"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivCancion"
             app:layout_constraintTop_toBottomOf="@id/txtviewNombre"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="15dp"/>
+            tools:text="Artista" />
 
         <TextView
             android:id="@+id/txtviewAlbum"
@@ -53,10 +54,10 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="18sp"
-            tools:text="Álbum"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivCancion"
             app:layout_constraintTop_toBottomOf="@id/txtviewArtista"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            tools:text="Álbum" />
 
         <TextView
             android:id="@+id/txtviewDuracion"
@@ -64,29 +65,29 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            tools:text="3:30"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivCancion"
             app:layout_constraintTop_toBottomOf="@id/txtviewAlbum"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            tools:text="3:30" />
 
         <ImageView
             android:id="@+id/btnEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/edit_ic_baseline_edit_24"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivCancion"
-            app:layout_constraintTop_toBottomOf="@id/txtviewDuracion"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/txtviewDuracion" />
 
         <ImageView
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/delete_ic_baseline_delete_24"
-            app:layout_constraintStart_toEndOf="@id/btnEdit"
-            app:layout_constraintTop_toBottomOf="@id/txtviewDuracion"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"/>
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toEndOf="@id/btnEdit"
+            app:layout_constraintTop_toBottomOf="@id/txtviewDuracion" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

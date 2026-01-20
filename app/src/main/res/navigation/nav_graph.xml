@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/cancionesFragment">
+
+    <fragment
+        android:id="@+id/cancionesFragment"
+        android:name="com.example.appmusica.fragments.CancionesFragment"
+        android:label="Canciones">
+
+        <action
+            android:id="@+id/action_cancionesFragment_to_detalleFragment"
+            app:destination="@id/detalleFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detalleFragment"
+        android:name="com.example.appmusica.fragments.DetalleFragment"
+        android:label="Detalle canción">
+
+        <!-- ESTE ARGUMENTO ES CLAVE PARA Q SEA SEGURO -->
+        <argument
+            android:name="position"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>

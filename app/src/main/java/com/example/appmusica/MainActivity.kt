@@ -2,74 +2,59 @@ package com.example.appmusica
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.findNavController
+import androidx.navigation.ui.*
 import com.example.appmusica.databinding.ActivityMainBinding
-import com.example.appmusica.models.Cancion
-import com.example.appmusica.objects_models.Repository
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var controller: Controller
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        controller = Controller(this) // Crear el controlador
-        controller.setAdapter() // Configurar el RecyclerView con las canciones
+        setSupportActionBar(binding.toolbar)
 
-        // Configurar el LayoutManager del RecyclerView
-        binding.myRecyclerView.layoutManager = LinearLayoutManager(this)
+        val navController = findNavController(R.id.nav_host_fragment)
 
-        // Configurar el FloatingActionButton para abrir AddCancionActivity
-        binding.fabAdd.setOnClickListener {
-            val intent = Intent(this, AddCancionActivity::class.java)
-            startActivityForResult(intent, 1000) // Asegúrate de usar un código de solicitud único para esta acción
-        }
+        appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.cancionesFragment, R.id.settingsFragment),
+            binding.drawerLayout
+        )
+
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.navigationView.setupWithNavController(navController)
+
+        // Usuario en el header
+        val header = binding.navigationView.getHeaderView(0)
+        header.findViewById<TextView>(R.id.txtUser)
+            .text = intent.getStringExtra("user")
     }
 
-    // Sobrescribir onActivityResult para manejar el resultado de la actividad de agregar canción
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+        return true
+    }
 
-        // Si es la actividad de agregar canción
-        if (requestCode == 1000 && resultCode == RESULT_OK) {
-            // Obtener la nueva canción desde el Intent
-            val nuevaCancion: Cancion? = data?.getParcelableExtra("nuevaCancion")
-
-            // Si la canción no es nula, agregarla al repositorio y actualizar la lista
-            nuevaCancion?.let {
-                Repository.listCanciones.add(it)  // Añadir la canción al repositorio
-                controller.setAdapter()  // Actualizar el RecyclerView
-            }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_logout) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
+        return super.onOptionsItemSelected(item)
+    }
 
-        // Si es la actividad de editar canción
-        if (requestCode == Controller.REQUEST_CODE_UPDATE && resultCode == RESULT_OK) {
-            // Aquí debes actualizar la canción en la lista con los nuevos datos
-            data?.let {
-                val nombre = it.getStringExtra("nombre") ?: ""
-                val artista = it.getStringExtra("artista") ?: ""
-                val album = it.getStringExtra("album") ?: ""
-                val duracion = it.getStringExtra("duracion") ?: ""
-                val imagen = it.getStringExtra("imagen") ?: ""
-
-                // Encuentra la canción que se editó y actualízala
-                val index = controller.listCanciones.indexOfFirst { it.nombre == nombre }
-                if (index != -1) {
-                    controller.listCanciones[index] =
-                        Cancion(nombre, artista, album, duracion, imagen)
-                    controller.setAdapter() // Actualizar el RecyclerView
-                }
-            }
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
+
 

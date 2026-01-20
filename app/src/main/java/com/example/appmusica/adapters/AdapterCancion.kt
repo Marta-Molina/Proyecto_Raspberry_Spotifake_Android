@@ -1,31 +1,27 @@
 package com.example.appmusica.adapters
 
-import com.example.appmusica.R
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appmusica.ViewHCancion
+import com.example.appmusica.R
+import com.example.appmusica.viewholder.ViewHCancion
 import com.example.appmusica.models.Cancion
 
 class AdapterCancion(
-    var listCancion: MutableList<Cancion>,
-    var deleteOnClick: (Int) -> Unit, // Eliminar
-    var updateOnClick: (Int) -> Unit // Actualizar
+    private val list: MutableList<Cancion>,
+    private val delete: (Int) -> Unit,
+    private val update: (Int) -> Unit
 ) : RecyclerView.Adapter<ViewHCancion>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHCancion {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val layoutItemCancion = R.layout.item_cancion // Usa el layout para la canción
-        return ViewHCancion(
-            layoutInflater.inflate(layoutItemCancion, parent, false),
-            deleteOnClick,
-            updateOnClick
-        )
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_cancion, parent, false)
+        return ViewHCancion(view, delete, update)
     }
 
     override fun onBindViewHolder(holder: ViewHCancion, position: Int) {
-        holder.renderize(listCancion[position])
+        holder.renderize(list[position])
     }
 
-    override fun getItemCount(): Int = listCancion.size
+    override fun getItemCount(): Int = list.size
 }

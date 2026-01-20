@@ -5,5 +5,8 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.AppMusica" parent="Base.Theme.AppMusica" />
+    <style name="Theme.AppMusica" parent="Base.Theme.AppMusica">
+        <item name="colorPrimary">#6A1B9A</item>
+        <item name="colorSecondary">#FF4081</item>
+    </style>
 </resources>

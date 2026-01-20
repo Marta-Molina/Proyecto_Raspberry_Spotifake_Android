@@ -1,32 +1,37 @@
-class LoginActivity : AppCompatActivity() {
+package com.example.appmusica
 
-    private lateinit var binding: ActivityLoginBinding
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_login)
 
-        binding.btnLogin.setOnClickListener {
-            val user = binding.etUser.text.toString()
-            val pass = binding.etPassword.text.toString()
+        val etUser = findViewById<EditText>(R.id.etUser)
+        val etPass = findViewById<EditText>(R.id.etPassword)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
 
+        btnLogin.setOnClickListener {
+            val user = etUser.text.toString()
+            val pass = etPass.text.toString()
+
+            // Login hardcodeado
             if (user == "admin" && pass == "1234") {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("username", user)
+                intent.putExtra("user", user)
                 startActivity(intent)
                 finish()
             } else {
-                Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
             }
-        }
-
-        binding.btnRegister.setOnClickListener {
-            Toast.makeText(this, "Registro pendiente", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.btnRecover.setOnClickListener {
-            Toast.makeText(this, "Recuperación pendiente", Toast.LENGTH_SHORT).show()
         }
     }
 }
+
+

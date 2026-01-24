@@ -19,10 +19,15 @@
         android:name="com.example.appmusica.fragments.DetalleFragment"
         android:label="Detalle canción">
 
-        <!-- ESTE ARGUMENTO ES CLAVE PARA Q SEA SEGURO -->
+        <!-- ESTE ARGUMENTO ES CLAVE -->
         <argument
             android:name="position"
             app:argType="integer" />
     </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.appmusica.fragments.SettingsFragment"
+        android:label="Settings" />
 
 </navigation>

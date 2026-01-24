@@ -9,9 +9,11 @@ import com.example.appmusica.fragments.CancionesFragment
 import com.example.appmusica.models.Cancion
 
 class ViewHCancion(
+
     view: View,
     private val delete: (Int) -> Unit,
-    private val update: (Int) -> Unit
+    private val update: (Int) -> Unit,
+    private val onItemClick: (Int) -> Unit   //NUEVO
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = ItemCancionBinding.bind(view)
@@ -22,17 +24,25 @@ class ViewHCancion(
         binding.txtviewAlbum.text = cancion.album
         binding.txtviewDuracion.text = cancion.duracion
 
-        Glide.with(itemView.context)
-            .load(cancion.imagen)
-            .into(binding.ivCancion)
-
+        // Click normal → detalle
         itemView.setOnClickListener {
-            val action =
-                CancionesFragment.actionCancionesFragmentToDetalleFragment(adapterPosition)
-            it.findNavController().navigate(action)
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                onItemClick(bindingAdapterPosition)
+            }
         }
 
-        binding.btnDelete.setOnClickListener { delete(adapterPosition) }
-        binding.btnEdit.setOnClickListener { update(adapterPosition) }
+        // Botón borrar
+        binding.btnDelete.setOnClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                delete(bindingAdapterPosition)
+            }
+        }
+
+        // Botón editar
+        binding.btnEdit.setOnClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                update(bindingAdapterPosition)
+            }
+        }
     }
 }

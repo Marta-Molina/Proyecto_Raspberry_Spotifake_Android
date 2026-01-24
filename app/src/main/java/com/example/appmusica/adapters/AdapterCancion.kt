@@ -4,19 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmusica.R
-import com.example.appmusica.viewholder.ViewHCancion
 import com.example.appmusica.models.Cancion
+import com.example.appmusica.viewholder.ViewHCancion
 
 class AdapterCancion(
     private val list: MutableList<Cancion>,
     private val delete: (Int) -> Unit,
-    private val update: (Int) -> Unit
+    private val update: (Int) -> Unit,
+    private val onItemClick: (Int) -> Unit   //NUEVO
 ) : RecyclerView.Adapter<ViewHCancion>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHCancion {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_cancion, parent, false)
-        return ViewHCancion(view, delete, update)
+
+        return ViewHCancion(view, delete, update, onItemClick)
     }
 
     override fun onBindViewHolder(holder: ViewHCancion, position: Int) {
@@ -25,3 +27,4 @@ class AdapterCancion(
 
     override fun getItemCount(): Int = list.size
 }
+

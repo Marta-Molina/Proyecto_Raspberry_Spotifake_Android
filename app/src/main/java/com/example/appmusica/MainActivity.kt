@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        // 🔹 Obtener NavController de forma segura
+        // Obtener NavController de forma segura
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navigationView.setupWithNavController(navController)
+        binding.bottomNavigationView.setupWithNavController(navController)
 
         // Usuario en el header
         val header = binding.navigationView.getHeaderView(0)

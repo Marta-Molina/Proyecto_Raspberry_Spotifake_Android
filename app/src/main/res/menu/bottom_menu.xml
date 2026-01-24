@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- bottom_menu.xml -->
+    <item
+        android:id="@+id/cancionesFragment"
+        android:title="Canciones"
+        android:icon="@android:drawable/ic_media_play" />
+
+    <item
+        android:id="@+id/settingsFragment"
+        android:title="Settings"
+        android:icon="@android:drawable/ic_menu_preferences" />
+
+</menu>

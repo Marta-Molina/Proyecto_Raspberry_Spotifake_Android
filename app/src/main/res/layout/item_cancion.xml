@@ -19,7 +19,7 @@
             android:id="@+id/ivCancion"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:background="@color/black"
+            android:scaleType="centerCrop"
             android:contentDescription="Imagen de la canción"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

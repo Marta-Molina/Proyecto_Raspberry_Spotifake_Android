@@ -23,7 +23,7 @@ object Repository {
             "Billie Eilish",
             "When We All Fall Asleep, Where Do We Go?",
             "3:14",
-            "https://pics.filmaffinity.com/Billie_Eilish_Bad_Guy_Vaideo_musical-410721258-large.jpg"
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ84nWhIG9Sj0PDeXUmo0CPvVmUUU0tXwMwvk2bJTKeE6dWUWhE-SDOfKirBoXjbdkoOWc&usqp=CAU"
         ),
         Cancion(
             "Uptown Funk",
@@ -65,7 +65,7 @@ object Repository {
             "Justin Timberlake",
             "Trolls (Soundtrack)",
             "3:56",
-            "https://m.media-amazon.com/images/I/710Toa9kaL._UF894,1000_QL80_.jpg"
+            "https://m.media-amazon.com/images/I/710Toa9ka+L._UF894,1000_QL80_.jpg"
         ),
         Cancion(
             "Havana",

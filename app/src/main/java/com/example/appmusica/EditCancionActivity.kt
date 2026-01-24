@@ -1,69 +1,48 @@
 package com.example.appmusica
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.appmusica.databinding.ActivityEditCancionBinding
 import com.example.appmusica.models.Cancion
 import com.example.appmusica.objects_models.Repository
 
-// EditCancionActivity.kt
 class EditCancionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditCancionBinding
-    private var cancionOriginal: Cancion? = null
+    private var position: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditCancionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val nombre = intent.getStringExtra("nombre")
-        val artista = intent.getStringExtra("artista")
-        val album = intent.getStringExtra("album")
-        val duracion = intent.getStringExtra("duracion")
-        val imagen = intent.getStringExtra("imagen")
+        position = intent.getIntExtra("pos", -1)
+        if (position == -1) finish()
 
-        binding.editTextNombre.setText(nombre)
-        binding.editTextArtista.setText(artista)
-        binding.editTextAlbum.setText(album)
-        binding.editTextDuracion.setText(duracion)
-        binding.editTextImagen.setText(imagen)
+        val cancion = Repository.listCanciones[position]
 
-        // Guardar la canción original para poder actualizarla
-        cancionOriginal = Cancion(nombre!!, artista!!, album!!, duracion!!, imagen!!)
+        binding.editTextNombre.setText(cancion.nombre)
+        binding.editTextArtista.setText(cancion.artista)
+        binding.editTextAlbum.setText(cancion.album)
+        binding.editTextDuracion.setText(cancion.duracion)
+        binding.editTextImagen.setText(cancion.imagen)
 
         binding.btnUpdateCancion.setOnClickListener {
-            val nuevoNombre = binding.editTextNombre.text.toString()
-            val nuevoArtista = binding.editTextArtista.text.toString()
-            val nuevoAlbum = binding.editTextAlbum.text.toString()
-            val nuevaDuracion = binding.editTextDuracion.text.toString()
-            val nuevaImagen = binding.editTextImagen.text.toString()
+            val nombre = binding.editTextNombre.text.toString()
+            val artista = binding.editTextArtista.text.toString()
+            val album = binding.editTextAlbum.text.toString()
+            val duracion = binding.editTextDuracion.text.toString()
+            val imagen = binding.editTextImagen.text.toString()
 
-            // Validar campos
-            if (nuevoNombre.isNotEmpty() && nuevoArtista.isNotEmpty() && nuevoAlbum.isNotEmpty() && nuevaDuracion.isNotEmpty() && nuevaImagen.isNotEmpty()) {
-                // Crear una nueva canción con los datos actualizados
-                val cancionActualizada = Cancion(nuevoNombre, nuevoArtista, nuevoAlbum, nuevaDuracion, nuevaImagen)
-
-                // Devolver los datos a MainActivity
-                val intent = Intent().apply {
-                    putExtra("nombre", nuevoNombre)
-                    putExtra("artista", nuevoArtista)
-                    putExtra("album", nuevoAlbum)
-                    putExtra("duracion", nuevaDuracion)
-                    putExtra("imagen", nuevaImagen)
-                }
-
-                setResult(RESULT_OK, intent) // Indicar que fue exitoso
-                finish() // Cerrar la actividad
+            if (nombre.isNotEmpty() && artista.isNotEmpty() && album.isNotEmpty() && duracion.isNotEmpty() && imagen.isNotEmpty()) {
+                val cancionActualizada = Cancion(nombre, artista, album, duracion, imagen)
+                Repository.listCanciones[position] = cancionActualizada
+                Toast.makeText(this, "Canción actualizada", Toast.LENGTH_SHORT).show()
+                finish()
             } else {
-                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
-

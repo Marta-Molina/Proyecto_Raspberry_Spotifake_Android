@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     id("org.jetbrains.kotlin.kapt")
+    id("com.google.gms.google-services")
 
 }
 
@@ -75,9 +76,13 @@ dependencies {
     // Lifecycle ViewModel KTX (ensure ViewModel factory classes available)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
-    // Firebase Auth (BOM)
-    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    // Firebase BoM (SIEMPRE PRIMERO)
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+
+    // Firebase products (sin versión)
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-analytics")
+
 
 
 }

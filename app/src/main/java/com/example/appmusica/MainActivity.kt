@@ -48,7 +48,11 @@ class MainActivity : AppCompatActivity() {
         // Usuario en el header: preferir usuario de Firebase si está disponible
         val header = binding.navigationView.getHeaderView(0)
         val emailFromIntent = intent.getStringExtra("user")
-        val currentEmail = FirebaseAuth.getInstance().currentUser?.email
+        val currentEmail = try {
+            FirebaseAuth.getInstance().currentUser?.email
+        } catch (e: Exception) {
+            null
+        }
         header.findViewById<TextView>(R.id.txtUser)
             .text = (currentEmail ?: emailFromIntent ?: "Invitado")
     }
@@ -60,8 +64,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_logout) {
-            // Cerrar sesión de Firebase
-            FirebaseAuth.getInstance().signOut()
+            // Cerrar sesión de Firebase (safe)
+            try {
+                FirebaseAuth.getInstance().signOut()
+            } catch (e: Exception) {
+                // ignore
+            }
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return true

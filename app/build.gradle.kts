@@ -6,6 +6,10 @@ plugins {
 
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 android {
     namespace = "com.example.appmusica"
     compileSdk {
@@ -60,11 +64,16 @@ dependencies {
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.47")
-    kapt("com.google.dagger:hilt-compiler:2.47")
+    kapt("com.google.dagger:hilt-android-compiler:2.47")
 
-    // Hilt + ViewModel helpers (AndroidX Hilt)
-    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    // AndroidX Hilt compiler for ViewModel integration
     kapt("androidx.hilt:hilt-compiler:1.0.0")
+    // Hilt common utilities and navigation integration (helps provide default factories)
+    implementation("androidx.hilt:hilt-common:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+
+    // Lifecycle ViewModel KTX (ensure ViewModel factory classes available)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
     // Firebase Auth (BOM)
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))

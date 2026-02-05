@@ -5,9 +5,17 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import com.example.appmusica.auth.AuthState
+import com.example.appmusica.auth.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
+
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,21 +24,43 @@ class LoginActivity : AppCompatActivity() {
         val etUser = findViewById<EditText>(R.id.etUser)
         val etPass = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val btnRegister = findViewById<Button>(R.id.btnRegister)
 
         btnLogin.setOnClickListener {
-            val user = etUser.text.toString()
+            val user = etUser.text.toString().trim()
             val pass = etPass.text.toString()
-
-            // Login hardcodeado
-            if (user == "admin" && pass == "1234") {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("user", user)
-                startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+            if (user.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(this, "Introduce email y contraseña", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+            authViewModel.signIn(user, pass)
         }
+
+        btnRegister.setOnClickListener {
+            val user = etUser.text.toString().trim()
+            val pass = etPass.text.toString()
+            if (user.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(this, "Introduce email y contraseña", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            authViewModel.register(user, pass)
+        }
+
+        authViewModel.authState.observe(this, Observer { state ->
+            when (state) {
+                is AuthState.Loading -> Toast.makeText(this, "Procesando...", Toast.LENGTH_SHORT).show()
+                is AuthState.Success -> {
+                    // Navegar a MainActivity
+                    val email = authViewModel.currentUser()?.email ?: ""
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("user", email)
+                    startActivity(intent)
+                    finish()
+                }
+                is AuthState.Error -> Toast.makeText(this, state.error, Toast.LENGTH_LONG).show()
+                is AuthState.Idle -> { /* no-op */ }
+            }
+        })
     }
 }
 

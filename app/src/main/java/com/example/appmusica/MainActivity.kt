@@ -1,3 +1,4 @@
+
 package com.example.appmusica
 
 import android.content.Intent
@@ -12,7 +13,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.appmusica.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -41,10 +45,12 @@ class MainActivity : AppCompatActivity() {
         binding.navigationView.setupWithNavController(navController)
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // Usuario en el header
+        // Usuario en el header: preferir usuario de Firebase si está disponible
         val header = binding.navigationView.getHeaderView(0)
+        val emailFromIntent = intent.getStringExtra("user")
+        val currentEmail = FirebaseAuth.getInstance().currentUser?.email
         header.findViewById<TextView>(R.id.txtUser)
-            .text = intent.getStringExtra("user")
+            .text = (currentEmail ?: emailFromIntent ?: "Invitado")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -54,6 +60,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_logout) {
+            // Cerrar sesión de Firebase
+            FirebaseAuth.getInstance().signOut()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return true

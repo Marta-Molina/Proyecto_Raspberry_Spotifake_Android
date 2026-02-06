@@ -8,7 +8,9 @@ import dagger.hilt.android.HiltAndroidApp
 class AppMusicaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Initialize Firebase. Ensure google-services.json is present in app/ for full config.
-        FirebaseApp.initializeApp(this)
+
+        val app = FirebaseApp.initializeApp(this)
+        android.util.Log.d("FIREBASE_TEST", "Firebase init = $app")
     }
+
 }

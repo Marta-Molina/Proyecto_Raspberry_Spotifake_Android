@@ -76,12 +76,12 @@ dependencies {
     // Lifecycle ViewModel KTX (ensure ViewModel factory classes available)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
-    // Firebase BoM (SIEMPRE PRIMERO)
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    // Firebase BoM (SIEMPRE PRIMERO) - usar versión sin el catálogo de versiones
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
 
-    // Firebase products (sin versión)
+    // Firebase products (la versión la provee el BoM)
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 
 
 

@@ -1,24 +1,18 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
+        google()             // Necesario para plugins de Android y Firebase
+        mavenCentral()       // Repositorio general de librerías
+        gradlePluginPortal() // Para plugins de Gradle
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google()       // Muy importante: Firebase y Hilt están aquí
         mavenCentral()
     }
 }
 
 rootProject.name = "AppMusica"
 include(":app")
- 

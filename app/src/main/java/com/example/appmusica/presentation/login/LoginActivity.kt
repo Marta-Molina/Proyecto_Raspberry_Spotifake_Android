@@ -1,4 +1,4 @@
-package com.example.appmusica
+package com.example.appmusica.presentation.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.example.appmusica.auth.AuthState
-import com.example.appmusica.auth.AuthViewModel
+import com.example.appmusica.MainActivity
+import com.example.appmusica.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,20 +48,31 @@ class LoginActivity : AppCompatActivity() {
 
         authViewModel.authState.observe(this, Observer { state ->
             when (state) {
-                is AuthState.Loading -> Toast.makeText(this, "Procesando...", Toast.LENGTH_SHORT).show()
-                is AuthState.Success -> {
-                    // Navegar a MainActivity
+                is AuthState.Loading -> Toast.makeText(this, "Procesando...", Toast.LENGTH_SHORT)
+                    .show()
+
+                is AuthState.Authenticated -> {
+                    // Navegar a MainActivity sólo cuando la sesión esté iniciada
                     val email = authViewModel.currentUser()?.email ?: ""
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("user", email)
                     startActivity(intent)
                     finish()
                 }
+
+                is AuthState.Registered -> {
+                    // Usuario registrado correctamente pero sin iniciar sesión
+                    Toast.makeText(
+                        this,
+                        "Registro correcto. Por favor, inicia sesión.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
                 is AuthState.Error -> Toast.makeText(this, state.error, Toast.LENGTH_LONG).show()
-                is AuthState.Idle -> { /* no-op */ }
+                is AuthState.Idle -> { /* no-op */
+                }
             }
         })
     }
 }
-
-

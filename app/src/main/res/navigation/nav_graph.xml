@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/cancionesFragment"
-        android:name="com.example.appmusica.fragments.CancionesFragment"
+        android:name="com.example.appmusica.presentation.canciones.CancionesFragment"
         android:label="Canciones">
 
         <action

@@ -1,4 +1,4 @@
-package com.example.appmusica.fragments
+package com.example.appmusica.presentation.canciones
 
 import android.content.Intent
 import android.os.Bundle

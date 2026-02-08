@@ -1,9 +1,10 @@
-package com.example.appmusica.objects_models
+package com.example.appmusica.data.datasource
 
-import com.example.appmusica.models.Cancion
+import com.example.appmusica.domain.model.Cancion
+import javax.inject.Inject
 
-object Repository {
-    val listCanciones: MutableList<Cancion> = mutableListOf(
+class FakeCancionesDataSource @Inject constructor() {
+    val canciones: MutableList<Cancion> = mutableListOf(
         Cancion(
             "Shape of You",
             "Ed Sheeran",

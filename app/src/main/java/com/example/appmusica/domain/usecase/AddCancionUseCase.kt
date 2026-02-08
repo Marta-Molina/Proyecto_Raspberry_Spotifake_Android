@@ -1,4 +1,14 @@
 package com.example.appmusica.domain.usecase
 
-class AddCancionesUseCase {
+import com.example.appmusica.domain.model.Cancion
+import com.example.appmusica.domain.repository.CancionRepository
+import javax.inject.Inject
+
+class AddCancionUseCase @Inject constructor(
+    private val repository: CancionRepository
+) {
+    operator fun invoke(cancion: Cancion) {
+        repository.addCancion(cancion)
+    }
 }
+

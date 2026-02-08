@@ -1,4 +1,12 @@
 package com.example.appmusica.domain.usecase
 
-class DeleteCancionUseCase {
+import com.example.appmusica.domain.repository.CancionRepository
+import javax.inject.Inject
+
+class DeleteCancionUseCase @Inject constructor(
+    private val repository: CancionRepository
+) {
+    operator fun invoke(position: Int) {
+        repository.deleteCancion(position)
+    }
 }

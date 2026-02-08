@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/detalleFragment"
-        android:name="com.example.appmusica.fragments.DetalleFragment"
+        android:name="com.example.appmusica.presentation.canciones.DetalleFragment"
         android:label="Detalle canción">
 
         <!-- ESTE ARGUMENTO ES CLAVE -->
@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.appmusica.fragments.SettingsFragment"
+        android:name="com.example.appmusica.presentation.settings.SettingsFragment"
         android:label="Settings" />
 
 </navigation>

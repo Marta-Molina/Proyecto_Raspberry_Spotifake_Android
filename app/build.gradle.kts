@@ -83,6 +83,12 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
 
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Convertidor JSON (Gson)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Opcional pero recomendado (logs de red)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
 
 }

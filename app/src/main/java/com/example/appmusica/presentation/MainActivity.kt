@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -14,8 +15,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.appmusica.R
 import com.example.appmusica.databinding.ActivityMainBinding
 import com.example.appmusica.presentation.login.LoginActivity
+import com.example.appmusica.retrofit.PostRequest
+import com.example.appmusica.retrofit.RetrofitClient
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -56,6 +60,29 @@ class MainActivity : AppCompatActivity() {
         }
         header.findViewById<TextView>(R.id.txtUser)
             .text = (currentEmail ?: emailFromIntent ?: "Invitado")
+
+        //LLAMAR A LA API DESDE MAINACTIVITY
+        lifecycleScope.launch {
+            val newPost = PostRequest(
+                title = "Nuevo Post",
+                body = "Este es el contenido",
+                userId = 1
+            )
+
+            try {
+                val response = RetrofitClient.api.createPost(newPost)
+
+                if (response.isSuccessful) {
+                    val createdPost = response.body()
+                    println("Post creado con ID: ${createdPost?.id}")
+                } else {
+                    println("Error: ${response.code()}")
+                }
+
+            } catch (e: Exception) {
+                println("Error de red: ${e.message}")
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

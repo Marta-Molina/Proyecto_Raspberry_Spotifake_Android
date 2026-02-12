@@ -1,6 +1,5 @@
 package com.example.appmusica.retrofit
 
-import com.google.android.gms.common.api.Response
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -29,15 +28,17 @@ interface ApiService {
 
     //ENVIAR HEADERS
     @POST("posts")
-    suspend fun createPost(
+    suspend fun createPostWithAuth(
         @Header("Authorization") token: String,
         @Body post: PostRequest
     ): Response<PostResponse>
 
-    //USO DE LO DE ENVIAR HEADERS
+
+    /*USO DE LO DE ENVIAR HEADERS
     RetrofitClient.api.createPost(
     "Bearer TU_TOKEN_AQUI",
     newPost
     )
+    */
 
 }

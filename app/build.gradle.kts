@@ -90,5 +90,4 @@ dependencies {
     // Opcional pero recomendado (logs de red)
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-
 }

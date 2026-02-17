@@ -3,15 +3,9 @@ package com.example.appmusica.domain.repository
 import com.example.appmusica.domain.model.Cancion
 
 interface CancionRepository {
-
-    fun getCanciones(): List<Cancion>
-
-    fun getCancion(position: Int): Cancion
-
-    fun addCancion(cancion: Cancion)
-
-    fun updateCancion(position: Int, cancion: Cancion)
-
-    fun deleteCancion(position: Int)
+    suspend fun getCanciones(): List<Cancion>
+    suspend fun getCancion(id: Int): Cancion?
+    suspend fun addCancion(cancion: Cancion)
+    suspend fun updateCancion(id: Int, cancion: Cancion)
+    suspend fun deleteCancion(id: Int)
 }
-

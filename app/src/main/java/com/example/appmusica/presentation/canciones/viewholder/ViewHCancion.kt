@@ -25,11 +25,11 @@ class ViewHCancion(
 
         // Cargar la imagen con Glide
         Glide.with(binding.ivCancion.context)
-            .load(cancion.imagen) // URL de la canción
+            .load(cancion.portadaUrl) // URL de la canción
             .centerCrop() // Ajuste de la imagen
             .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache para mejorar rendimiento
-            .placeholder(R.color.darker_gray) // Mientras carga
-            .error(R.color.black) // Si falla la carga
+            .placeholder(android.R.color.darker_gray) // Mientras carga
+            .error(android.R.color.black) // Si falla la carga
             .into(binding.ivCancion)
 
         // Click normal → detalle

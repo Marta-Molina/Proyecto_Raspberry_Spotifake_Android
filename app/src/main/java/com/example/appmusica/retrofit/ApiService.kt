@@ -41,4 +41,22 @@ interface ApiService {
     )
     */
 
+    @GET("canciones")
+    suspend fun getCanciones(): Response<List<Cancion>>
+
+    @GET("canciones/{id}")
+    suspend fun getCancionById(
+        @retrofit2.http.Path("id") id: Int
+    ): Response<Cancion>
+
+    @GET("canciones")
+    suspend fun getCancionesByArtista(
+        @retrofit2.http.Query("artista") artista: String
+    ): Response<List<Cancion>>
+
+    @retrofit2.http.DELETE("canciones/{id}")
+    suspend fun deleteCancion(
+        @retrofit2.http.Path("id") id: Int
+    ): Response<Unit>
+
 }

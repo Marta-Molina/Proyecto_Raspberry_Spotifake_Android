@@ -7,7 +7,7 @@ import javax.inject.Inject
 class UpdateCancionUseCase @Inject constructor(
     private val repository: CancionRepository
 ) {
-    operator fun invoke(position: Int, cancion: Cancion) {
-        repository.updateCancion(position, cancion)
+    suspend operator fun invoke(id: Int, cancion: Cancion) {
+        repository.updateCancion(id, cancion)
     }
 }

@@ -28,13 +28,16 @@ class EditCancionActivity : AppCompatActivity() {
             return
         }
 
-        val cancion = viewModel.getCancion(position)
+        val cancion = viewModel.getCancion(position) ?: run {
+            finish()
+            return
+        }
 
         binding.editTextNombre.setText(cancion.nombre)
         binding.editTextArtista.setText(cancion.artista)
         binding.editTextAlbum.setText(cancion.album)
         binding.editTextDuracion.setText(cancion.duracion)
-        binding.editTextImagen.setText(cancion.imagen)
+        binding.editTextImagen.setText(cancion.portadaUrl)
 
         binding.btnUpdateCancion.setOnClickListener {
             val nombre = binding.editTextNombre.text.toString()
@@ -50,14 +53,16 @@ class EditCancionActivity : AppCompatActivity() {
                 imagen.isNotEmpty()
             ) {
                 val cancionActualizada = Cancion(
+                    id = cancion.id,
                     nombre = nombre,
                     artista = artista,
                     album = album,
                     duracion = duracion,
-                    imagen = imagen
+                    portadaUrl = imagen,
+                    audioUrl = cancion.audioUrl
                 )
 
-                viewModel.updateCancion(position, cancionActualizada)
+                viewModel.updateCancion(cancion.id, cancionActualizada)
 
                 Toast.makeText(this, "Canción actualizada", Toast.LENGTH_SHORT).show()
                 finish()

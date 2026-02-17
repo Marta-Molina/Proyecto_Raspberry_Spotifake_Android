@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetCancionesUseCase @Inject constructor(
     private val repository: CancionRepository
 ) {
-    operator fun invoke(): List<Cancion> {
+    suspend operator fun invoke(): List<Cancion> {
         return repository.getCanciones()
     }
 }

@@ -37,7 +37,10 @@ class ListadoCancionesFragment : Fragment() {
 
         adapter = AdapterCancion(
             mutableListOf(),
-            delete = { pos -> viewModel.deleteCancion(pos) },
+            delete = { pos -> 
+                val cancion = viewModel.getCancion(pos)
+                if (cancion != null) viewModel.deleteCancion(cancion.id)
+            },
             update = { pos -> openEdit(pos) },
             onItemClick = { pos -> openDetalle(pos) }
         )
@@ -60,8 +63,13 @@ class ListadoCancionesFragment : Fragment() {
     }
 
     private fun openDetalle(pos: Int) {
-        // Si no tienes pantalla detalle aún, puedes dejarlo vacío
-        // o mostrar un Toast
+        val bundle = Bundle().apply {
+            putInt("position", pos)
+        }
+        androidx.navigation.fragment.findNavController().navigate(
+            com.example.appmusica.R.id.action_cancionesFragment_to_detalleFragment,
+            bundle
+        )
     }
 
     override fun onDestroyView() {

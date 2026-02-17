@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
 import com.example.appmusica.databinding.FragmentDetalleBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
@@ -18,6 +20,7 @@ class DetalleFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CancionesViewModel by viewModels()
+    private var player: ExoPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,23 +34,46 @@ class DetalleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val position = arguments?.getInt("pos") ?: return
+        val position = arguments?.getInt("position") ?: return
 
-        val cancion = viewModel.getCancion(position)
+        viewModel.selectCancion(position)
 
-        binding.txtNombre.text = cancion.nombre
-        binding.txtArtista.text = cancion.artista
-        binding.txtAlbum.text = cancion.album
-        binding.txtDuracion.text = cancion.duracion
+        viewModel.selectedCancion.observe(viewLifecycleOwner) { cancion ->
+            cancion?.let {
+                binding.txtNombre.text = it.nombre
+                binding.txtArtista.text = it.artista
+                binding.txtAlbum.text = it.album
+                binding.txtDuracion.text = it.duracion
 
-        Glide.with(requireContext())
-            .load(cancion.imagen)
-            .centerCrop()
-            .into(binding.imgCancion)
+                Glide.with(requireContext())
+                    .load(it.portadaUrl)
+                    .centerCrop()
+                    .into(binding.imgCancion)
+
+                setupPlayer(it.audioUrl)
+            }
+        }
+    }
+
+    private fun setupPlayer(audioUrl: String) {
+        player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
+            binding.playerControlView.player = exoPlayer
+            val mediaItem = MediaItem.fromUri(audioUrl)
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player?.pause()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        player?.release()
+        player = null
         _binding = null
     }
 }

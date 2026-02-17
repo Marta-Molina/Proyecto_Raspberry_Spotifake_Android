@@ -34,11 +34,13 @@ class AddCancionActivity : AppCompatActivity() {
                 imagen.isNotEmpty()
             ) {
                 val nuevaCancion = Cancion(
+                    id = (0..1000).random(), // Generate dummy ID for now
                     nombre = nombre,
                     artista = artista,
                     album = album,
                     duracion = duracion,
-                    imagen = imagen
+                    portadaUrl = imagen,
+                    audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // Dummy audio
                 )
 
                 viewModel.addCancion(nuevaCancion)

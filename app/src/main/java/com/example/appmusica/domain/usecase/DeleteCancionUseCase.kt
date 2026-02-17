@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteCancionUseCase @Inject constructor(
     private val repository: CancionRepository
 ) {
-    operator fun invoke(position: Int) {
-        repository.deleteCancion(position)
+    suspend operator fun invoke(id: Int) {
+        repository.deleteCancion(id)
     }
 }

@@ -46,13 +46,13 @@ class DetalleFragment : Fragment() {
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
 
-                val fullPortadaUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${it.portadaUrl.removePrefix("/")}"
+                val fullPortadaUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${it.urlPortada.removePrefix("/")}"
                 Glide.with(requireContext())
                     .load(fullPortadaUrl)
                     .centerCrop()
                     .into(binding.imgCancion)
 
-                setupPlayer(it.audioUrl)
+                setupPlayer(it.urlAudio)
             }
         }
     }

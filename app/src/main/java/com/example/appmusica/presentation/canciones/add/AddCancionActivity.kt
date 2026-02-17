@@ -38,8 +38,8 @@ class AddCancionActivity : AppCompatActivity() {
                     nombre = nombre,
                     artista = artista,
                     album = album,
-                    portadaUrl = imagen,
-                    audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // Dummy audio
+                    urlPortada = imagen,
+                    urlAudio = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // Dummy audio
                 )
 
                 viewModel.addCancion(nuevaCancion)

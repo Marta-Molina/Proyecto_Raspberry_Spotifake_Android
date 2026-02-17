@@ -36,7 +36,7 @@ class EditCancionActivity : AppCompatActivity() {
         binding.editTextNombre.setText(cancion.nombre)
         binding.editTextArtista.setText(cancion.artista)
         binding.editTextAlbum.setText(cancion.album)
-        binding.editTextImagen.setText(cancion.portadaUrl)
+        binding.editTextImagen.setText(cancion.urlPortada)
 
         binding.btnUpdateCancion.setOnClickListener {
             val nombre = binding.editTextNombre.text.toString()
@@ -56,9 +56,8 @@ class EditCancionActivity : AppCompatActivity() {
                     nombre = nombre,
                     artista = artista,
                     album = album,
-                    duracion = duracion,
-                    portadaUrl = imagen,
-                    audioUrl = cancion.audioUrl
+                    urlPortada = imagen,
+                    urlAudio = cancion.urlAudio
                 )
 
                 viewModel.updateCancion(cancion.id, cancionActualizada)

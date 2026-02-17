@@ -20,6 +20,7 @@ hilt = "2.47"
 media3 = "1.5.1"
 firebaseBom = "34.8.0"
 media3Ui = "1.9.2"
+firebaseCrashlyticsBuildtools = "3.0.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +45,7 @@ dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", ve
 # 🔥 Firebase (SOLO BoM, SIN librerías individuales)
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Ui" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

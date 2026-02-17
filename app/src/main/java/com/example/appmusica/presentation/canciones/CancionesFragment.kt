@@ -12,6 +12,7 @@ import com.example.appmusica.databinding.FragmentCancionesBinding
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.add.AddCancionActivity
+import com.example.appmusica.presentation.canciones.edit.EditCancionActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,7 +30,9 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
             list = mutableListOf(),
             delete = { pos -> viewModel.deleteCancion(pos) },
             update = { pos ->
-                viewModel.editCancion(requireContext(), pos)
+                val intent = Intent(requireContext(), EditCancionActivity::class.java)
+                intent.putExtra("pos", pos)
+                startActivity(intent)
             },
             onItemClick = { pos -> navegarADetalle(pos) }
         )

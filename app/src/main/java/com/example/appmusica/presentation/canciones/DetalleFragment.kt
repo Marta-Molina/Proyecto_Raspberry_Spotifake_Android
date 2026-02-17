@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
 import com.example.appmusica.databinding.FragmentDetalleBinding
@@ -43,10 +45,10 @@ class DetalleFragment : Fragment() {
                 binding.txtNombre.text = it.nombre
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
-                binding.txtDuracion.text = it.duracion
 
+                val fullPortadaUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${it.portadaUrl.removePrefix("/")}"
                 Glide.with(requireContext())
-                    .load(it.portadaUrl)
+                    .load(fullPortadaUrl)
                     .centerCrop()
                     .into(binding.imgCancion)
 
@@ -55,10 +57,12 @@ class DetalleFragment : Fragment() {
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun setupPlayer(audioUrl: String) {
         player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
             binding.playerControlView.player = exoPlayer
-            val mediaItem = MediaItem.fromUri(audioUrl)
+            val fullAudioUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${audioUrl.removePrefix("/")}"
+            val mediaItem = MediaItem.fromUri(fullAudioUrl)
             exoPlayer.setMediaItem(mediaItem)
             exoPlayer.prepare()
             exoPlayer.playWhenReady = true

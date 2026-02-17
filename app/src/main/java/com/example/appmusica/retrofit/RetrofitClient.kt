@@ -5,13 +5,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "https://subpatronal-healthiest-kash.ngrok-free.dev"
-
-    val api: ApiService by lazy {
+    val api: ApiCancionesService by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(com.example.appmusica.di.NetworkModule.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ApiService::class.java)
+            .create(ApiCancionesService::class.java)
     }
 }

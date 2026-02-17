@@ -36,7 +36,6 @@ class EditCancionActivity : AppCompatActivity() {
         binding.editTextNombre.setText(cancion.nombre)
         binding.editTextArtista.setText(cancion.artista)
         binding.editTextAlbum.setText(cancion.album)
-        binding.editTextDuracion.setText(cancion.duracion)
         binding.editTextImagen.setText(cancion.portadaUrl)
 
         binding.btnUpdateCancion.setOnClickListener {

@@ -1,30 +1,33 @@
 package com.example.appmusica.data.repository
 
-import com.example.appmusica.data.datasource.FakeCancionesDataSource
+import android.util.Log
 import com.example.appmusica.domain.model.Cancion
 import com.example.appmusica.domain.repository.CancionRepository
-import com.example.appmusica.retrofit.ApiService
+import com.example.appmusica.retrofit.ApiCancionesService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CancionRepositoryImpl @Inject constructor(
-    private val api: ApiService,
-    private val dataSource: FakeCancionesDataSource
+    private val api: ApiCancionesService
 ) : CancionRepository {
 
     override suspend fun getCanciones(): List<Cancion> {
         return try {
             val response = api.getCanciones()
             if (response.isSuccessful) {
+                Log.d("API_TEST", response.body().toString())
                 response.body() ?: emptyList()
             } else {
-                dataSource.canciones
+                Log.e("API_TEST", "Error: ${response.code()}")
+                emptyList()
             }
         } catch (e: Exception) {
-            dataSource.canciones
+            Log.e("API_TEST", e.message ?: "Error")
+            emptyList()
         }
     }
+
 
     override suspend fun getCancion(id: Int): Cancion? {
         return try {
@@ -32,25 +35,26 @@ class CancionRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 response.body()
             } else {
-                dataSource.canciones.find { it.id == id }
+                null
             }
         } catch (e: Exception) {
-            dataSource.canciones.find { it.id == id }
+            null
         }
     }
 
     override suspend fun addCancion(cancion: Cancion) {
-        // Implement API call if needed, currently adding to fake
-        dataSource.canciones.add(cancion)
+        // Implementation for adding cancion to API could go here
     }
 
     override suspend fun updateCancion(id: Int, cancion: Cancion) {
-        val index = dataSource.canciones.indexOfFirst { it.id == id }
-        if (index != -1) dataSource.canciones[index] = cancion
+        // Implementation for updating cancion via API could go here
     }
 
     override suspend fun deleteCancion(id: Int) {
-        api.deleteCancion(id)
-        dataSource.canciones.removeAll { it.id == id }
+        try {
+            api.deleteCancion(id)
+        } catch (e: Exception) {
+            // Handle error
+        }
     }
 }

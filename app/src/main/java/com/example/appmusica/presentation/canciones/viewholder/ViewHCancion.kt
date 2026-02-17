@@ -24,8 +24,9 @@ class ViewHCancion(
         binding.txtviewDuracion.text = cancion.duracion
 
         // Cargar la imagen con Glide
+        val fullUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${cancion.portadaUrl.removePrefix("/")}"
         Glide.with(binding.ivCancion.context)
-            .load(cancion.portadaUrl) // URL de la canción
+            .load(fullUrl) // URL de la canción
             .centerCrop() // Ajuste de la imagen
             .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache para mejorar rendimiento
             .placeholder(android.R.color.darker_gray) // Mientras carga

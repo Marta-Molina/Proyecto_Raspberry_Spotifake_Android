@@ -38,7 +38,6 @@ class AddCancionActivity : AppCompatActivity() {
                     nombre = nombre,
                     artista = artista,
                     album = album,
-                    duracion = duracion,
                     portadaUrl = imagen,
                     audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // Dummy audio
                 )

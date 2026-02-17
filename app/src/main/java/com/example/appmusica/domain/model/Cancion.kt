@@ -17,17 +17,14 @@ data class Cancion(
     val album: String,
 
     @SerializedName("urlportada")
-    val portadaUrl: String,
+    val urlPortada: String,
 
     @SerializedName("urlaudio")
-    val audioUrl: String,
+    val urlAudio: String,
 
     @SerializedName("genero")
     val genero: String? = null,
 
     @SerializedName("likes")
     val likes: Int? = null,
-
-    @SerializedName("duracion")
-    val duracion: String? = null
 )

@@ -13,6 +13,8 @@ class ViewHCancion(
     view: View,
     private val delete: (Int) -> Unit,
     private val update: (Int) -> Unit,
+    private val like: (Int) -> Unit,
+    private val addToList: (Int) -> Unit,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
@@ -23,6 +25,14 @@ class ViewHCancion(
         binding.txtviewNombre.text = cancion.nombre
         binding.txtviewArtista.text = cancion.artista
         binding.txtviewAlbum.text = cancion.album
+        binding.txtviewLikes.text = cancion.likes.toString()
+
+        // Cambiar icono de like si tiene likes (demo simple)
+        if (cancion.likes > 0) {
+            binding.btnLike.setImageResource(android.R.drawable.btn_star_big_on)
+        } else {
+            binding.btnLike.setImageResource(android.R.drawable.btn_star_big_off)
+        }
 
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
@@ -60,6 +70,20 @@ class ViewHCancion(
         binding.btnEdit.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 update(bindingAdapterPosition)
+            }
+        }
+
+        // Botón Like
+        binding.btnLike.setOnClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                like(bindingAdapterPosition)
+            }
+        }
+
+        // Botón Add to List
+        binding.btnAddToList.setOnClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                addToList(bindingAdapterPosition)
             }
         }
     }

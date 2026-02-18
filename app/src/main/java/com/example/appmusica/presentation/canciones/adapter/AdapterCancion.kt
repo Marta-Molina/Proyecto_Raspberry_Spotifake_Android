@@ -11,13 +11,15 @@ class AdapterCancion(
     private val list: MutableList<Cancion>,
     private val delete: (Int) -> Unit,
     private val update: (Int) -> Unit,
+    private val like: (Int) -> Unit,
+    private val addToList: (Int) -> Unit,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ViewHCancion>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHCancion {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_cancion, parent, false)
-        return ViewHCancion(view, delete, update, onItemClick)
+        return ViewHCancion(view, delete, update, like, addToList, onItemClick)
     }
 
     override fun onBindViewHolder(holder: ViewHCancion, position: Int) {

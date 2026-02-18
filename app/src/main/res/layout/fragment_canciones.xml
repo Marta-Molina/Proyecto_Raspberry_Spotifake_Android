@@ -6,26 +6,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- RecyclerView para la lista de canciones -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerCanciones"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:clipToPadding="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:orientation="vertical">
+
+        <!-- Barra de búsqueda -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:iconifiedByDefault="false"
+            app:queryHint="Buscar por nombre, artista o album..." />
+
+        <!-- RecyclerView para la lista de canciones -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCanciones"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:clipToPadding="false" />
+    </LinearLayout>
 
     <!-- FloatingActionButton para añadir una canción -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
-        android:layout_marginEnd="16dp"
+        android:layout_margin="16dp"
         android:contentDescription="Agregar canción"
         android:src="@android:drawable/ic_input_add"
-        app:layout_anchor="@id/recyclerCanciones"
         app:layout_anchorGravity="bottom|end"
+        android:layout_gravity="bottom|end"
         app:tint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

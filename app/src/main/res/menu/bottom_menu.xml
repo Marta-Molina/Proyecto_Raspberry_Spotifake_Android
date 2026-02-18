@@ -6,6 +6,11 @@
         android:icon="@android:drawable/ic_media_play" />
 
     <item
+        android:id="@+id/playlistsFragment"
+        android:title="Listas"
+        android:icon="@android:drawable/ic_menu_agenda" />
+
+    <item
         android:id="@+id/settingsFragment"
         android:title="Settings"
         android:icon="@android:drawable/ic_menu_preferences" />

@@ -12,18 +12,18 @@ class CancionRepositoryImpl @Inject constructor(
     private val api: ApiCancionesService
 ) : CancionRepository {
 
-    override suspend fun getCanciones(): List<Cancion> {
+    override suspend fun getCanciones(nombre: String?, artista: String?, album: String?): List<Cancion> {
         return try {
-            val response = api.getCanciones()
+            val response = api.getCanciones(nombre, artista, album)
             if (response.isSuccessful) {
                 Log.d("API_TEST", response.body().toString())
                 response.body() ?: emptyList()
             } else {
-                Log.e("API_TEST", "Error: ${response.code()}")
+                Log.e("API_TEST", "Error fetching canciones: ${response.code()} ${response.message()}")
                 emptyList()
             }
         } catch (e: Exception) {
-            Log.e("API_TEST", e.message ?: "Error")
+            Log.e("API_TEST", "Exception fetching canciones: ${e.message}", e)
             emptyList()
         }
     }
@@ -35,26 +35,45 @@ class CancionRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 response.body()
             } else {
+                Log.e("API_TEST", "Error fetching cancion $id: ${response.code()}")
                 null
             }
         } catch (e: Exception) {
+            Log.e("API_TEST", "Exception fetching cancion $id: ${e.message}")
             null
         }
     }
 
     override suspend fun addCancion(cancion: Cancion) {
-        // Implementation for adding cancion to API could go here
+        try {
+            val response = api.addCancion(cancion)
+            if (!response.isSuccessful) {
+                Log.e("API_TEST", "Error adding cancion: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception adding cancion: ${e.message}")
+        }
     }
 
     override suspend fun updateCancion(id: Int, cancion: Cancion) {
-        // Implementation for updating cancion via API could go here
+        try {
+            val response = api.updateCancion(id, cancion)
+            if (!response.isSuccessful) {
+                Log.e("API_TEST", "Error updating cancion $id: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception updating cancion $id: ${e.message}")
+        }
     }
 
     override suspend fun deleteCancion(id: Int) {
         try {
-            api.deleteCancion(id)
+            val response = api.deleteCancion(id)
+            if (!response.isSuccessful) {
+                Log.e("API_TEST", "Error deleting cancion $id: ${response.code()}")
+            }
         } catch (e: Exception) {
-            // Handle error
+            Log.e("API_TEST", "Exception deleting cancion $id: ${e.message}")
         }
     }
 }

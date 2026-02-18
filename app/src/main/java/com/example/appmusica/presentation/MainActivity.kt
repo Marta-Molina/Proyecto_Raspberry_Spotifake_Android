@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.cancionesFragment, R.id.settingsFragment),
+            setOf(R.id.cancionesFragment, R.id.playlistsFragment, R.id.settingsFragment),
             binding.drawerLayout
         )
 

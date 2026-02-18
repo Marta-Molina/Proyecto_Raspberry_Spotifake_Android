@@ -30,4 +30,25 @@
         android:name="com.example.appmusica.presentation.settings.SettingsFragment"
         android:label="Settings" />
 
+    <fragment
+        android:id="@+id/playlistsFragment"
+        android:name="com.example.appmusica.presentation.playlists.PlaylistsFragment"
+        android:label="Mis Listas">
+        <action
+            android:id="@+id/action_playlistsFragment_to_playlistSongsFragment"
+            app:destination="@id/playlistSongsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistSongsFragment"
+        android:name="com.example.appmusica.presentation.playlists.PlaylistSongsFragment"
+        android:label="Canciones de la Lista">
+        <argument
+            android:name="playlistId"
+            app:argType="integer" />
+        <argument
+            android:name="playlistName"
+            app:argType="string" />
+    </fragment>
+
 </navigation>

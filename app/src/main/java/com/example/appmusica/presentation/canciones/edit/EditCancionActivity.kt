@@ -36,19 +36,21 @@ class EditCancionActivity : AppCompatActivity() {
         binding.editTextNombre.setText(cancion.nombre)
         binding.editTextArtista.setText(cancion.artista)
         binding.editTextAlbum.setText(cancion.album)
+        binding.editTextGenero.setText(cancion.genero.toString())
+        binding.editTextLikes.setText(cancion.likes.toString())
         binding.editTextImagen.setText(cancion.urlPortada)
 
         binding.btnUpdateCancion.setOnClickListener {
             val nombre = binding.editTextNombre.text.toString()
             val artista = binding.editTextArtista.text.toString()
             val album = binding.editTextAlbum.text.toString()
-            val duracion = binding.editTextDuracion.text.toString()
+            val genero = binding.editTextGenero.text.toString().toIntOrNull() ?: 0
+            val likes = binding.editTextLikes.text.toString().toIntOrNull() ?: 0
             val imagen = binding.editTextImagen.text.toString()
 
             if (nombre.isNotEmpty() &&
                 artista.isNotEmpty() &&
                 album.isNotEmpty() &&
-                duracion.isNotEmpty() &&
                 imagen.isNotEmpty()
             ) {
                 val cancionActualizada = Cancion(
@@ -56,6 +58,8 @@ class EditCancionActivity : AppCompatActivity() {
                     nombre = nombre,
                     artista = artista,
                     album = album,
+                    genero = genero,
+                    likes = likes,
                     urlPortada = imagen,
                     urlAudio = cancion.urlAudio
                 )

@@ -1,11 +1,12 @@
 package com.example.appmusica.presentation.canciones.viewholder
 
-import android.R
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.appmusica.R
 import com.example.appmusica.databinding.ItemCancionBinding
+import com.example.appmusica.di.NetworkModule
 import com.example.appmusica.domain.model.Cancion
 
 class ViewHCancion(
@@ -18,20 +19,28 @@ class ViewHCancion(
     private val binding = ItemCancionBinding.bind(view)
 
     fun renderize(cancion: Cancion) {
+
         binding.txtviewNombre.text = cancion.nombre
         binding.txtviewArtista.text = cancion.artista
         binding.txtviewAlbum.text = cancion.album
-        binding.txtviewDuracion.text = cancion.duracion
 
-        // Cargar la imagen con Glide
-        val fullUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${cancion.portadaUrl.removePrefix("/")}"
-        Glide.with(binding.ivCancion.context)
-            .load(fullUrl) // URL de la canción
-            .centerCrop() // Ajuste de la imagen
-            .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache para mejorar rendimiento
-            .placeholder(android.R.color.darker_gray) // Mientras carga
-            .error(android.R.color.black) // Si falla la carga
-            .into(binding.ivCancion)
+        // ✅ Cargar imagen solo si no es null
+        cancion.urlPortada?.let { portadaPath ->
+
+            val fullUrl =
+                NetworkModule.BASE_URL + portadaPath.removePrefix("/")
+
+            Glide.with(binding.ivCancion.context)
+                .load(fullUrl)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.color.white)
+                .error(R.color.black)
+                .into(binding.ivCancion)
+        } ?: run {
+            // Si es null, ponemos una imagen por defecto
+            binding.ivCancion.setImageResource(R.color.white)
+        }
 
         // Click normal → detalle
         itemView.setOnClickListener {

@@ -25,13 +25,19 @@
         android:hint="Álbum" />
 
     <EditText
-        android:id="@+id/editTextDuracion"
+        android:id="@+id/editTextImagen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Duración (Ej: 3:40)" />
+        android:hint="URL de la imagen" />
 
     <EditText
-        android:id="@+id/editTextImagen"
+        android:id="@+id/editTextGenero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="URL de la imagen" />
+
+    <EditText
+        android:id="@+id/editTextLikes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="URL de la imagen" />

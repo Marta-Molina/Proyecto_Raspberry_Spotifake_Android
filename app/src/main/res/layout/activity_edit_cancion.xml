@@ -24,7 +24,13 @@
         android:hint="Álbum" />
 
     <EditText
-        android:id="@+id/editTextDuracion"
+        android:id="@+id/editTextGenero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Duración" />
+
+    <EditText
+        android:id="@+id/editTextLikes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Duración" />

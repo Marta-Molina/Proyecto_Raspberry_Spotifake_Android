@@ -26,21 +26,26 @@ class AddCancionActivity : AppCompatActivity() {
             val album = binding.editTextAlbum.text.toString()
             val duracion = binding.editTextDuracion.text.toString()
             val imagen = binding.editTextImagen.text.toString()
+            val genero = binding.editTextGenero.text.toString().toIntOrNull() ?: 0
+            val likes = binding.editTextLikes.text.toString().toIntOrNull() ?: 0
+
 
             if (nombre.isNotEmpty() &&
                 artista.isNotEmpty() &&
                 album.isNotEmpty() &&
-                duracion.isNotEmpty() &&
                 imagen.isNotEmpty()
             ) {
                 val nuevaCancion = Cancion(
-                    id = (0..1000).random(), // Generate dummy ID for now
+                    id = (0..1000).random(),
                     nombre = nombre,
                     artista = artista,
                     album = album,
+                    genero = genero,
+                    likes = likes,
                     urlPortada = imagen,
-                    urlAudio = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // Dummy audio
+                    urlAudio = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
                 )
+
 
                 viewModel.addCancion(nuevaCancion)
 

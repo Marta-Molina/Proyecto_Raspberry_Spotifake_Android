@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CancionesViewModel @Inject constructor(
-    private val getCanciones: GetCancionesUseCase,
+    private val getCancionesUseCase: GetCancionesUseCase,
     private val addCancionUseCase: AddCancionUseCase,
     private val deleteCancionUseCase: DeleteCancionUseCase,
     private val updateCancionUseCase: UpdateCancionUseCase,
@@ -25,9 +25,10 @@ class CancionesViewModel @Inject constructor(
     private val _selectedCancion = MutableLiveData<Cancion?>()
     val selectedCancion: LiveData<Cancion?> = _selectedCancion
 
-    fun loadCanciones() {
+    fun loadCanciones(query: String? = null) {
         viewModelScope.launch {
-            _canciones.value = getCanciones()
+            // Buscamos por nombre, artista o album usando el mismo query para simplificar en la UI
+            _canciones.value = getCancionesUseCase(nombre = query, artista = query, album = query)
         }
     }
 
@@ -48,6 +49,16 @@ class CancionesViewModel @Inject constructor(
     fun updateCancion(id: Int, cancion: Cancion) {
         viewModelScope.launch {
             updateCancionUseCase(id, cancion)
+            loadCanciones()
+        }
+    }
+
+    fun toggleLike(cancion: Cancion) {
+        viewModelScope.launch {
+            val newLikes = if (cancion.likes > 0) cancion.likes - 1 else cancion.likes + 1 // Simple toggle logic for demo
+            val updatedCancion = cancion.copy(likes = newLikes)
+            updateCancionUseCase(cancion.id, updatedCancion)
+            // Reload from current state to update UI
             loadCanciones()
         }
     }

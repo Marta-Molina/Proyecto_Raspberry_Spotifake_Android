@@ -20,6 +20,7 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
 
     private lateinit var binding: FragmentCancionesBinding
     private val viewModel: CancionesViewModel by viewModels()
+    private val playlistViewModel: PlaylistViewModel by viewModels()
     private lateinit var adapter: AdapterCancion
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,11 +29,17 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
 
         adapter = AdapterCancion(
             list = mutableListOf(),
-            delete = { pos -> viewModel.deleteCancion(pos) },
+            delete = { pos -> viewModel.deleteCancion(viewModel.getCancion(pos)?.id ?: -1) },
             update = { pos ->
                 val intent = Intent(requireContext(), EditCancionActivity::class.java)
                 intent.putExtra("pos", pos)
                 startActivity(intent)
+            },
+            like = { pos -> 
+                viewModel.getCancion(pos)?.let { viewModel.toggleLike(it) }
+            },
+            addToList = { pos ->
+                mostrarDialogoListas(viewModel.getCancion(pos)?.id ?: -1)
             },
             onItemClick = { pos -> navegarADetalle(pos) }
         )
@@ -41,6 +48,18 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@CancionesFragment.adapter
         }
+
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.loadCanciones(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.loadCanciones(newText)
+                return true
+            }
+        })
 
         viewModel.canciones.observe(viewLifecycleOwner) { lista ->
             adapter.updateList(lista)
@@ -51,6 +70,28 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         }
 
         viewModel.loadCanciones()
+    }
+
+    private fun mostrarDialogoListas(cancionId: Int) {
+        playlistViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
+            if (playlists == null) return@observe
+            if (playlists.isEmpty()) {
+                android.widget.Toast.makeText(requireContext(), "No tienes listas creadas", android.widget.Toast.LENGTH_SHORT).show()
+                return@observe
+            }
+
+            val nombres = playlists.map { it.nombre }.toTypedArray()
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Seleccionar Lista")
+                .setItems(nombres) { _, which ->
+                    val playlistId = playlists[which].id
+                    playlistViewModel.addSongToPlaylist(playlistId, cancionId)
+                    android.widget.Toast.makeText(requireContext(), "Canción añadida a ${playlists[which].nombre}", android.widget.Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+        playlistViewModel.loadPlaylists()
     }
 
     private fun navegarADetalle(position: Int) {

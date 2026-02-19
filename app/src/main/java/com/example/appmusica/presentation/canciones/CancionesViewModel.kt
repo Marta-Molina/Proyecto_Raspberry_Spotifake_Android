@@ -22,13 +22,31 @@ class CancionesViewModel @Inject constructor(
     private val _canciones = MutableLiveData<List<Cancion>>()
     val canciones: LiveData<List<Cancion>> = _canciones
 
+    private var fullList: List<Cancion> = emptyList()
+
     private val _selectedCancion = MutableLiveData<Cancion?>()
     val selectedCancion: LiveData<Cancion?> = _selectedCancion
 
     fun loadCanciones(query: String? = null) {
         viewModelScope.launch {
-            // Buscamos por nombre, artista o album usando el mismo query para simplificar en la UI
-            _canciones.value = getCancionesUseCase(nombre = query, artista = query, album = query)
+            if (fullList.isEmpty() || query == null) {
+                // Si la lista está vacía o no hay query, cargamos todo del repositorio
+                fullList = getCancionesUseCase()
+                _canciones.value = fullList
+            }
+            
+            if (!query.isNullOrBlank()) {
+                // Filtramos localmente para una respuesta instantánea y precisa
+                val filtered = fullList.filter { cancion ->
+                    cancion.nombre.contains(query, ignoreCase = true) ||
+                    cancion.artista.contains(query, ignoreCase = true) ||
+                    cancion.album.contains(query, ignoreCase = true)
+                }
+                _canciones.value = filtered
+            } else if (query != null && query.isEmpty()) {
+                // Si el query está vacío (el usuario borró todo), mostramos la lista completa
+                _canciones.value = fullList
+            }
         }
     }
 

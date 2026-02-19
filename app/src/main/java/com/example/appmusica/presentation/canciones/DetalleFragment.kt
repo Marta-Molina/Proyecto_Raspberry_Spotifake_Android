@@ -57,7 +57,7 @@ class DetalleFragment : Fragment() {
                 val fullPortadaUrl = if (portadaPath.startsWith("http")) {
                     portadaPath
                 } else {
-                    "${com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("api/")}${portadaPath.removePrefix("/")}"
+                    com.example.appmusica.di.NetworkModule.BASE_URL + portadaPath.removePrefix("/")
                 }
                 
                 val glideUrl = GlideUrl(fullPortadaUrl, LazyHeaders.Builder()
@@ -100,7 +100,12 @@ class DetalleFragment : Fragment() {
         val fullAudioUrl = if (audioUrl.startsWith("http")) {
             audioUrl
         } else {
-            "${com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("api/")}${audioUrl.removePrefix("/")}"
+            com.example.appmusica.di.NetworkModule.BASE_URL + audioUrl.removePrefix("/")
+        }
+
+        // Evitar reiniciar si ya es el mismo MediaItem
+        if (player?.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {
+            return
         }
         
         Log.d("PLAYER", "Playing: $fullAudioUrl")

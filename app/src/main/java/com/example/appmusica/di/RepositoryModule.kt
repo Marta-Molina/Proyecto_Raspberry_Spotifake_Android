@@ -1,5 +1,7 @@
 package com.example.appmusica.di
 
+import com.example.appmusica.data.repository.AuthRepositoryImpl
+import com.example.appmusica.data.repository.CancionRepositoryImpl
 import com.example.appmusica.data.repository.PlaylistRepositoryImpl
 import com.example.appmusica.domain.repository.AuthRepository
 import com.example.appmusica.domain.repository.CancionRepository

@@ -18,7 +18,7 @@
             android:textStyle="bold"
             android:padding="16dp"
             android:textColor="@color/black"
-            app:tools:text="Mi Lista" />
+            android:text="Mi Lista" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerPlaylistSongs"

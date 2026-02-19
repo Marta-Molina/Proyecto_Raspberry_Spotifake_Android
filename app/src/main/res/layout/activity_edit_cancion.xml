@@ -94,7 +94,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             android:hint="Género (ID)"
             android:textColorHint="@color/spotify_light_grey"
             app:boxStrokeColor="@color/spotify_green"
@@ -102,6 +102,24 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextGenero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:hint="Likes"
+            android:textColorHint="@color/spotify_light_grey"
+            app:boxStrokeColor="@color/spotify_green"
+            app:hintTextColor="@color/spotify_green">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextLikes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"

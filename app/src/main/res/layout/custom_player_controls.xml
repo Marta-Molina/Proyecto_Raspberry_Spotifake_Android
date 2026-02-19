@@ -52,7 +52,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@androidx.media3.ui.R.drawable.exo_ic_skip_previous"
+            app:srcCompat="@drawable/exo_ic_skip_previous"
             app:tint="@color/white" />
 
         <ImageButton
@@ -62,7 +62,7 @@
             android:layout_marginHorizontal="24dp"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:src="@androidx.media3.ui.R.drawable.exo_ic_play_circle_filled"
+            app:srcCompat="@drawable/exo_ic_play_circle_filled"
             app:tint="@color/spotify_green" />
 
         <ImageButton
@@ -72,7 +72,7 @@
             android:layout_marginHorizontal="24dp"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:src="@androidx.media3.ui.R.drawable.exo_ic_pause_circle_filled"
+            app:srcCompat="@drawable/exo_ic_pause_circle_filled"
             app:tint="@color/spotify_green" />
 
         <ImageButton
@@ -80,7 +80,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@androidx.media3.ui.R.drawable.exo_ic_skip_next"
+            app:srcCompat="@drawable/exo_ic_skip_next"
             app:tint="@color/white" />
 
     </LinearLayout>

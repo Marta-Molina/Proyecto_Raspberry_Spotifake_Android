@@ -34,10 +34,12 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun createPlaylist(nombre: String, userId: Int = 1) { // userId mocked to 1
+    fun createPlaylist(nombre: String, userId: Int = 1) { 
         viewModelScope.launch {
-            createPlaylistUseCase(Playlist(nombre = nombre, idUsuario = userId))
-            loadPlaylists()
+            val result = createPlaylistUseCase(Playlist(nombre = nombre, idUsuario = userId))
+            if (result != null) {
+                loadPlaylists()
+            }
         }
     }
 

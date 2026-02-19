@@ -48,7 +48,12 @@ class DetalleFragment : Fragment() {
                 binding.txtAlbum.text = it.album
 
                 val portadaPath = it.urlPortada ?: ""
-                val fullPortadaUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${portadaPath.removePrefix("/")}"
+                val fullPortadaUrl = if (portadaPath.startsWith("http")) {
+                    portadaPath
+                } else {
+                    "${com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("api/")}${portadaPath.removePrefix("/")}"
+                }
+                
                 Glide.with(requireContext())
                     .load(fullPortadaUrl)
                     .centerCrop()
@@ -58,8 +63,8 @@ class DetalleFragment : Fragment() {
 
                 it.urlAudio?.let { audioUrl ->
                     setupPlayer(audioUrl)
+                    binding.playerControlView.visibility = View.VISIBLE
                 } ?: run {
-                    // Handle case where there is no audio URL
                     binding.playerControlView.visibility = View.GONE
                 }
             }
@@ -68,14 +73,21 @@ class DetalleFragment : Fragment() {
 
     @OptIn(UnstableApi::class)
     private fun setupPlayer(audioUrl: String) {
-        player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
-            binding.playerControlView.player = exoPlayer
-            val fullAudioUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${audioUrl.removePrefix("/")}"
-            val mediaItem = MediaItem.fromUri(fullAudioUrl)
-            exoPlayer.setMediaItem(mediaItem)
-            exoPlayer.prepare()
-            exoPlayer.playWhenReady = true
+        if (player == null) {
+            player = ExoPlayer.Builder(requireContext()).build()
+            binding.playerControlView.player = player
         }
+        
+        val fullAudioUrl = if (audioUrl.startsWith("http")) {
+            audioUrl
+        } else {
+            "${com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("api/")}${audioUrl.removePrefix("/")}"
+        }
+        
+        val mediaItem = MediaItem.fromUri(fullAudioUrl)
+        player?.setMediaItem(mediaItem)
+        player?.prepare()
+        player?.playWhenReady = true
     }
 
     override fun onPause() {

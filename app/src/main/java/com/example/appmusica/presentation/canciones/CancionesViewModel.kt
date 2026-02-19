@@ -55,10 +55,9 @@ class CancionesViewModel @Inject constructor(
 
     fun toggleLike(cancion: Cancion) {
         viewModelScope.launch {
-            val newLikes = if (cancion.likes > 0) cancion.likes - 1 else cancion.likes + 1 // Simple toggle logic for demo
-            val updatedCancion = cancion.copy(likes = newLikes)
+            // Decidimos que por ahora el like solo incremente para asegurar que se vea el cambio
+            val updatedCancion = cancion.copy(likes = cancion.likes + 1)
             updateCancionUseCase(cancion.id, updatedCancion)
-            // Reload from current state to update UI
             loadCanciones()
         }
     }

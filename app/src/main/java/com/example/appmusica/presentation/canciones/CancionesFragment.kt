@@ -71,28 +71,30 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         }
 
         viewModel.loadCanciones()
+        playlistViewModel.loadPlaylists()
+        
+        playlistViewModel.playlists.observe(viewLifecycleOwner) { _ ->
+            // Just observing to keep it loaded
+        }
     }
 
     private fun mostrarDialogoListas(cancionId: Int) {
-        playlistViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
-            if (playlists == null) return@observe
-            if (playlists.isEmpty()) {
-                android.widget.Toast.makeText(requireContext(), "No tienes listas creadas", android.widget.Toast.LENGTH_SHORT).show()
-                return@observe
-            }
-
-            val nombres = playlists.map { it.nombre }.toTypedArray()
-            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Seleccionar Lista")
-                .setItems(nombres) { _, which ->
-                    val playlistId = playlists[which].id
-                    playlistViewModel.addSongToPlaylist(playlistId, cancionId)
-                    android.widget.Toast.makeText(requireContext(), "Canción añadida a ${playlists[which].nombre}", android.widget.Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+        val playlists = playlistViewModel.playlists.value
+        if (playlists == null || playlists.isEmpty()) {
+            android.widget.Toast.makeText(requireContext(), "No tienes listas creadas", android.widget.Toast.LENGTH_SHORT).show()
+            return
         }
-        playlistViewModel.loadPlaylists()
+
+        val nombres = playlists.map { it.nombre }.toTypedArray()
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Seleccionar Lista")
+            .setItems(nombres) { _, which ->
+                val playlistId = playlists[which].id
+                playlistViewModel.addSongToPlaylist(playlistId, cancionId)
+                android.widget.Toast.makeText(requireContext(), "Canción añadida a ${playlists[which].nombre}", android.widget.Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun navegarADetalle(position: Int) {

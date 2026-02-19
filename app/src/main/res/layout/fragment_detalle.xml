@@ -69,20 +69,86 @@
             app:layout_constraintTop_toBottomOf="@id/txtArtista"
             tools:text="Froot (Album)" />
 
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sliderProgress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:valueFrom="0"
+            android:valueTo="100"
+            app:thumbColor="@color/spotify_green"
+            app:trackColorActive="@color/spotify_green"
+            app:trackColorInactive="#33FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtAlbum" />
+
+        <TextView
+            android:id="@+id/txtCurrentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="0:00"
+            android:textColor="@color/spotify_light_grey"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sliderProgress" />
+
+        <TextView
+            android:id="@+id/txtTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="0:00"
+            android:textColor="@color/spotify_light_grey"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sliderProgress" />
+
+        <LinearLayout
+            android:id="@+id/controlsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/txtCurrentTime">
+
+            <ImageButton
+                android:id="@+id/btnPrev"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/exo_ic_skip_previous"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/btnPlayPause"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/exo_ic_play_circle_filled"
+                app:tint="@color/spotify_green" />
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/exo_ic_skip_next"
+                app:tint="@color/white" />
+        </LinearLayout>
+
         <androidx.media3.ui.PlayerView
             android:id="@+id/playerView"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_marginTop="24dp"
-            android:background="@android:color/transparent"
-            app:use_controller="true"
-            app:show_timeout="0"
-            app:hide_on_touch="false"
-            app:use_artwork="false"
-            app:surface_type="none"
-            app:show_buffering="always"
-            app:controller_layout_id="@layout/custom_player_controls"
-            app:layout_constraintTop_toBottomOf="@id/txtAlbum"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:use_controller="false"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingClass" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

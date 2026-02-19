@@ -40,6 +40,13 @@ class DetalleFragment : Fragment() {
         return binding.root
     }
 
+    private var updateProgressRunnable = object : Runnable {
+        override fun run() {
+            updateProgress()
+            binding.root.postDelayed(this, 1000)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,12 +80,38 @@ class DetalleFragment : Fragment() {
 
                 it.urlAudio?.let { audioUrl ->
                     setupPlayer(audioUrl)
-                    binding.playerView.visibility = View.VISIBLE
-                } ?: run {
-                    binding.playerView.visibility = View.GONE
                 }
             }
         }
+
+        setupManualControls()
+    }
+
+    private fun setupManualControls() {
+        binding.btnPlayPause.setOnClickListener {
+            player?.let {
+                if (it.isPlaying) {
+                    it.pause()
+                } else {
+                    it.play()
+                }
+                updatePlayPauseIcon()
+            }
+        }
+
+        binding.sliderProgress.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                player?.let {
+                    val duration = it.duration
+                    if (duration > 0) {
+                        it.seekTo((value * duration / 100).toLong())
+                    }
+                }
+            }
+        }
+
+        binding.btnPrev.setOnClickListener { player?.seekToPrevious() }
+        binding.btnNext.setOnClickListener { player?.seekToNext() }
     }
 
     @OptIn(UnstableApi::class)
@@ -91,11 +124,22 @@ class DetalleFragment : Fragment() {
                 .setMediaSourceFactory(DefaultMediaSourceFactory(requireContext()).setDataSourceFactory(dataSourceFactory))
                 .build()
             
+            player?.addListener(object : androidx.media3.common.Player.Listener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    updatePlayPauseIcon()
+                    if (isPlaying) {
+                        binding.root.post(updateProgressRunnable)
+                    } else {
+                        binding.root.removeCallbacks(updateProgressRunnable)
+                    }
+                }
+
+                override fun onPlaybackStateChanged(state: Int) {
+                    updatePlayPauseIcon()
+                }
+            })
+
             binding.playerView.player = player
-            // Aseguramos que los controles se muestren siempre
-            binding.playerView.showController()
-            binding.playerView.controllerShowTimeoutMs = 0
-            binding.playerView.controllerAutoShow = true
         }
         
         val fullAudioUrl = if (audioUrl.startsWith("http")) {
@@ -104,25 +148,53 @@ class DetalleFragment : Fragment() {
             com.example.appmusica.di.NetworkModule.BASE_URL + audioUrl.removePrefix("/")
         }
 
-        // Evitar reiniciar si ya es el mismo MediaItem
         if (player?.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {
             return
         }
         
-        Log.d("PLAYER", "Playing: $fullAudioUrl")
         val mediaItem = MediaItem.fromUri(fullAudioUrl)
         player?.setMediaItem(mediaItem)
         player?.prepare()
         player?.playWhenReady = true
     }
 
+    private fun updatePlayPauseIcon() {
+        val isPlaying = player?.isPlaying ?: false
+        val iconRes = if (isPlaying) {
+            androidx.media3.ui.R.drawable.exo_ic_pause_circle_filled
+        } else {
+            androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
+        }
+        binding.btnPlayPause.setImageResource(iconRes)
+    }
+
+    private fun updateProgress() {
+        player?.let {
+            val current = it.currentPosition
+            val duration = it.duration
+            if (duration > 0) {
+                binding.sliderProgress.value = (current.toFloat() / duration.toFloat() * 100).coerceIn(0f, 100f)
+                binding.txtCurrentTime.text = formatTime(current)
+                binding.txtTotalTime.text = formatTime(duration)
+            }
+        }
+    }
+
+    private fun formatTime(ms: Long): String {
+        val seconds = (ms / 1000) % 60
+        val minutes = (ms / (1000 * 60)) % 60
+        return String.format("%d:%02d", minutes, seconds)
+    }
+
     override fun onPause() {
         super.onPause()
+        binding.root.removeCallbacks(updateProgressRunnable)
         player?.pause()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.root.removeCallbacks(updateProgressRunnable)
         player?.release()
         player = null
         _binding = null

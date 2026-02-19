@@ -39,10 +39,16 @@ class ListadoCancionesFragment : Fragment() {
         adapter = AdapterCancion(
             mutableListOf(),
             delete = { pos -> 
-                val cancion = viewModel.getCancion(pos)
+                val cancion = adapter.getCancion(pos)
                 if (cancion != null) viewModel.deleteCancion(cancion.id)
             },
             update = { pos -> openEdit(pos) },
+            like = { pos ->
+                adapter.getCancion(pos)?.let { viewModel.toggleLike(it) }
+            },
+            addToList = { pos ->
+                // Por ahora no implementamos el diálogo aquí si no es necesario
+            },
             onItemClick = { pos -> openDetalle(pos) }
         )
 

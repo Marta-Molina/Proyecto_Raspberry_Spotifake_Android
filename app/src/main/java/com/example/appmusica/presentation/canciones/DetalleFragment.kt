@@ -46,13 +46,21 @@ class DetalleFragment : Fragment() {
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
 
-                val fullPortadaUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${it.urlPortada.removePrefix("/")}"
+                val portadaPath = it.urlPortada ?: ""
+                val fullPortadaUrl = "${com.example.appmusica.di.NetworkModule.BASE_URL}${portadaPath.removePrefix("/")}"
                 Glide.with(requireContext())
                     .load(fullPortadaUrl)
                     .centerCrop()
+                    .placeholder(R.drawable.ic_media_play) // Use a default icon
+                    .error(R.drawable.ic_media_play)
                     .into(binding.imgCancion)
 
-                setupPlayer(it.urlAudio)
+                it.urlAudio?.let { audioUrl ->
+                    setupPlayer(audioUrl)
+                } ?: run {
+                    // Handle case where there is no audio URL
+                    binding.playerControlView.visibility = View.GONE
+                }
             }
         }
     }

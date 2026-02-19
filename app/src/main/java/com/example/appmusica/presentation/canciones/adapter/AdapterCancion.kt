@@ -40,4 +40,5 @@ class AdapterCancion(
         notifyDataSetChanged()
     }
 
+    fun getCancion(position: Int): Cancion? = if (position in list.indices) list[position] else null
 }

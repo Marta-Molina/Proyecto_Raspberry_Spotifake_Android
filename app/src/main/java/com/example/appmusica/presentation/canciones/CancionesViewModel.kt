@@ -5,7 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appmusica.domain.model.Cancion
-import com.example.appmusica.domain.usecase.*
+import com.example.appmusica.domain.model.Genero
+import com.example.appmusica.domain.usecase.GetCancionesUseCase
+import com.example.appmusica.domain.usecase.AddCancionUseCase
+import com.example.appmusica.domain.usecase.DeleteCancionUseCase
+import com.example.appmusica.domain.usecase.UpdateCancionUseCase
+import com.example.appmusica.domain.usecase.GetCancionUseCase
+import com.example.appmusica.domain.usecase.GetGenerosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +31,9 @@ class CancionesViewModel @Inject constructor(
 
     private val _generos = MutableLiveData<List<Genero>>()
     val generos: LiveData<List<Genero>> = _generos
+
+    private val _selectedCancion = MutableLiveData<Cancion?>()
+    val selectedCancion: LiveData<Cancion?> = _selectedCancion
 
     private var fullList: List<Cancion> = emptyList()
     private var currentQuery: String? = null

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentCancionesBinding
+import com.example.appmusica.domain.model.Genero
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.add.AddCancionActivity
@@ -77,7 +78,7 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         }
 
         binding.spinnerGenero.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, idSelected: Long) {
                 if (position == 0) {
                     viewModel.loadCanciones(generoId = 0)
                 } else {

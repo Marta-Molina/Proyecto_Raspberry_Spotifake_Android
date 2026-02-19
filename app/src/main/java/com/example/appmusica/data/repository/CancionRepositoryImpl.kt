@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.appmusica.domain.model.Cancion
 import com.example.appmusica.domain.repository.CancionRepository
 import com.example.appmusica.retrofit.ApiCancionesService
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,11 +59,12 @@ class CancionRepositoryImpl @Inject constructor(
 
     override suspend fun updateCancion(id: Int, cancion: Cancion) {
         try {
-            val nombre = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.nombre)
-            val artista = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.artista)
-            val album = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.album)
-            val genero = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.genero.toString())
-            val likes = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.likes.toString())
+            val mediaType = "text/plain".toMediaTypeOrNull()
+            val nombre = cancion.nombre.toRequestBody(mediaType)
+            val artista = cancion.artista.toRequestBody(mediaType)
+            val album = cancion.album.toRequestBody(mediaType)
+            val genero = cancion.genero.toString().toRequestBody(mediaType)
+            val likes = cancion.likes.toString().toRequestBody(mediaType)
 
             val response = api.updateCancion(id, nombre, artista, album, genero, likes)
             if (!response.isSuccessful) {

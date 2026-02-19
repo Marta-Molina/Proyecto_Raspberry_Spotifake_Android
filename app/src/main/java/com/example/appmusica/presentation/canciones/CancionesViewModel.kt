@@ -74,6 +74,10 @@ class CancionesViewModel @Inject constructor(
         }
     }
 
+    fun setCanciones(lista: List<Cancion>) {
+        _canciones.value = lista
+    }
+
     fun getCancion(position: Int): Cancion? {
         val list = _canciones.value
         return if (list != null && position < list.size) list[position] else null

@@ -3,7 +3,7 @@ package com.example.appmusica.presentation.playlists
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +11,7 @@ import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentPlaylistSongsBinding
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.edit.EditCancionActivity
+import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,6 +19,7 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
 
     private lateinit var binding: FragmentPlaylistSongsBinding
     private val viewModel: PlaylistViewModel by viewModels()
+    private val cancionesViewModel: CancionesViewModel by activityViewModels()
     private lateinit var adapter: AdapterCancion
     private var playlistId: Int = -1
 
@@ -58,6 +60,7 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
 
         viewModel.playlistSongs.observe(viewLifecycleOwner) { lista ->
             adapter.updateList(lista)
+            cancionesViewModel.setCanciones(lista)
         }
 
         if (playlistId != -1) {

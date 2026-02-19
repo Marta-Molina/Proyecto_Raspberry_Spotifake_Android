@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.Log
@@ -23,7 +24,7 @@ class DetalleFragment : Fragment() {
     private var _binding: FragmentDetalleBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CancionesViewModel by viewModels()
+    private val viewModel: CancionesViewModel by activityViewModels()
     private var player: ExoPlayer? = null
 
     override fun onCreateView(

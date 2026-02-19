@@ -12,7 +12,11 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.datasource.DefaultHttpDataSource
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentDetalleBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
@@ -56,8 +60,12 @@ class DetalleFragment : Fragment() {
                     "${com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("api/")}${portadaPath.removePrefix("/")}"
                 }
                 
+                val glideUrl = GlideUrl(fullPortadaUrl, LazyHeaders.Builder()
+                    .addHeader("ngrok-skip-browser-warning", "true")
+                    .build())
+
                 Glide.with(requireContext())
-                    .load(fullPortadaUrl)
+                    .load(glideUrl)
                     .centerCrop()
                     .placeholder(R.drawable.ic_launcher_foreground)
                     .error(R.drawable.ic_launcher_foreground)
@@ -76,7 +84,13 @@ class DetalleFragment : Fragment() {
     @OptIn(UnstableApi::class)
     private fun setupPlayer(audioUrl: String) {
         if (player == null) {
-            player = ExoPlayer.Builder(requireContext()).build()
+            val dataSourceFactory = DefaultHttpDataSource.Factory()
+                .setDefaultRequestProperties(mapOf("ngrok-skip-browser-warning" to "true"))
+            
+            player = ExoPlayer.Builder(requireContext())
+                .setMediaSourceFactory(DefaultMediaSourceFactory(requireContext()).setDataSourceFactory(dataSourceFactory))
+                .build()
+            
             binding.playerView.player = player
             // Aseguramos que los controles se muestren por defecto
             binding.playerView.showController()

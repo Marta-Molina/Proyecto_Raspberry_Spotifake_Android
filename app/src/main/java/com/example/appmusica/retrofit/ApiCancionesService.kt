@@ -58,4 +58,7 @@ interface ApiCancionesService {
 
     @DELETE("listas/{idLista}/canciones/{idCancion}")
     suspend fun removeCancionFromLista(@Path("idLista") listaId: Int, @Path("idCancion") cancionId: Int): Response<Unit>
+
+    @GET("generos")
+    suspend fun getGeneros(): Response<List<com.example.appmusica.domain.model.Genero>>
 }

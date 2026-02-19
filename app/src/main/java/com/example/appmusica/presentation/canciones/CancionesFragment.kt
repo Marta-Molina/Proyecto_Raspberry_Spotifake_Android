@@ -63,6 +63,32 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
             }
         })
 
+        viewModel.generos.observe(viewLifecycleOwner) { generos ->
+            val genreNames = mutableListOf("Todos los géneros")
+            genreNames.addAll(generos.map { it.nombre })
+            
+            val adapterSpinner = android.widget.ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                genreNames
+            )
+            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerGenero.adapter = adapterSpinner
+        }
+
+        binding.spinnerGenero.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (position == 0) {
+                    viewModel.loadCanciones(generoId = 0)
+                } else {
+                    val genreId = viewModel.generos.value?.get(position - 1)?.id ?: 0
+                    viewModel.loadCanciones(generoId = genreId)
+                }
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
         viewModel.canciones.observe(viewLifecycleOwner) { lista ->
             adapter.updateList(lista)
         }

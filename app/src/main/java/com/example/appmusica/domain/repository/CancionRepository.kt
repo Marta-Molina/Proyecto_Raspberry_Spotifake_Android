@@ -8,4 +8,5 @@ interface CancionRepository {
     suspend fun addCancion(cancion: Cancion)
     suspend fun updateCancion(id: Int, cancion: Cancion)
     suspend fun deleteCancion(id: Int)
+    suspend fun getGeneros(): List<com.example.appmusica.domain.model.Genero>
 }

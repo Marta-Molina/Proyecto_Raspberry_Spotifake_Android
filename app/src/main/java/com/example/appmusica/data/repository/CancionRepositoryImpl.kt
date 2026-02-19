@@ -85,4 +85,19 @@ class CancionRepositoryImpl @Inject constructor(
             Log.e("API_TEST", "Exception deleting cancion $id: ${e.message}")
         }
     }
+
+    override suspend fun getGeneros(): List<com.example.appmusica.domain.model.Genero> {
+        return try {
+            val response = api.getGeneros()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("API_TEST", "Error fetching generos: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception fetching generos: ${e.message}")
+            emptyList()
+        }
+    }
 }

@@ -16,37 +16,57 @@ class CancionesViewModel @Inject constructor(
     private val addCancionUseCase: AddCancionUseCase,
     private val deleteCancionUseCase: DeleteCancionUseCase,
     private val updateCancionUseCase: UpdateCancionUseCase,
-    private val getCancionUseCase: GetCancionUseCase
+    private val getCancionUseCase: GetCancionUseCase,
+    private val getGenerosUseCase: GetGenerosUseCase
 ) : ViewModel() {
 
     private val _canciones = MutableLiveData<List<Cancion>>()
     val canciones: LiveData<List<Cancion>> = _canciones
 
+    private val _generos = MutableLiveData<List<Genero>>()
+    val generos: LiveData<List<Genero>> = _generos
+
     private var fullList: List<Cancion> = emptyList()
+    private var currentQuery: String? = null
+    private var selectedGeneroId: Int? = null
 
-    private val _selectedCancion = MutableLiveData<Cancion?>()
-    val selectedCancion: LiveData<Cancion?> = _selectedCancion
+    init {
+        loadGeneros()
+        loadCanciones()
+    }
 
-    fun loadCanciones(query: String? = null) {
+    private fun loadGeneros() {
         viewModelScope.launch {
-            if (fullList.isEmpty() || query == null) {
-                // Si la lista está vacía o no hay query, cargamos todo del repositorio
+            _generos.value = getGenerosUseCase()
+        }
+    }
+
+    fun loadCanciones(query: String? = currentQuery, generoId: Int? = selectedGeneroId) {
+        currentQuery = query
+        selectedGeneroId = if (generoId == 0) null else generoId
+
+        viewModelScope.launch {
+            if (fullList.isEmpty()) {
                 fullList = getCancionesUseCase()
-                _canciones.value = fullList
             }
             
-            if (!query.isNullOrBlank()) {
-                // Filtramos localmente para una respuesta instantánea y precisa
-                val filtered = fullList.filter { cancion ->
-                    cancion.nombre.contains(query, ignoreCase = true) ||
-                    cancion.artista.contains(query, ignoreCase = true) ||
-                    cancion.album.contains(query, ignoreCase = true)
+            var filtered = fullList
+
+            // Filtro por texto
+            if (!currentQuery.isNullOrBlank()) {
+                filtered = filtered.filter { cancion ->
+                    cancion.nombre.contains(currentQuery!!, ignoreCase = true) ||
+                    cancion.artista.contains(currentQuery!!, ignoreCase = true) ||
+                    cancion.album.contains(currentQuery!!, ignoreCase = true)
                 }
-                _canciones.value = filtered
-            } else if (query != null && query.isEmpty()) {
-                // Si el query está vacío (el usuario borró todo), mostramos la lista completa
-                _canciones.value = fullList
             }
+
+            // Filtro por género
+            if (selectedGeneroId != null) {
+                filtered = filtered.filter { it.genero == selectedGeneroId }
+            }
+
+            _canciones.value = filtered
         }
     }
 

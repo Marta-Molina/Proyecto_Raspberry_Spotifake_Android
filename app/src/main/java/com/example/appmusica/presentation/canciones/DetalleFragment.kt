@@ -11,6 +11,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
+import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentDetalleBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,8 +52,8 @@ class DetalleFragment : Fragment() {
                 Glide.with(requireContext())
                     .load(fullPortadaUrl)
                     .centerCrop()
-                    .placeholder(R.drawable.ic_media_play) // Use a default icon
-                    .error(R.drawable.ic_media_play)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
                     .into(binding.imgCancion)
 
                 it.urlAudio?.let { audioUrl ->

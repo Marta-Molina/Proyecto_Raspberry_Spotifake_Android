@@ -92,8 +92,9 @@ class DetalleFragment : Fragment() {
                 .build()
             
             binding.playerView.player = player
-            // Aseguramos que los controles se muestren por defecto
+            // Aseguramos que los controles se muestren siempre
             binding.playerView.showController()
+            binding.playerView.controllerShowTimeoutMs = 0
             binding.playerView.controllerAutoShow = true
         }
         

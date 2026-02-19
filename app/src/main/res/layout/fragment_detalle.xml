@@ -78,6 +78,8 @@
             app:use_controller="true"
             app:show_timeout="0"
             app:hide_on_touch="false"
+            app:use_artwork="false"
+            app:surface_type="none"
             app:controller_layout_id="@layout/custom_player_controls"
             app:layout_constraintTop_toBottomOf="@id/txtAlbum"
             tools:ignore="MissingClass" />

@@ -13,14 +13,15 @@ import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.add.AddCancionActivity
 import com.example.appmusica.presentation.canciones.edit.EditCancionActivity
+import com.example.appmusica.presentation.playlists.PlaylistViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CancionesFragment : Fragment(R.layout.fragment_canciones) {
 
     private lateinit var binding: FragmentCancionesBinding
-    private val viewModel: CancionesViewModel by viewModels()
-    private val playlistViewModel: PlaylistViewModel by viewModels()
+    private val viewModel: com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel by viewModels()
+    private val playlistViewModel: com.example.appmusica.presentation.playlists.PlaylistViewModel by viewModels()
     private lateinit var adapter: AdapterCancion
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

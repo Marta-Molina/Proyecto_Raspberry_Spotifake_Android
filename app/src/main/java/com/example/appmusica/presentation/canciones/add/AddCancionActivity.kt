@@ -24,7 +24,6 @@ class AddCancionActivity : AppCompatActivity() {
             val nombre = binding.editTextNombre.text.toString()
             val artista = binding.editTextArtista.text.toString()
             val album = binding.editTextAlbum.text.toString()
-            val duracion = binding.editTextDuracion.text.toString()
             val imagen = binding.editTextImagen.text.toString()
             val genero = binding.editTextGenero.text.toString().toIntOrNull() ?: 0
             val likes = binding.editTextLikes.text.toString().toIntOrNull() ?: 0

@@ -70,7 +70,7 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
             putInt("position", position)
         }
         findNavController().navigate(
-            R.id.action_cancionesFragment_to_detalleFragment, // Reutilizando acción si es posible
+            R.id.action_playlistSongsFragment_to_detalleFragment,
             bundle
         )
     }

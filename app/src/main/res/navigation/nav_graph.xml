@@ -49,6 +49,9 @@
         <argument
             android:name="playlistName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_playlistSongsFragment_to_detalleFragment"
+            app:destination="@id/detalleFragment" />
     </fragment>
 
 </navigation>

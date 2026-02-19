@@ -57,9 +57,15 @@ class CancionRepositoryImpl @Inject constructor(
 
     override suspend fun updateCancion(id: Int, cancion: Cancion) {
         try {
-            val response = api.updateCancion(id, cancion)
+            val nombre = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.nombre)
+            val artista = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.artista)
+            val album = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.album)
+            val genero = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.genero.toString())
+            val likes = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), cancion.likes.toString())
+
+            val response = api.updateCancion(id, nombre, artista, album, genero, likes)
             if (!response.isSuccessful) {
-                Log.e("API_TEST", "Error updating cancion $id: ${response.code()}")
+                Log.e("API_TEST", "Error updating cancion $id: ${response.code()} ${response.errorBody()?.string()}")
             }
         } catch (e: Exception) {
             Log.e("API_TEST", "Exception updating cancion $id: ${e.message}")

@@ -19,8 +19,16 @@ interface ApiCancionesService {
     @POST("canciones")
     suspend fun addCancion(@Body cancion: Cancion): Response<Cancion>
 
+    @Multipart
     @PUT("canciones/{id}")
-    suspend fun updateCancion(@Path("id") id: Int, @Body cancion: Cancion): Response<Cancion>
+    suspend fun updateCancion(
+        @Path("id") id: Int,
+        @Part("nombre") nombre: okhttp3.RequestBody? = null,
+        @Part("artista") artista: okhttp3.RequestBody? = null,
+        @Part("album") album: okhttp3.RequestBody? = null,
+        @Part("genero") genero: okhttp3.RequestBody? = null,
+        @Part("likes") likes: okhttp3.RequestBody? = null
+    ): Response<Cancion>
 
     @DELETE("canciones/{id}")
     suspend fun deleteCancion(@Path("id") id: Int): Response<Unit>

@@ -42,11 +42,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <androidx.media3.ui.PlayerControlView
-            android:id="@+id/playerControlView"
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/playerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
             android:layout_marginTop="24dp"
+            app:use_controller="true"
+            app:show_timeout="0"
+            app:hide_on_touch="false"
             tools:ignore="MissingClass" />
 
     </LinearLayout>

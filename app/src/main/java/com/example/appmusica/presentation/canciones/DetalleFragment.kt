@@ -63,9 +63,9 @@ class DetalleFragment : Fragment() {
 
                 it.urlAudio?.let { audioUrl ->
                     setupPlayer(audioUrl)
-                    binding.playerControlView.visibility = View.VISIBLE
+                    binding.playerView.visibility = View.VISIBLE
                 } ?: run {
-                    binding.playerControlView.visibility = View.GONE
+                    binding.playerView.visibility = View.GONE
                 }
             }
         }
@@ -75,7 +75,10 @@ class DetalleFragment : Fragment() {
     private fun setupPlayer(audioUrl: String) {
         if (player == null) {
             player = ExoPlayer.Builder(requireContext()).build()
-            binding.playerControlView.player = player
+            binding.playerView.player = player
+            // Aseguramos que los controles se muestren por defecto
+            binding.playerView.showController()
+            binding.playerView.controllerAutoShow = true
         }
         
         val fullAudioUrl = if (audioUrl.startsWith("http")) {
@@ -84,6 +87,7 @@ class DetalleFragment : Fragment() {
             "${com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("api/")}${audioUrl.removePrefix("/")}"
         }
         
+        Log.d("PLAYER", "Playing: $fullAudioUrl")
         val mediaItem = MediaItem.fromUri(fullAudioUrl)
         player?.setMediaItem(mediaItem)
         player?.prepare()

@@ -6,7 +6,10 @@
     </style>
 
     <style name="Theme.AppMusica" parent="Base.Theme.AppMusica">
-        <item name="colorPrimary">#6A1B9A</item>
-        <item name="colorSecondary">#FF4081</item>
+        <item name="colorPrimary">@color/spotify_green</item>
+        <item name="colorSecondary">@color/spotify_light_grey</item>
+        <item name="android:windowBackground">@color/spotify_black</item>
+        <item name="android:statusBarColor">@color/spotify_black</item>
+        <item name="android:navigationBarColor">@color/spotify_black</item>
     </style>
 </resources>

@@ -16,11 +16,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/spotify_black"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ToolbarPopupThemeLight" />
 
-        <!-- NavHostFragment corregido -->
+        <!-- NavHostFragment -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -39,10 +39,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="?attr/colorPrimary"
+            android:background="@color/spotify_black"
             app:menu="@menu/bottom_menu"
-            app:itemIconTint="@color/white"
-            app:itemTextColor="@color/white"
+            app:itemIconTint="@color/selector_nav_colors"
+            app:itemTextColor="@color/selector_nav_colors"
             app:labelVisibilityMode="labeled" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

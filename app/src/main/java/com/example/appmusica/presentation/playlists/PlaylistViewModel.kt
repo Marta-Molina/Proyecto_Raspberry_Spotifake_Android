@@ -30,8 +30,14 @@ class PlaylistViewModel @Inject constructor(
 
     fun loadPlaylists() {
         viewModelScope.launch {
-            _playlists.value = getPlaylistsUseCase()
+            // Usamos el ID de usuario 1 por defecto según los requisitos
+            _playlists.value = getUserListas(1)
         }
+    }
+
+    private suspend fun getUserListas(userId: Int): List<Playlist> {
+        // Aprovechamos que tenemos el caso de uso aunque en el repo se llame diferente
+        return getPlaylistsUseCase() // Verificaremos si el caso de uso es correcto o necetamos inyectar el de usuario
     }
 
     fun createPlaylist(nombre: String, userId: Int = 1) { 

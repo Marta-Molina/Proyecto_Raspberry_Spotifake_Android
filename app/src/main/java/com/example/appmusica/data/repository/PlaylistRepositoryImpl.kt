@@ -14,18 +14,7 @@ class PlaylistRepositoryImpl @Inject constructor(
 ) : PlaylistRepository {
 
     override suspend fun getListas(): List<Playlist> {
-        return try {
-            val response = api.getListas()
-            if (response.isSuccessful) {
-                response.body() ?: emptyList()
-            } else {
-                Log.e("API_TEST", "Error fetching listas: ${response.code()}")
-                emptyList()
-            }
-        } catch (e: Exception) {
-            Log.e("API_TEST", "Exception fetching listas: ${e.message}")
-            emptyList()
-        }
+        return getUserListas(1)
     }
 
     override suspend fun createLista(playlist: Playlist): Playlist? {
@@ -102,9 +91,10 @@ class PlaylistRepositoryImpl @Inject constructor(
     override suspend fun addCancionToLista(listaId: Int, cancionId: Int) {
         try {
             val body = mapOf("idCancion" to cancionId)
+            Log.d("API_LISTAS", "Adding cancion $cancionId to lista $listaId")
             val response = api.addCancionToLista(listaId, body)
             if (!response.isSuccessful) {
-                Log.e("API_TEST", "Error adding cancion to lista: ${response.code()}")
+                Log.e("API_TEST", "Error adding cancion to lista: ${response.code()} ${response.errorBody()?.string()}")
             }
         } catch (e: Exception) {
             Log.e("API_TEST", "Exception adding cancion to lista: ${e.message}")

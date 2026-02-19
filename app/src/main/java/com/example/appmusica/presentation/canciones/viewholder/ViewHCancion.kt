@@ -15,6 +15,7 @@ class ViewHCancion(
     private val update: (Int) -> Unit,
     private val like: (Int) -> Unit,
     private val addToList: (Int) -> Unit,
+    private val onRemove: ((Int) -> Unit)? = null,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
@@ -80,10 +81,22 @@ class ViewHCancion(
             }
         }
 
-        // Botón Add to List
-        binding.btnAddToList.setOnClickListener {
-            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                addToList(bindingAdapterPosition)
+        // Botón Add to List vs Remove
+        if (onRemove != null) {
+            binding.btnRemove.visibility = View.VISIBLE
+            binding.btnAddToList.visibility = View.GONE
+            binding.btnRemove.setOnClickListener {
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    onRemove(bindingAdapterPosition)
+                }
+            }
+        } else {
+            binding.btnRemove.visibility = View.GONE
+            binding.btnAddToList.visibility = View.VISIBLE
+            binding.btnAddToList.setOnClickListener {
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    addToList(bindingAdapterPosition)
+                }
             }
         }
     }

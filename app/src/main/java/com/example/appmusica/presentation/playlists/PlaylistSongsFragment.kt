@@ -35,11 +35,7 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
 
         adapter = AdapterCancion(
             list = mutableListOf(),
-            delete = { pos -> 
-                // En este fragmento, "delete" significa quitar de la lista
-                val cancionId = adapter.getCancion(pos)?.id ?: -1
-                viewModel.removeSongFromPlaylist(playlistId, cancionId)
-            },
+            delete = { _ -> /* No global delete in playlist view */ },
             update = { pos ->
                 val intent = Intent(requireContext(), EditCancionActivity::class.java)
                 intent.putExtra("pos", pos)
@@ -50,6 +46,10 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
             },
             addToList = { _ ->
                 // Ya estamos en una lista
+            },
+            onRemove = { pos ->
+                val cancionId = adapter.getCancion(pos)?.id ?: -1
+                viewModel.removeSongFromPlaylist(playlistId, cancionId)
             },
             onItemClick = { pos -> navegarADetalle(pos) }
         )

@@ -106,6 +106,17 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/btnRemove"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@android:drawable/ic_delete"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/spotify_light_grey" />
+
+        <ImageView
             android:id="@+id/btnAddToList"
             android:layout_width="28dp"
             android:layout_height="28dp"

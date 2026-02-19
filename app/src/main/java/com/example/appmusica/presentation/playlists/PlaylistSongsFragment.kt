@@ -49,7 +49,14 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
             },
             onRemove = { pos ->
                 val cancionId = adapter.getCancion(pos)?.id ?: -1
-                viewModel.removeSongFromPlaylist(playlistId, cancionId)
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Quitar canción")
+                    .setMessage("¿Estás seguro de que quieres quitar esta canción de la lista?")
+                    .setPositiveButton("Quitar") { _, _ ->
+                        viewModel.removeSongFromPlaylist(playlistId, cancionId)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
             },
             onItemClick = { pos -> navegarADetalle(pos) }
         )

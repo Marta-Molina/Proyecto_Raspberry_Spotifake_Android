@@ -26,7 +26,17 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
         adapter = PlaylistAdapter(
             list = mutableListOf(),
             onDelete = { pos ->
-                adapter.getPlaylist(pos)?.let { viewModel.deletePlaylist(it.id) }
+                val playlist = adapter.getPlaylist(pos)
+                if (playlist != null) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Eliminar playlist")
+                        .setMessage("¿Estás seguro de que quieres eliminar la lista '${playlist.nombre}'?")
+                        .setPositiveButton("Eliminar") { _, _ ->
+                            viewModel.deletePlaylist(playlist.id)
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .show()
+                }
             },
             onEdit = { pos ->
                 adapter.getPlaylist(pos)?.let { mostrarDialogoEditar(it.id, it.nombre) }

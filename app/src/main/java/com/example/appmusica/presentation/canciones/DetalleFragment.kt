@@ -60,6 +60,7 @@ class DetalleFragment : Fragment() {
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
 
+                val portadaPath = it.urlPortada ?: ""
                 val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
                 val fullPortadaUrl = if (portadaPath.startsWith("http")) {
                     portadaPath

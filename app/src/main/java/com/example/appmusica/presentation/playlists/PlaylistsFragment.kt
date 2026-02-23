@@ -89,7 +89,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             .setPositiveButton("Guardar") { _, _ ->
                 val nuevoNombre = editText.text.toString()
                 if (nuevoNombre.isNotBlank()) {
-                    viewModel.updatePlaylist(id, nuevoNombre)
+                    viewModel.updatePlaylist(id, nuevoNombre, 1)
                 }
             }
             .setNegativeButton("Cancelar", null)

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.findNavController
 import com.example.appmusica.R
 import com.example.appmusica.data.remote.request.UserRequest
 import com.example.appmusica.data.remote.response.UserResponse
@@ -44,7 +45,7 @@ class ManageUsersFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putSerializable("user", user)
                 }
-                androidx.navigation.fragment.findNavController().navigate(
+                findNavController().navigate(
                     R.id.action_manageUsersFragment_to_userDetailFragment,
                     bundle
                 )

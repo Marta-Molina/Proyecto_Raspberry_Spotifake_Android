@@ -93,8 +93,12 @@
 
             <ImageView
                 android:id="@+id/btnLike"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="4dp"
                 android:src="@android:drawable/btn_star_big_off"
                 app:tint="@color/spotify_light_grey" />
 
@@ -110,8 +114,12 @@
 
         <ImageView
             android:id="@+id/btnRemove"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
             android:src="@android:drawable/ic_delete"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -121,8 +129,12 @@
 
         <ImageView
             android:id="@+id/btnAddToList"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
             android:src="@android:drawable/ic_menu_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

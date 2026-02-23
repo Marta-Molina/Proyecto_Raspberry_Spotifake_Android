@@ -16,6 +16,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.data.local.AuthManager
 import com.example.appmusica.presentation.login.AuthViewModel
 import com.example.appmusica.retrofit.ApiCancionesService
@@ -77,8 +79,13 @@ class SettingsFragment : Fragment() {
         authManager.getUrlImagen()?.let { url ->
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
             val fullUrl = baseUrl + url
+            
+            val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
+                .addHeader("ngrok-skip-browser-warning", "true")
+                .build())
+
             Glide.with(this)
-                .load(fullUrl)
+                .load(glideUrl)
                 .error(android.R.drawable.ic_menu_report_image)
                 .circleCrop()
                 .into(ivProfile)
@@ -108,8 +115,12 @@ class SettingsFragment : Fragment() {
                         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
                         val fullUrl = baseUrl + user.urlImagen
                         
+                        val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
+                            .addHeader("ngrok-skip-browser-warning", "true")
+                            .build())
+
                         Glide.with(this@SettingsFragment)
-                            .load(fullUrl)
+                            .load(glideUrl)
                             .placeholder(R.drawable.user)
                             .error(android.R.drawable.ic_menu_report_image)
                             .circleCrop()

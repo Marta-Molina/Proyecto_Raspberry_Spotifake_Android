@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.domain.model.Cancion
 import com.example.appmusica.di.NetworkModule
@@ -38,9 +40,15 @@ class ManageSongsAdapter(
 
         val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
         song.urlPortada?.let { url ->
+            // Si la ruta ya es una URL completa (empieza por http), la usamos tal cual
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url
+            
+            val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
+                .addHeader("ngrok-skip-browser-warning", "true")
+                .build())
+
             Glide.with(holder.itemView.context)
-                .load(fullUrl)
+                .load(glideUrl)
                 .placeholder(R.drawable.portada_generica)
                 .error(R.drawable.portada_generica)
                 .into(holder.ivSongPortada)

@@ -19,7 +19,8 @@ class PlaylistViewModel @Inject constructor(
     private val deletePlaylistUseCase: DeletePlaylistUseCase,
     private val addCancionToPlaylistUseCase: AddCancionToPlaylistUseCase,
     private val removeCancionFromPlaylistUseCase: RemoveCancionFromPlaylistUseCase,
-    private val getPlaylistCancionesUseCase: GetPlaylistCancionesUseCase
+    private val getPlaylistCancionesUseCase: GetPlaylistCancionesUseCase,
+    private val getUserPlaylistsUseCase: GetUserPlaylistsUseCase
 ) : ViewModel() {
 
     private val _playlists = MutableLiveData<List<Playlist>>()
@@ -30,7 +31,7 @@ class PlaylistViewModel @Inject constructor(
 
     fun loadUserPlaylists(userId: Int) {
         viewModelScope.launch {
-            _playlists.value = getPlaylistsUseCase().filter { it.idUsuario == userId }
+            _playlists.value = getUserPlaylistsUseCase(userId)
         }
     }
 
@@ -41,9 +42,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
     fun loadPlaylists(userId: Int) {
-        viewModelScope.launch {
-            _playlists.value = getPlaylistsUseCase().filter { it.idUsuario == userId }
-        }
+        loadUserPlaylists(userId)
     }
 
     private suspend fun getUserListas(userId: Int): List<Playlist> {
@@ -61,6 +60,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
     fun deletePlaylist(id: Int, userId: Int? = null) {
+        android.util.Log.d("PlaylistVM", "Deleting playlist $id for user $userId")
         viewModelScope.launch {
             deletePlaylistUseCase(id)
             if (userId != null) loadUserPlaylists(userId) else loadAllPlaylists()
@@ -68,6 +68,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
     fun updatePlaylist(id: Int, nombre: String, userId: Int) {
+        android.util.Log.d("PlaylistVM", "Updating playlist $id to $nombre")
         viewModelScope.launch {
             updatePlaylistUseCase(id, Playlist(id = id, nombre = nombre, idUsuario = userId))
             loadUserPlaylists(userId)
@@ -88,6 +89,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
     fun removeSongFromPlaylist(playlistId: Int, cancionId: Int) {
+        android.util.Log.d("PlaylistVM", "Removing song $cancionId from playlist $playlistId")
         viewModelScope.launch {
             removeCancionFromPlaylistUseCase(playlistId, cancionId)
             loadPlaylistSongs(playlistId)

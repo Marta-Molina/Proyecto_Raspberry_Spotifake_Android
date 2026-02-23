@@ -52,9 +52,13 @@
 
         <ImageView
             android:id="@+id/btnEditPlaylist"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
             android:src="@drawable/edit_ic_baseline_edit_24"
             app:layout_constraintEnd_toStartOf="@id/btnDeletePlaylist"
             app:layout_constraintTop_toTopOf="parent"
@@ -63,8 +67,12 @@
 
         <ImageView
             android:id="@+id/btnDeletePlaylist"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
             android:src="@drawable/delete_ic_baseline_delete_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

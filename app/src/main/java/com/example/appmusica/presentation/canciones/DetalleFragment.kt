@@ -62,21 +62,17 @@ class DetalleFragment : Fragment() {
 
                 val portadaPath = it.urlPortada ?: ""
                 val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
-                val fullPortadaUrl = if (portadaPath.startsWith("http")) {
-                    portadaPath
-                } else {
-                    baseUrl + portadaPath
-                }
+                val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
                 
                 val glideUrl = GlideUrl(fullPortadaUrl, LazyHeaders.Builder()
                     .addHeader("ngrok-skip-browser-warning", "true")
                     .build())
 
-                Glide.with(requireContext())
+                Glide.with(this)
                     .load(glideUrl)
                     .centerCrop()
-                    .placeholder(R.drawable.ic_launcher_foreground)
-                    .error(R.drawable.ic_launcher_foreground)
+                    .placeholder(R.drawable.portada_generica)
+                    .error(R.drawable.portada_generica)
                     .into(binding.imgCancion)
 
                 it.urlAudio?.let { audioUrl ->
@@ -144,11 +140,7 @@ class DetalleFragment : Fragment() {
         }
         
         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
-        val fullAudioUrl = if (audioUrl.startsWith("http")) {
-            audioUrl
-        } else {
-            baseUrl + audioUrl
-        }
+        val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
 
         if (player?.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {
             return

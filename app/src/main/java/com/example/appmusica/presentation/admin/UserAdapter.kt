@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
@@ -44,8 +46,12 @@ class UserAdapter(
 
         val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
         user.urlImagen?.let { url ->
+            val glideUrl = GlideUrl(baseUrl + url, LazyHeaders.Builder()
+                .addHeader("ngrok-skip-browser-warning", "true")
+                .build())
+
             Glide.with(holder.itemView.context)
-                .load(baseUrl + url)
+                .load(glideUrl)
                 .placeholder(R.drawable.user)
                 .error(R.drawable.user)
                 .circleCrop()

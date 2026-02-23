@@ -4,6 +4,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.databinding.ItemCancionBinding
 import com.example.appmusica.di.NetworkModule
@@ -37,20 +39,25 @@ class ViewHCancion(
 
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
-
             val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
-            val fullUrl = baseUrl + portadaPath
+            
+            // Si la ruta ya es una URL completa (empieza por http), la usamos tal cual
+            val fullUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
+            
+            val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
+                .addHeader("ngrok-skip-browser-warning", "true")
+                .build())
 
             Glide.with(binding.ivCancion.context)
-                .load(fullUrl)
+                .load(glideUrl)
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.color.white)
-                .error(R.color.black)
+                .placeholder(R.drawable.portada_generica)
+                .error(R.drawable.portada_generica)
                 .into(binding.ivCancion)
         } ?: run {
             // Si es null, ponemos una imagen por defecto
-            binding.ivCancion.setImageResource(R.color.white)
+            binding.ivCancion.setImageResource(R.drawable.portada_generica)
         }
 
         // Click normal → detalle

@@ -13,6 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
@@ -56,8 +58,12 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             
             val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
             it.urlImagen?.let { url ->
+                val glideUrl = GlideUrl(baseUrl + url, LazyHeaders.Builder()
+                    .addHeader("ngrok-skip-browser-warning", "true")
+                    .build())
+
                 Glide.with(this)
-                    .load(baseUrl + url)
+                    .load(glideUrl)
                     .placeholder(R.drawable.user)
                     .error(R.drawable.user)
                     .circleCrop()

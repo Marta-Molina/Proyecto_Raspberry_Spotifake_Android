@@ -24,6 +24,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var authRepository: AuthRepository
 
+    @Inject
+    lateinit var authManager: com.example.appmusica.data.local.AuthManager
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -49,18 +52,36 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.cancionesFragment, R.id.playlistsFragment, R.id.settingsFragment),
-            binding.drawerLayout
-        )
+        val topLevelDestinations = mutableSetOf(R.id.cancionesFragment, R.id.playlistsFragment, R.id.settingsFragment)
+        if (authManager.isAdmin()) {
+            topLevelDestinations.add(R.id.adminFragment)
+        }
+
+        appBarConfiguration = AppBarConfiguration(topLevelDestinations, binding.drawerLayout)
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navigationView.setupWithNavController(navController)
         binding.bottomNavigationView.setupWithNavController(navController)
 
+        // Configurar visibilidad del menú Admin
+        val adminVisible = authManager.isAdmin()
+        binding.bottomNavigationView.menu.findItem(R.id.adminFragment)?.isVisible = adminVisible
+        binding.navigationView.menu.findItem(R.id.adminFragment)?.isVisible = adminVisible
+
         // Usuario en el header
         val header = binding.navigationView.getHeaderView(0)
+        // Intentar obtener el nombre si estuviera guardado, si no, uno genérico
         header.findViewById<TextView>(R.id.txtUser).text = "Usuario Spotifake"
+        
+        val ivUserThumb = header.findViewById<android.widget.ImageView>(R.id.ivUserThumb)
+        authManager.getUrlImagen()?.let { url ->
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "")
+            com.bumptech.glide.Glide.with(this)
+                .load(baseUrl + url)
+                .error(android.R.drawable.ic_menu_report_image)
+                .circleCrop()
+                .into(ivUserThumb)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

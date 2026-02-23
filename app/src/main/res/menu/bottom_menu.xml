@@ -15,4 +15,10 @@
         android:title="Settings"
         android:icon="@android:drawable/ic_menu_preferences" />
 
+    <item
+        android:id="@+id/adminFragment"
+        android:title="Admin"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:visible="false" />
+
 </menu>

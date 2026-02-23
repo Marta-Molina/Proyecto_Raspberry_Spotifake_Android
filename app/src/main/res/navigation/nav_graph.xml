@@ -54,4 +54,34 @@
             app:destination="@id/detalleFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/adminFragment"
+        android:name="com.example.appmusica.presentation.admin.AdminFragment"
+        android:label="Administración">
+        <action
+            android:id="@+id/action_adminFragment_to_manageUsersFragment"
+            app:destination="@id/manageUsersFragment" />
+        <action
+            android:id="@+id/action_adminFragment_to_manageGenresFragment"
+            app:destination="@id/manageGenresFragment" />
+        <action
+            android:id="@+id/action_adminFragment_to_manageSongsFragment"
+            app:destination="@id/manageSongsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/manageUsersFragment"
+        android:name="com.example.appmusica.presentation.admin.ManageUsersFragment"
+        android:label="Gestión de Usuarios" />
+
+    <fragment
+        android:id="@+id/manageGenresFragment"
+        android:name="com.example.appmusica.presentation.admin.ManageGenresFragment"
+        android:label="Gestión de Géneros" />
+
+    <fragment
+        android:id="@+id/manageSongsFragment"
+        android:name="com.example.appmusica.presentation.admin.ManageSongsFragment"
+        android:label="Gestión de Canciones" />
+
 </navigation>

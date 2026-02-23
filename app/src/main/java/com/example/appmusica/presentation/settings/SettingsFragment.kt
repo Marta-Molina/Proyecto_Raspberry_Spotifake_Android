@@ -110,7 +110,7 @@ class SettingsFragment : Fragment() {
                         
                         Glide.with(this@SettingsFragment)
                             .load(fullUrl)
-                            .placeholder(R.drawable.ic_profile_placeholder) // Necesitas este recurso o uno similar
+                            .placeholder(R.drawable.user)
                             .error(android.R.drawable.ic_menu_report_image)
                             .circleCrop()
                             .into(ivProfile)

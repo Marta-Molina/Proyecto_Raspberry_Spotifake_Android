@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.appmusica.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,19 +21,19 @@ class AdminFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_admin, container, false)
 
         view.findViewById<Button>(R.id.btnManageSongs).setOnClickListener {
-            androidx.navigation.fragment.findNavController().navigate(R.id.action_adminFragment_to_manageSongsFragment)
+            findNavController().navigate(R.id.action_adminFragment_to_manageSongsFragment)
         }
 
         view.findViewById<Button>(R.id.btnManageUsers).setOnClickListener {
-            androidx.navigation.fragment.findNavController().navigate(R.id.action_adminFragment_to_manageUsersFragment)
+            findNavController().navigate(R.id.action_adminFragment_to_manageUsersFragment)
         }
 
         view.findViewById<Button>(R.id.btnManageGenres).setOnClickListener {
-            androidx.navigation.fragment.findNavController().navigate(R.id.action_adminFragment_to_manageGenresFragment)
+            findNavController().navigate(R.id.action_adminFragment_to_manageGenresFragment)
         }
 
         view.findViewById<Button>(R.id.btnManagePlaylists).setOnClickListener {
-            androidx.navigation.fragment.findNavController().navigate(R.id.action_adminFragment_to_managePlaylistsFragment)
+            findNavController().navigate(R.id.action_adminFragment_to_managePlaylistsFragment)
         }
 
         return view

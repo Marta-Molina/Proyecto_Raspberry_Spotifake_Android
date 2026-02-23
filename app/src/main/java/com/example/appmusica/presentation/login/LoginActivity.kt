@@ -20,6 +20,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val etNombre = findViewById<EditText>(R.id.etNombre)
+        val tilNombre = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilNombre)
         val etUser = findViewById<EditText>(R.id.etUser)
         val etPass = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
@@ -34,21 +36,29 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            Toast.makeText(this, "Procesando...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Iniciando sesión...", Toast.LENGTH_SHORT).show()
             authViewModel.login(user, pass)
         }
 
         btnRegister.setOnClickListener {
-            val user = etUser.text.toString().trim()
-            val pass = etPass.text.toString()
-
-            if (user.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(this, "Introduce email y contraseña", Toast.LENGTH_SHORT).show()
+            if (tilNombre.visibility == android.view.View.GONE) {
+                tilNombre.visibility = android.view.View.VISIBLE
+                btnRegister.text = "Confirmar registro"
+                btnLogin.visibility = android.view.View.GONE
                 return@setOnClickListener
             }
 
-            Toast.makeText(this, "Procesando...", Toast.LENGTH_SHORT).show()
-            authViewModel.register(user, pass)
+            val nombre = etNombre.text.toString().trim()
+            val user = etUser.text.toString().trim()
+            val pass = etPass.text.toString()
+
+            if (nombre.isEmpty() || user.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            Toast.makeText(this, "Registrando...", Toast.LENGTH_SHORT).show()
+            authViewModel.register(nombre, user, pass)
         }
 
         authViewModel.authResult.observe(this) { result ->

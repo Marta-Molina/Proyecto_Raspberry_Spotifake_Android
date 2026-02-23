@@ -21,13 +21,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(email: String, password: String) {
-        authRepository.register(email, password) { success, message ->
+    fun register(nombre: String, email: String, password: String) {
+        authRepository.register(nombre, email, password) { success, message ->
             _authResult.postValue(success to message)
         }
     }
 
     fun logout() {
         authRepository.logout()
+    }
+
+    fun isLoggedIn(): Boolean {
+        return authRepository.isLoggedIn()
     }
 }

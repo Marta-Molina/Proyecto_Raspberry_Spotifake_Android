@@ -1,9 +1,4 @@
-package com.example.appmusica.domain.repository
-
-import com.google.firebase.auth.FirebaseUser
-
 interface AuthRepository {
-
     fun login(
         email: String,
         password: String,
@@ -11,10 +6,12 @@ interface AuthRepository {
     )
 
     fun register(
-        email: String,
+        nombre: String,
+        correo: String,
         password: String,
         callback: (Boolean, String?) -> Unit
     )
 
     fun logout()
+    fun isLoggedIn(): Boolean
 }

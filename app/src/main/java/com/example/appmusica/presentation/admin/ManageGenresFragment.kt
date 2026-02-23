@@ -39,7 +39,10 @@ class ManageGenresFragment : Fragment() {
         val rvGenres = view.findViewById<RecyclerView>(R.id.rvGenres)
         rvGenres.layoutManager = LinearLayoutManager(context)
         
-        genreAdapter = GenreAdapter(emptyList())
+        genreAdapter = GenreAdapter(emptyList(),
+            onEdit = { genre -> showEditGenreDialog(genre) },
+            onDelete = { genre -> showDeleteGenreDialog(genre) }
+        )
         rvGenres.adapter = genreAdapter
 
         view.findViewById<FloatingActionButton>(R.id.fabAddGenre).setOnClickListener {
@@ -97,6 +100,74 @@ class ManageGenresFragment : Fragment() {
                         loadGenres()
                     } else {
                         Toast.makeText(context, "Error al añadir género", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showEditGenreDialog(genre: Genero) {
+        val editText = EditText(requireContext())
+        editText.setText(genre.nombre)
+        
+        AlertDialog.Builder(requireContext())
+            .setTitle("Editar Género")
+            .setView(editText)
+            .setPositiveButton("Guardar") { _, _ ->
+                val name = editText.text.toString()
+                if (name.isNotBlank()) {
+                    updateGenre(genre.id, name)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun updateGenre(id: Int, name: String) {
+        scope.launch {
+            try {
+                val response = apiService.updateGenero(id, Genero(id, name))
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "Género actualizado", Toast.LENGTH_SHORT).show()
+                        loadGenres()
+                    } else {
+                        Toast.makeText(context, "Error al actualizar género", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showDeleteGenreDialog(genre: Genero) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar Género")
+            .setMessage("¿Estás seguro de que quieres eliminar '${genre.nombre}'?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                deleteGenre(genre.id)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun deleteGenre(id: Int) {
+        scope.launch {
+            try {
+                val response = apiService.deleteGenero(id)
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "Género eliminado", Toast.LENGTH_SHORT).show()
+                        loadGenres()
+                    } else {
+                        Toast.makeText(context, "Error al eliminar género", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {

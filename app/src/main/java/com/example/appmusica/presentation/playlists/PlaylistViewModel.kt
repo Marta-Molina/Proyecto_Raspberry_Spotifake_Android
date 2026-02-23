@@ -28,16 +28,21 @@ class PlaylistViewModel @Inject constructor(
     private val _playlistSongs = MutableLiveData<List<Cancion>>()
     val playlistSongs: LiveData<List<Cancion>> = _playlistSongs
 
-    fun loadPlaylists() {
+    fun loadUserPlaylists(userId: Int) {
         viewModelScope.launch {
-            // Usamos el ID de usuario 1 por defecto según los requisitos
-            _playlists.value = getUserListas(1)
+            _playlists.value = getPlaylistsUseCase().filter { it.idUsuario == userId }
         }
     }
 
     fun loadAllPlaylists() {
         viewModelScope.launch {
             _playlists.value = getPlaylistsUseCase()
+        }
+    }
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            _playlists.value = getPlaylistsUseCase().filter { it.idUsuario == 1 }
         }
     }
 
@@ -55,17 +60,17 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun deletePlaylist(id: Int) {
+    fun deletePlaylist(id: Int, userId: Int? = null) {
         viewModelScope.launch {
             deletePlaylistUseCase(id)
-            loadPlaylists()
+            if (userId != null) loadUserPlaylists(userId) else loadAllPlaylists()
         }
     }
 
-    fun updatePlaylist(id: Int, nombre: String, userId: Int = 1) {
+    fun updatePlaylist(id: Int, nombre: String, userId: Int) {
         viewModelScope.launch {
             updatePlaylistUseCase(id, Playlist(id = id, nombre = nombre, idUsuario = userId))
-            loadPlaylists()
+            loadUserPlaylists(userId)
         }
     }
 

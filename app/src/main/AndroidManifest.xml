@@ -15,10 +15,10 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.AppMusica">
         <activity
-            android:name=".EditCancionActivity"
+            android:name=".presentation.canciones.edit.EditCancionActivity"
             android:exported="false" />
         <activity
-            android:name=".AddCancionActivity"
+            android:name=".presentation.canciones.add.AddCancionActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.MainActivity">

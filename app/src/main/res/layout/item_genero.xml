@@ -6,13 +6,41 @@
     android:layout_margin="4dp"
     app:cardCornerRadius="4dp">
 
-    <TextView
-        android:id="@+id/tvGenreName"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Nombre del Género"
-        android:textSize="16sp"
-        android:textColor="@color/black" />
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvGenreName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:text="Nombre del Género"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <ImageButton
+            android:id="@+id/btnEditGenre"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_edit"
+            app:tint="@color/spotify_dark_grey"
+            android:contentDescription="Editar género" />
+
+        <ImageButton
+            android:id="@+id/btnDeleteGenre"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="@android:color/holo_red_dark"
+            android:contentDescription="Eliminar género" />
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

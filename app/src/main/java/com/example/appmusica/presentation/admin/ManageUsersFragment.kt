@@ -39,7 +39,16 @@ class ManageUsersFragment : Fragment() {
         
         userAdapter = UserAdapter(emptyList(), 
             onPromote = { user -> promoteUser(user) },
-            onDelete = { user -> deleteUser(user) }
+            onDelete = { user -> deleteUser(user) },
+            onClick = { user -> 
+                val bundle = Bundle().apply {
+                    putSerializable("user", user)
+                }
+                androidx.navigation.fragment.findNavController().navigate(
+                    R.id.action_manageUsersFragment_to_userDetailFragment,
+                    bundle
+                )
+            }
         )
         rvUsers.adapter = userAdapter
 

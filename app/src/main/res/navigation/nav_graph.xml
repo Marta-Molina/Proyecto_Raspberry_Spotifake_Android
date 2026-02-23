@@ -75,7 +75,23 @@
     <fragment
         android:id="@+id/manageUsersFragment"
         android:name="com.example.appmusica.presentation.admin.ManageUsersFragment"
-        android:label="Gestión de Usuarios" />
+        android:label="Gestión de Usuarios">
+        <action
+            android:id="@+id/action_manageUsersFragment_to_userDetailFragment"
+            app:destination="@id/userDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userDetailFragment"
+        android:name="com.example.appmusica.presentation.admin.UserDetailFragment"
+        android:label="Detalles de Usuario">
+        <argument
+            android:name="user"
+            app:argType="com.example.appmusica.data.remote.response.UserResponse" />
+        <action
+            android:id="@+id/action_userDetailFragment_to_playlistSongsFragment"
+            app:destination="@id/playlistSongsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/manageGenresFragment"

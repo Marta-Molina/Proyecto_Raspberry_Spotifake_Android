@@ -78,6 +78,12 @@ interface ApiCancionesService {
     @POST("generos")
     suspend fun addGenero(@Body genero: com.example.appmusica.domain.model.Genero): Response<com.example.appmusica.domain.model.Genero>
 
+    @PUT("generos/{id}")
+    suspend fun updateGenero(@Path("id") id: Int, @Body genero: com.example.appmusica.domain.model.Genero): Response<com.example.appmusica.domain.model.Genero>
+
+    @DELETE("generos/{id}")
+    suspend fun deleteGenero(@Path("id") id: Int): Response<Unit>
+
     @GET("usuarios")
     suspend fun getUsuarios(): Response<List<com.example.appmusica.data.remote.response.UserResponse>>
 

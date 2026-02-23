@@ -15,7 +15,8 @@ import com.example.appmusica.di.NetworkModule
 class UserAdapter(
     private var users: List<UserResponse>,
     private val onPromote: (UserResponse) -> Unit,
-    private val onDelete: (UserResponse) -> Unit
+    private val onDelete: (UserResponse) -> Unit,
+    private val onClick: (UserResponse) -> Unit
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -55,6 +56,7 @@ class UserAdapter(
 
         holder.btnPromoteAdmin.setOnClickListener { onPromote(user) }
         holder.btnDeleteUser.setOnClickListener { onDelete(user) }
+        holder.itemView.setOnClickListener { onClick(user) }
     }
 
     override fun getItemCount() = users.size

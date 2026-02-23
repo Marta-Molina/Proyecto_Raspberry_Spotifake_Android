@@ -1,6 +1,7 @@
 package com.example.appmusica.data.remote.response
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class UserResponse(
     @SerializedName("id") val id: Long,
@@ -12,4 +13,4 @@ data class UserResponse(
     @SerializedName("premium") val premium: Boolean,
     @SerializedName("token") val token: String,
     @SerializedName("urlImagen") val urlImagen: String? = null
-)
+) : Serializable

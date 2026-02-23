@@ -9,11 +9,15 @@ import com.example.appmusica.R
 import com.example.appmusica.domain.model.Genero
 
 class GenreAdapter(
-    private var genres: List<Genero>
+    private var genres: List<Genero>,
+    private val onEdit: (Genero) -> Unit,
+    private val onDelete: (Genero) -> Unit
 ) : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
 
     class GenreViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvGenreName: TextView = view.findViewById(R.id.tvGenreName)
+        val btnEditGenre: View = view.findViewById(R.id.btnEditGenre)
+        val btnDeleteGenre: View = view.findViewById(R.id.btnDeleteGenre)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
@@ -22,7 +26,11 @@ class GenreAdapter(
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
-        holder.tvGenreName.text = genres[position].nombre
+        val genre = genres[position]
+        holder.tvGenreName.text = genre.nombre
+        
+        holder.btnEditGenre.setOnClickListener { onEdit(genre) }
+        holder.btnDeleteGenre.setOnClickListener { onDelete(genre) }
     }
 
     override fun getItemCount() = genres.size

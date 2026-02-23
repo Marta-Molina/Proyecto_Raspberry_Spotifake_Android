@@ -12,9 +12,7 @@ kapt {
 
 android {
     namespace = "com.example.appmusica"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 34
     buildFeatures {
         viewBinding = true
     }
@@ -56,6 +54,7 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

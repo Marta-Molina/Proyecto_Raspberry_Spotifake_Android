@@ -12,7 +12,7 @@ kapt {
 
 android {
     namespace = "com.example.appmusica"
-    compileSdk = 34
+    compileSdk = 36
     buildFeatures {
         viewBinding = true
     }

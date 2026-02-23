@@ -60,11 +60,11 @@ class DetalleFragment : Fragment() {
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
 
-                val portadaPath = it.urlPortada ?: ""
+                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
                 val fullPortadaUrl = if (portadaPath.startsWith("http")) {
                     portadaPath
                 } else {
-                    com.example.appmusica.di.NetworkModule.BASE_URL + portadaPath.removePrefix("/")
+                    baseUrl + portadaPath
                 }
                 
                 val glideUrl = GlideUrl(fullPortadaUrl, LazyHeaders.Builder()
@@ -142,10 +142,11 @@ class DetalleFragment : Fragment() {
             binding.playerView.player = player
         }
         
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
         val fullAudioUrl = if (audioUrl.startsWith("http")) {
             audioUrl
         } else {
-            com.example.appmusica.di.NetworkModule.BASE_URL + audioUrl.removePrefix("/")
+            baseUrl + audioUrl
         }
 
         if (player?.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {

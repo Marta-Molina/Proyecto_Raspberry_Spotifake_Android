@@ -40,9 +40,9 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun loadPlaylists() {
+    fun loadPlaylists(userId: Int) {
         viewModelScope.launch {
-            _playlists.value = getPlaylistsUseCase().filter { it.idUsuario == 1 }
+            _playlists.value = getPlaylistsUseCase().filter { it.idUsuario == userId }
         }
     }
 
@@ -51,11 +51,11 @@ class PlaylistViewModel @Inject constructor(
         return getPlaylistsUseCase() // Verificaremos si el caso de uso es correcto o necetamos inyectar el de usuario
     }
 
-    fun createPlaylist(nombre: String, userId: Int = 1) { 
+    fun createPlaylist(nombre: String, userId: Int) { 
         viewModelScope.launch {
             val result = createPlaylistUseCase(Playlist(nombre = nombre, idUsuario = userId))
             if (result != null) {
-                loadPlaylists()
+                loadUserPlaylists(userId)
             }
         }
     }

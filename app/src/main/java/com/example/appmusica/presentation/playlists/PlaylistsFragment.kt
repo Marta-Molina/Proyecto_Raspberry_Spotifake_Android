@@ -9,11 +9,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.R
+import com.example.appmusica.data.local.AuthManager
 import com.example.appmusica.databinding.FragmentPlaylistsBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
+
+    @Inject
+    lateinit var authManager: AuthManager
 
     private lateinit var binding: FragmentPlaylistsBinding
     private val viewModel: PlaylistViewModel by viewModels()
@@ -32,14 +37,14 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
                         .setTitle("Eliminar playlist")
                         .setMessage("¿Estás seguro de que quieres eliminar la lista '${playlist.nombre}'?")
                         .setPositiveButton("Eliminar") { _, _ ->
-                            viewModel.deletePlaylist(playlist.id)
+                            viewModel.deletePlaylist(playlist.id, authManager.getUserId().toInt())
                         }
                         .setNegativeButton("Cancelar", null)
                         .show()
                 }
             },
             onEdit = { pos ->
-                adapter.getPlaylist(pos)?.let { mostrarDialogoEditar(it.id, it.nombre) }
+                adapter.getPlaylist(pos)?.let { mostrarDialogoEditar(it.id, it.nombre, it.idUsuario) }
             },
             onClick = { pos ->
                 adapter.getPlaylist(pos)?.let { navegarACanciones(it.id, it.nombre) }
@@ -59,7 +64,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             adapter.updateList(lista)
         }
 
-        viewModel.loadPlaylists()
+        viewModel.loadPlaylists(authManager.getUserId().toInt())
     }
 
     private fun mostrarDialogoCrear() {
@@ -72,14 +77,14 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             .setPositiveButton("Crear") { _, _ ->
                 val nombre = editText.text.toString()
                 if (nombre.isNotBlank()) {
-                    viewModel.createPlaylist(nombre)
+                    viewModel.createPlaylist(nombre, authManager.getUserId().toInt())
                 }
             }
             .setNegativeButton("Cancelar", null)
             .show()
     }
 
-    private fun mostrarDialogoEditar(id: Int, nombreActual: String) {
+    private fun mostrarDialogoEditar(id: Int, nombreActual: String, userId: Int) {
         val editText = EditText(requireContext())
         editText.setText(nombreActual)
         
@@ -89,7 +94,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             .setPositiveButton("Guardar") { _, _ ->
                 val nuevoNombre = editText.text.toString()
                 if (nuevoNombre.isNotBlank()) {
-                    viewModel.updatePlaylist(id, nuevoNombre, 1)
+                    viewModel.updatePlaylist(id, nuevoNombre, userId)
                 }
             }
             .setNegativeButton("Cancelar", null)

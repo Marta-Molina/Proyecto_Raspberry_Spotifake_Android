@@ -42,7 +42,7 @@ class UserAdapter(
         // Hide promote button if already admin
         holder.btnPromoteAdmin.visibility = if (user.admin) View.GONE else View.VISIBLE
 
-        val baseUrl = NetworkModule.BASE_URL.replace("/api/", "")
+        val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
         user.urlImagen?.let { url ->
             Glide.with(holder.itemView.context)
                 .load(baseUrl + url)

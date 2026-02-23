@@ -36,7 +36,7 @@ class ManageSongsAdapter(
         holder.tvSongName.text = song.nombre
         holder.tvSongArtist.text = song.artista
 
-        val baseUrl = NetworkModule.BASE_URL.replace("/api/", "")
+        val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
         song.urlPortada?.let { url ->
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url
             Glide.with(holder.itemView.context)

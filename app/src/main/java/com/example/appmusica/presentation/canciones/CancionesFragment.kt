@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.R
+import com.example.appmusica.data.local.AuthManager
 import com.example.appmusica.databinding.FragmentCancionesBinding
 import com.example.appmusica.domain.model.Genero
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
@@ -20,6 +21,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CancionesFragment : Fragment(R.layout.fragment_canciones) {
+
+    @javax.inject.Inject
+    lateinit var authManager: AuthManager
 
     private lateinit var binding: FragmentCancionesBinding
     private val viewModel: CancionesViewModel by activityViewModels()
@@ -99,7 +103,7 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         }
 
         viewModel.loadCanciones()
-        playlistViewModel.loadPlaylists()
+        playlistViewModel.loadPlaylists(authManager.getUserId().toInt())
         
         playlistViewModel.playlists.observe(viewLifecycleOwner) { _ ->
             // Just observing to keep it loaded

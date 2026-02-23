@@ -38,8 +38,8 @@ class ViewHCancion(
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
 
-            val fullUrl =
-                NetworkModule.BASE_URL + portadaPath.removePrefix("/")
+            val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
+            val fullUrl = baseUrl + portadaPath
 
             Glide.with(binding.ivCancion.context)
                 .load(fullUrl)

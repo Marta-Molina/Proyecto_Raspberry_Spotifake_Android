@@ -73,6 +73,17 @@ class SettingsFragment : Fragment() {
             startActivity(Intent(requireContext(), com.example.appmusica.presentation.login.LoginActivity::class.java))
         }
 
+        // Cargar imagen de perfil si existe
+        authManager.getUrlImagen()?.let { url ->
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "")
+            val fullUrl = baseUrl + url
+            Glide.with(this)
+                .load(fullUrl)
+                .error(android.R.drawable.ic_menu_report_image)
+                .circleCrop()
+                .into(ivProfile)
+        }
+
         return view
     }
 
@@ -88,8 +99,21 @@ class SettingsFragment : Fragment() {
                 
                 val response = apiService.uploadProfileImage(userId, body)
                 withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val user = response.body()!!
+                        authManager.saveUrlImagen(user.urlImagen)
                         Toast.makeText(context, "Imagen de perfil actualizada", Toast.LENGTH_SHORT).show()
+                        
+                        // Cargar la imagen usando la URL devuelta por el servidor
+                        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "")
+                        val fullUrl = baseUrl + user.urlImagen
+                        
+                        Glide.with(this@SettingsFragment)
+                            .load(fullUrl)
+                            .placeholder(R.drawable.ic_profile_placeholder) // Necesitas este recurso o uno similar
+                            .error(android.R.drawable.ic_menu_report_image)
+                            .circleCrop()
+                            .into(ivProfile)
                     } else {
                         Toast.makeText(context, "Error al subir imagen: ${response.message()}", Toast.LENGTH_SHORT).show()
                     }

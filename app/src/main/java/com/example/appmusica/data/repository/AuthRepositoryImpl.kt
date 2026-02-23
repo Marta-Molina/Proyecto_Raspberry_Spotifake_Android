@@ -26,6 +26,8 @@ class AuthRepositoryImpl @Inject constructor(
                     val user = response.body()!!
                     authManager.saveToken(user.token)
                     authManager.saveUserId(user.id)
+                    authManager.saveIsAdmin(user.admin)
+                    authManager.saveUrlImagen(user.urlImagen)
                     callback(true, null)
                 } else {
                     callback(false, "Login fallido: ${response.message()}")
@@ -54,6 +56,8 @@ class AuthRepositoryImpl @Inject constructor(
                     val user = response.body()!!
                     authManager.saveToken(user.token)
                     authManager.saveUserId(user.id)
+                    authManager.saveIsAdmin(user.admin)
+                    authManager.saveUrlImagen(user.urlImagen)
                     callback(true, null)
                 } else {
                     callback(false, "Registro fallido: ${response.message()}")

@@ -12,6 +12,8 @@ class AuthManager @Inject constructor(context: Context) {
     companion object {
         private const val TOKEN_KEY = "jwt_token"
         private const val USER_ID_KEY = "user_id"
+        private const val IS_ADMIN_KEY = "is_admin"
+        private const val URL_IMAGEN_KEY = "url_imagen"
     }
 
     fun saveToken(token: String) {
@@ -28,6 +30,22 @@ class AuthManager @Inject constructor(context: Context) {
 
     fun getUserId(): Long {
         return prefs.getLong(USER_ID_KEY, -1L)
+    }
+
+    fun saveIsAdmin(isAdmin: Boolean) {
+        prefs.edit().putBoolean(IS_ADMIN_KEY, isAdmin).apply()
+    }
+
+    fun isAdmin(): Boolean {
+        return prefs.getBoolean(IS_ADMIN_KEY, false)
+    }
+
+    fun saveUrlImagen(url: String?) {
+        prefs.edit().putString(URL_IMAGEN_KEY, url).apply()
+    }
+
+    fun getUrlImagen(): String? {
+        return prefs.getString(URL_IMAGEN_KEY, null)
     }
 
     fun clear() {

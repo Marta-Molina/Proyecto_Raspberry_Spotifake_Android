@@ -1,3 +1,11 @@
+package com.example.appmusica.presentation.settings
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.appmusica.R
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri

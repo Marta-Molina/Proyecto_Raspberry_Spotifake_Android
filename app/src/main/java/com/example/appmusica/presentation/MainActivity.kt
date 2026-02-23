@@ -11,7 +11,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.appmusica.R
 import com.example.appmusica.domain.repository.AuthRepository
+import com.example.appmusica.databinding.ActivityMainBinding
+import com.example.appmusica.presentation.login.LoginActivity
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint

@@ -1,3 +1,5 @@
+package com.example.appmusica.domain.repository
+
 interface AuthRepository {
     fun login(
         email: String,

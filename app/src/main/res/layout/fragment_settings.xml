@@ -16,6 +16,40 @@
         android:textStyle="bold" />
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Perfil"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_foreground"
+            app:tint="@color/spotify_light_grey" />
+
+        <Button
+            android:id="@+id/btnChangeProfile"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/ivProfile"
+            android:text="Cambiar foto de perfil"
+            android:textColor="@color/spotify_green" />
+    </RelativeLayout>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -31,5 +65,20 @@
         android:text="Usuario Premium"
         android:textColor="@color/spotify_light_grey"
         android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="32dp"
+        android:background="#282828" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Cerrar sesión"
+        android:textColor="#FF4444" />
 
 </LinearLayout>

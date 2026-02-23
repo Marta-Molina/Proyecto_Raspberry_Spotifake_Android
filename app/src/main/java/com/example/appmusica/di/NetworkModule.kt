@@ -17,18 +17,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): okhttp3.OkHttpClient {
+    fun provideAuthManager(@dagger.hilt.android.qualifiers.ApplicationContext context: android.content.Context): com.example.appmusica.data.local.AuthManager {
+        return com.example.appmusica.data.local.AuthManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: com.example.appmusica.retrofit.AuthInterceptor): okhttp3.OkHttpClient {
         val logging = okhttp3.logging.HttpLoggingInterceptor().apply {
             level = okhttp3.logging.HttpLoggingInterceptor.Level.BODY
         }
         return okhttp3.OkHttpClient.Builder()
             .addInterceptor(logging)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("ngrok-skip-browser-warning", "true")
-                    .build()
-                chain.proceed(request)
-            }
+            .addInterceptor(authInterceptor)
             .build()
     }
 

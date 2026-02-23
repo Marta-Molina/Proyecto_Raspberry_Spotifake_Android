@@ -59,6 +59,19 @@ interface ApiCancionesService {
     @DELETE("listas/{idLista}/canciones/{idCancion}")
     suspend fun removeCancionFromLista(@Path("idLista") listaId: Int, @Path("idCancion") cancionId: Int): Response<Unit>
 
+    @POST("register")
+    suspend fun register(@Body userRequest: com.example.appmusica.data.remote.request.UserRequest): Response<com.example.appmusica.data.remote.response.UserResponse>
+
+    @POST("login")
+    suspend fun login(@Body userRequest: com.example.appmusica.data.remote.request.UserRequest): Response<com.example.appmusica.data.remote.response.UserResponse>
+
+    @Multipart
+    @POST("usuarios/{id}/perfil")
+    suspend fun uploadProfileImage(
+        @Path("id") userId: Long,
+        @Part imagen: okhttp3.MultipartBody.Part
+    ): Response<com.example.appmusica.data.remote.response.UserResponse>
+
     @GET("generos")
     suspend fun getGeneros(): Response<List<com.example.appmusica.domain.model.Genero>>
 }

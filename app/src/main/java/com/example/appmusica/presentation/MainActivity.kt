@@ -11,20 +11,28 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.appmusica.R
-import com.example.appmusica.databinding.ActivityMainBinding
-import com.example.appmusica.presentation.login.LoginActivity
-import com.google.firebase.auth.FirebaseAuth
-import dagger.hilt.android.AndroidEntryPoint
+import com.example.appmusica.domain.repository.AuthRepository
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var authRepository: AuthRepository
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Verificar sesión
+        if (!authRepository.isLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -46,17 +54,9 @@ class MainActivity : AppCompatActivity() {
         binding.navigationView.setupWithNavController(navController)
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // Usuario en el header: preferir usuario de Firebase si está disponible
+        // Usuario en el header
         val header = binding.navigationView.getHeaderView(0)
-        val emailFromIntent = intent.getStringExtra("user")
-        val currentEmail = try {
-            FirebaseAuth.getInstance().currentUser?.email
-        } catch (e: Exception) {
-            null
-        }
-        header.findViewById<TextView>(R.id.txtUser)
-            .text = (currentEmail ?: emailFromIntent ?: "Invitado")
-
+        header.findViewById<TextView>(R.id.txtUser).text = "Usuario Spotifake"
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -66,12 +66,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_logout) {
-            // Cerrar sesión de Firebase (safe)
-            try {
-                FirebaseAuth.getInstance().signOut()
-            } catch (e: Exception) {
-                // ignore
-            }
+            authRepository.logout()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return true

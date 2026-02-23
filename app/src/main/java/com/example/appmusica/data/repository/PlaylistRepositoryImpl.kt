@@ -14,7 +14,18 @@ class PlaylistRepositoryImpl @Inject constructor(
 ) : PlaylistRepository {
 
     override suspend fun getListas(): List<Playlist> {
-        return getUserListas(1)
+        return try {
+            val response = api.getListas()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("API_TEST", "Error fetching all listas: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception fetching all listas: ${e.message}")
+            emptyList()
+        }
     }
 
     override suspend fun createLista(playlist: Playlist): Playlist? {

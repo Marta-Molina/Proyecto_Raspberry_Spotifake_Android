@@ -13,6 +13,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.domain.model.Cancion
 import com.example.appmusica.di.NetworkModule
+import com.example.appmusica.util.setClickAnimation
 
 class ManageSongsAdapter(
     private var songs: List<Cancion>,
@@ -57,7 +58,10 @@ class ManageSongsAdapter(
         }
 
         holder.btnEditSong.setOnClickListener { onEdit(song) }
+        holder.btnEditSong.setClickAnimation()
         holder.btnDeleteSong.setOnClickListener { onDelete(song) }
+        holder.btnDeleteSong.setClickAnimation()
+        holder.itemView.setClickAnimation()
     }
 
     override fun getItemCount() = songs.size

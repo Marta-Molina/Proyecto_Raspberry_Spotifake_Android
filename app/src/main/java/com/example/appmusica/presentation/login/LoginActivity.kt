@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appmusica.R
 import com.example.appmusica.presentation.MainActivity
+import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Iniciando sesión...", Toast.LENGTH_SHORT).show()
             authViewModel.login(user, pass)
         }
+        btnLogin.setClickAnimation()
 
         btnRegister.setOnClickListener {
             if (tilUsername.visibility == android.view.View.GONE) {
@@ -60,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Registrando...", Toast.LENGTH_SHORT).show()
             authViewModel.register(username, user, pass)
         }
+        btnRegister.setClickAnimation()
 
         authViewModel.authResult.observe(this) { result ->
             val success = result.first

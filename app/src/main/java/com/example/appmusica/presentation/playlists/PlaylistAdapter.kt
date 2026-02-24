@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appmusica.R
 import com.example.appmusica.databinding.ItemPlaylistBinding
 import com.example.appmusica.domain.model.Playlist
+import com.example.appmusica.util.setClickAnimation
 
 class PlaylistViewHolder(
     view: View,
@@ -24,18 +25,21 @@ class PlaylistViewHolder(
                 onDelete(bindingAdapterPosition)
             }
         }
+        binding.btnDeletePlaylist.setClickAnimation()
         
         binding.btnEditPlaylist.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 onEdit(bindingAdapterPosition)
             }
         }
+        binding.btnEditPlaylist.setClickAnimation()
         
         itemView.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 onClick(bindingAdapterPosition)
             }
         }
+        itemView.setClickAnimation()
     }
 }
 

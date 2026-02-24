@@ -13,6 +13,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
+import com.example.appmusica.util.setClickAnimation
 
 class UserAdapter(
     private var users: List<UserResponse>,
@@ -61,8 +62,11 @@ class UserAdapter(
         }
 
         holder.btnPromoteAdmin.setOnClickListener { onPromote(user) }
+        holder.btnPromoteAdmin.setClickAnimation()
         holder.btnDeleteUser.setOnClickListener { onDelete(user) }
+        holder.btnDeleteUser.setClickAnimation()
         holder.itemView.setOnClickListener { onClick(user) }
+        holder.itemView.setClickAnimation()
     }
 
     override fun getItemCount() = users.size

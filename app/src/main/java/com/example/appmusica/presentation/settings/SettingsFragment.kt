@@ -25,6 +25,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.data.local.AuthManager
 import com.example.appmusica.presentation.login.AuthViewModel
 import com.example.appmusica.retrofit.ApiCancionesService
+import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,16 +81,19 @@ class SettingsFragment : Fragment() {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             selectImageLauncher.launch(intent)
         }
+        btnChangeProfile.setClickAnimation()
 
         btnLogout.setOnClickListener {
             authViewModel.logout()
             activity?.finish()
             startActivity(Intent(requireContext(), com.example.appmusica.presentation.login.LoginActivity::class.java))
         }
+        btnLogout.setClickAnimation()
 
         btnDeleteHistory.setOnClickListener {
             sessionViewModel.clearHistory()
         }
+        btnDeleteHistory.setClickAnimation()
 
         // Cargar imagen de perfil si existe
         authManager.getUrlImagen()?.let { url ->

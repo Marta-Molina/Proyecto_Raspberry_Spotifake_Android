@@ -16,6 +16,7 @@ import com.example.appmusica.presentation.canciones.add.AddCancionActivity
 import com.example.appmusica.presentation.canciones.edit.EditCancionActivity
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,8 +50,11 @@ class ManageSongsFragment : Fragment() {
         )
         rvSongs.adapter = songAdapter
 
-        view.findViewById<FloatingActionButton>(R.id.fabAddSong).setOnClickListener {
-            startActivity(Intent(requireContext(), AddCancionActivity::class.java))
+        view.findViewById<FloatingActionButton>(R.id.fabAddSong).let {
+            it.setOnClickListener {
+                startActivity(Intent(requireContext(), AddCancionActivity::class.java))
+            }
+            it.setClickAnimation()
         }
 
         viewModel.canciones.observe(viewLifecycleOwner) { songs ->

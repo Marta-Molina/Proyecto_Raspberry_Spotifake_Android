@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmusica.R
 import com.example.appmusica.domain.model.Genero
+import com.example.appmusica.util.setClickAnimation
 
 class GenreAdapter(
     private var genres: List<Genero>,
@@ -30,7 +31,10 @@ class GenreAdapter(
         holder.tvGenreName.text = genre.nombre
         
         holder.btnEditGenre.setOnClickListener { onEdit(genre) }
+        holder.btnEditGenre.setClickAnimation()
         holder.btnDeleteGenre.setOnClickListener { onDelete(genre) }
+        holder.btnDeleteGenre.setClickAnimation()
+        holder.itemView.setClickAnimation()
     }
 
     override fun getItemCount() = genres.size

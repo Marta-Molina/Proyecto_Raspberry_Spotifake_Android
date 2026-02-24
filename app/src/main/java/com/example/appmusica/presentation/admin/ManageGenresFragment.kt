@@ -14,6 +14,7 @@ import com.example.appmusica.R
 import com.example.appmusica.domain.model.Genero
 import com.example.appmusica.retrofit.ApiCancionesService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,8 +46,9 @@ class ManageGenresFragment : Fragment() {
         )
         rvGenres.adapter = genreAdapter
 
-        view.findViewById<FloatingActionButton>(R.id.fabAddGenre).setOnClickListener {
-            showAddGenreDialog()
+        view.findViewById<FloatingActionButton>(R.id.fabAddGenre).let {
+            it.setOnClickListener { showAddGenreDialog() }
+            it.setClickAnimation()
         }
 
         loadGenres()

@@ -8,6 +8,7 @@ import com.example.appmusica.databinding.ActivityEditCancionBinding
 import com.example.appmusica.domain.model.Cancion
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
+import com.example.appmusica.util.setClickAnimation
 
 @AndroidEntryPoint
 class EditCancionActivity : AppCompatActivity() {
@@ -72,5 +73,6 @@ class EditCancionActivity : AppCompatActivity() {
                 Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
+        binding.btnUpdateCancion.setClickAnimation()
     }
 }

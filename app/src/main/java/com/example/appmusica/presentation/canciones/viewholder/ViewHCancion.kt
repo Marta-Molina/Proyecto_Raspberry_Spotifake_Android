@@ -10,6 +10,7 @@ import com.example.appmusica.R
 import com.example.appmusica.databinding.ItemCancionBinding
 import com.example.appmusica.di.NetworkModule
 import com.example.appmusica.domain.model.Cancion
+import com.example.appmusica.util.setClickAnimation
 
 class ViewHCancion(
     view: View,
@@ -66,6 +67,7 @@ class ViewHCancion(
                 onItemClick(bindingAdapterPosition)
             }
         }
+        itemView.setClickAnimation()
 
         // Botón borrar
         binding.btnDelete.setOnClickListener {
@@ -73,6 +75,7 @@ class ViewHCancion(
                 delete(bindingAdapterPosition)
             }
         }
+        binding.btnDelete.setClickAnimation()
 
         // Botón editar
         binding.btnEdit.setOnClickListener {
@@ -80,6 +83,7 @@ class ViewHCancion(
                 update(bindingAdapterPosition)
             }
         }
+        binding.btnEdit.setClickAnimation()
 
         // Botón Like
         binding.btnLike.setOnClickListener {
@@ -87,6 +91,7 @@ class ViewHCancion(
                 like(bindingAdapterPosition)
             }
         }
+        binding.btnLike.setClickAnimation()
 
         // Botón Add to List vs Remove
         if (onRemove != null) {
@@ -105,6 +110,7 @@ class ViewHCancion(
                     addToList(bindingAdapterPosition)
                 }
             }
+            binding.btnAddToList.setClickAnimation()
         }
     }
 }

@@ -20,6 +20,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentDetalleBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
+import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -95,6 +96,7 @@ class DetalleFragment : Fragment() {
                 updatePlayPauseIcon()
             }
         }
+        binding.btnPlayPause.setClickAnimation()
 
         binding.sliderProgress.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
@@ -108,7 +110,9 @@ class DetalleFragment : Fragment() {
         }
 
         binding.btnPrev.setOnClickListener { player?.seekToPrevious() }
+        binding.btnPrev.setClickAnimation()
         binding.btnNext.setOnClickListener { player?.seekToNext() }
+        binding.btnNext.setClickAnimation()
     }
 
     @OptIn(UnstableApi::class)

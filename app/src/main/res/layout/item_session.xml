@@ -35,19 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txtAction" />
 
-        <TextView
-            android:id="@+id/txtToken"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-            android:textColor="@color/spotify_light_grey"
-            android:textSize="12sp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtDateTime" />
+        <!-- Token almacenado pero no mostrado por seguridad -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

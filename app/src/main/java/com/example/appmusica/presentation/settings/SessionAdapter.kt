@@ -23,7 +23,7 @@ class SessionAdapter : ListAdapter<UserSession, SessionAdapter.SessionViewHolder
         fun bind(session: UserSession) {
             binding.txtAction.text = session.action
             binding.txtDateTime.text = "${session.date} ${session.time}"
-            binding.txtToken.text = "Token: ${session.token}"
+            // NO mostrar el token en la UI por razones de seguridad. El token sigue almacenado en Room.
         }
     }
 

@@ -8,8 +8,12 @@ import androidx.fragment.app.Fragment
 import com.example.appmusica.R
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.Manifest
+import androidx.core.content.ContextCompat
+import android.content.pm.PackageManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -62,6 +66,31 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    // Toma foto con la cámara y devuelve un Bitmap (preview / NFC)
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+        if (bitmap != null) {
+            // Guardar bitmap en un archivo temporal y usar el mismo flujo de subida
+            val file = saveBitmapToCache(bitmap)
+            if (file != null) {
+                selectedImageUri = Uri.fromFile(file)
+                ivProfile.setImageBitmap(bitmap)
+                uploadImage()
+            } else {
+                Toast.makeText(context, "Error al guardar la imagen de la cámara", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private val requestCameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            takePictureLauncher.launch(null)
+        } else {
+            Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,8 +107,27 @@ class SettingsFragment : Fragment() {
         observeSessionHistory()
 
         btnChangeProfile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            selectImageLauncher.launch(intent)
+            // Mostrar opciones: Galería o Cámara
+            val options = arrayOf("Galería", "Cámara")
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Seleccionar imagen")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> {
+                            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            selectImageLauncher.launch(intent)
+                        }
+                        1 -> {
+                            // Comprobar permiso de cámara
+                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                takePictureLauncher.launch(null)
+                            } else {
+                                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        }
+                    }
+                }
+                .show()
         }
         btnChangeProfile.setClickAnimation()
 
@@ -182,6 +230,20 @@ class SettingsFragment : Fragment() {
                 tempFile.outputStream().use { output ->
                     input.copyTo(output)
                 }
+            }
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun saveBitmapToCache(bitmap: Bitmap): File? {
+        val fileName = "camera_${System.currentTimeMillis()}.jpg"
+        val tempFile = File(requireContext().cacheDir, fileName)
+        return try {
+            tempFile.outputStream().use { out ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
             }
             tempFile
         } catch (e: Exception) {

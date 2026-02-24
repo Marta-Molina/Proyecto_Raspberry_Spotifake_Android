@@ -31,12 +31,11 @@
         android:layout_marginTop="16dp">
 
         <ImageView
-            android:id="@+id/ivProfile"
+            android:id="@+id/ivUserDetailPhoto"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_foreground"
-            app:tint="@color/spotify_light_grey" />
+            android:src="@drawable/user" />
 
         <Button
             android:id="@+id/btnChangeProfile"
@@ -45,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:layout_toEndOf="@id/ivProfile"
+            android:layout_toEndOf="@id/ivUserDetailPhoto"
             android:text="Cambiar foto de perfil"
             android:textColor="@color/spotify_green" />
     </RelativeLayout>

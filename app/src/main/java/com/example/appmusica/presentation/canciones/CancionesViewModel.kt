@@ -29,6 +29,10 @@ class CancionesViewModel @Inject constructor(
     private val _canciones = MutableLiveData<List<Cancion>>()
     val canciones: LiveData<List<Cancion>> = _canciones
 
+    // Resultado de la última operación de borrado: true=ok, false=error, null=no hay evento
+    private val _deleteResult = MutableLiveData<Boolean?>(null)
+    val deleteResult: LiveData<Boolean?> = _deleteResult
+
     private val _generos = MutableLiveData<List<Genero>>()
     val generos: LiveData<List<Genero>> = _generos
 
@@ -89,10 +93,22 @@ class CancionesViewModel @Inject constructor(
 
     fun deleteCancion(id: Int) {
         viewModelScope.launch {
-            deleteCancionUseCase(id)
-            fullList = emptyList()
-            loadCanciones()
+            val success = deleteCancionUseCase(id)
+            if (success) {
+                fullList = emptyList()
+                loadCanciones()
+                _deleteResult.value = true
+            } else {
+                _deleteResult.value = false
+            }
         }
+    }
+
+    /**
+     * Resetea el evento de resultado de borrado. Llamar desde la UI después de procesarlo.
+     */
+    fun clearDeleteResult() {
+        _deleteResult.value = null
     }
 
     fun updateCancion(id: Int, cancion: Cancion) {

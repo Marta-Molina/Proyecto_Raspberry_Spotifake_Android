@@ -74,8 +74,19 @@ class ManageSongsFragment : Fragment() {
             .setTitle("Eliminar canción")
             .setMessage("¿Estás seguro de que quieres eliminar esta canción?")
             .setPositiveButton("Eliminar") { _, _ ->
+                // Llamamos al ViewModel para borrar y observamos el resultado para mostrar feedback correcto
                 viewModel.deleteCancion(songId)
-                Toast.makeText(context, "Canción eliminada", Toast.LENGTH_SHORT).show()
+                // Observador temporal para el resultado del borrado
+                viewModel.deleteResult.observe(viewLifecycleOwner) { result ->
+                    if (result == null) return@observe
+                    if (result) {
+                        Toast.makeText(context, "Canción eliminada", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Error al eliminar canción", Toast.LENGTH_SHORT).show()
+                    }
+                    // Reseteamos el evento para evitar re-ejecuciones
+                    viewModel.clearDeleteResult()
+                }
             }
             .setNegativeButton("Cancelar", null)
             .show()

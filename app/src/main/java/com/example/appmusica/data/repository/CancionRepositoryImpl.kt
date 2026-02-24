@@ -75,14 +75,16 @@ class CancionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteCancion(id: Int) {
-        try {
+    override suspend fun deleteCancion(id: Int): Boolean {
+        return try {
             val response = api.deleteCancion(id)
             if (!response.isSuccessful) {
                 Log.e("API_TEST", "Error deleting cancion $id: ${response.code()}")
             }
+            response.isSuccessful
         } catch (e: Exception) {
             Log.e("API_TEST", "Exception deleting cancion $id: ${e.message}")
+            false
         }
     }
 

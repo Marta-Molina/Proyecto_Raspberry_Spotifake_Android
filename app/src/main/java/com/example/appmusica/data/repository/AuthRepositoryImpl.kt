@@ -1,6 +1,7 @@
 package com.example.appmusica.data.repository
 
 import com.example.appmusica.data.local.AuthManager
+import com.example.appmusica.data.local.dao.UserSessionDao
 import com.example.appmusica.data.remote.request.UserRequest
 import com.example.appmusica.domain.repository.AuthRepository
 import com.example.appmusica.retrofit.ApiCancionesService

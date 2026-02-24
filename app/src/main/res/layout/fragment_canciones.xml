@@ -59,15 +59,15 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         android:contentDescription="Agregar canción"
         android:src="@drawable/add_ic_baseline_add_24"
-        app:layout_anchorGravity="bottom|end"
-        android:layout_gravity="bottom|end"
         app:backgroundTint="@color/spotify_green"
-        app:tint="@color/spotify_black"
-        app:elevation="8dp" />
+        app:elevation="8dp"
+        app:layout_anchorGravity="bottom|end"
+        app:tint="@color/spotify_black" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -10,11 +10,11 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
@@ -42,8 +42,11 @@ class SettingsFragment : Fragment() {
     lateinit var apiService: ApiCancionesService
 
     private val authViewModel: AuthViewModel by viewModels()
+    private val sessionViewModel: SessionViewModel by viewModels()
 
     private lateinit var ivProfile: ImageView
+    private lateinit var rvHistory: RecyclerView
+    private lateinit var sessionAdapter: SessionAdapter
     private var selectedImageUri: Uri? = null
 
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -61,8 +64,13 @@ class SettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         
         ivProfile = view.findViewById(R.id.ivProfile)
+        rvHistory = view.findViewById(R.id.rvHistory)
         val btnChangeProfile = view.findViewById<Button>(R.id.btnChangeProfile)
         val btnLogout = view.findViewById<Button>(R.id.btnLogout)
+        val btnDeleteHistory = view.findViewById<TextView>(R.id.btnDeleteHistory)
+
+        setupRecyclerView()
+        observeSessionHistory()
 
         btnChangeProfile.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -75,10 +83,14 @@ class SettingsFragment : Fragment() {
             startActivity(Intent(requireContext(), com.example.appmusica.presentation.login.LoginActivity::class.java))
         }
 
+        btnDeleteHistory.setOnClickListener {
+            sessionViewModel.clearHistory()
+        }
+
         // Cargar imagen de perfil si existe
         authManager.getUrlImagen()?.let { url ->
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
-            val fullUrl = baseUrl + url
+            val fullUrl = if (url.startsWith("http")) url else baseUrl + url
             
             val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
                 .addHeader("ngrok-skip-browser-warning", "true")
@@ -92,6 +104,22 @@ class SettingsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun setupRecyclerView() {
+        sessionAdapter = SessionAdapter()
+        rvHistory.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = sessionAdapter
+        }
+    }
+
+    private fun observeSessionHistory() {
+        lifecycleScope.launch {
+            sessionViewModel.sessions.collect { sessions ->
+                sessionAdapter.submitList(sessions)
+            }
+        }
     }
 
     private fun uploadImage() {

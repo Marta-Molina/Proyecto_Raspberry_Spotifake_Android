@@ -128,16 +128,13 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
     // ── Like logic ──────────────────────────────────────────────────────────────
 
     private fun handleLike(cancion: Cancion) {
-        if (likedSongsManager.isLiked(cancion.id)) {
-            Toast.makeText(requireContext(), "¡Ya diste like a esta canción!", Toast.LENGTH_SHORT).show()
-            return
+        val nowLiked = likedSongsManager.toggleLike(cancion.id)
+        if (nowLiked) {
+            viewModel.addLike(cancion)
+            showLikeConfetti()
+        } else {
+            viewModel.removeLike(cancion)
         }
-        // Mark as liked locally first so the star turns green immediately
-        likedSongsManager.setLiked(cancion.id)
-        // Persist the incremented like count to the backend
-        viewModel.addLike(cancion)
-        // Celebrate!
-        showLikeConfetti()
     }
 
     private fun showLikeConfetti() {

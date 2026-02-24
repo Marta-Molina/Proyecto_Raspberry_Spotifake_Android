@@ -107,7 +107,16 @@ class CancionesViewModel @Inject constructor(
         viewModelScope.launch {
             val updatedCancion = cancion.copy(likes = cancion.likes + 1)
             updateCancionUseCase(cancion.id, updatedCancion)
-            fullList = emptyList() // invalidate cache so next load fetches fresh data
+            fullList = emptyList()
+            loadCanciones()
+        }
+    }
+
+    fun removeLike(cancion: Cancion) {
+        viewModelScope.launch {
+            val updatedCancion = cancion.copy(likes = maxOf(0, cancion.likes - 1))
+            updateCancionUseCase(cancion.id, updatedCancion)
+            fullList = emptyList()
             loadCanciones()
         }
     }

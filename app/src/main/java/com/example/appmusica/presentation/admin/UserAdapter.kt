@@ -37,7 +37,7 @@ class UserAdapter(
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = users[position]
-        holder.tvUserName.text = user.nombre
+        holder.tvUserName.text = user.username
         holder.tvUserEmail.text = user.correo
         holder.tvAdminBadge.visibility = if (user.admin) View.VISIBLE else View.GONE
         

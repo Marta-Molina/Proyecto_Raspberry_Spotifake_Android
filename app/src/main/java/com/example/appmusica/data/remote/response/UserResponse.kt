@@ -5,9 +5,7 @@ import java.io.Serializable
 
 data class UserResponse(
     @SerializedName("id") val id: Long,
-    @SerializedName("nombre") val nombre: String,
-    @SerializedName("apellido1") val apellido1: String,
-    @SerializedName("apellido2") val apellido2: String,
+    @SerializedName("username") val username: String,
     @SerializedName("correo") val correo: String,
     @SerializedName("admin") val admin: Boolean,
     @SerializedName("premium") val premium: Boolean,

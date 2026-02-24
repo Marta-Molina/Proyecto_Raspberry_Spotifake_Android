@@ -44,16 +44,14 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun register(nombre: String, correo: String, password: String, callback: (Boolean, String?) -> Unit) {
+    override fun register(username: String, correo: String, password: String, callback: (Boolean, String?) -> Unit) {
         scope.launch {
             try {
                 val response = api.register(
                     UserRequest(
-                        nombre = nombre,
+                        username = username,
                         correo = correo,
                         pass = password,
-                        apellido1 = "",
-                        apellido2 = "",
                         admin = false,
                         premium = false
                     )

@@ -32,12 +32,12 @@
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilNombre"
+            android:id="@+id/tilUsername"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Nombre"
+            android:hint="Username"
             android:visibility="gone"
             app:boxBackgroundColor="#282828"
             app:boxCornerRadiusTopEnd="8dp"
@@ -49,7 +49,7 @@
             app:hintTextColor="@color/spotify_light_grey">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNombre"
+                android:id="@+id/etUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="24dp"

@@ -8,7 +8,7 @@ interface AuthRepository {
     )
 
     fun register(
-        nombre: String,
+        username: String,
         correo: String,
         password: String,
         callback: (Boolean, String?) -> Unit

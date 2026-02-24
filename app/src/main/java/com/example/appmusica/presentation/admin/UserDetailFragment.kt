@@ -52,7 +52,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         val tvRole = view.findViewById<TextView>(R.id.tvUserDetailRole)
 
         user?.let {
-            tvName.text = "${it.nombre} ${it.apellido1 ?: ""} ${it.apellido2 ?: ""}".trim()
+            tvName.text = it.username
             tvEmail.text = it.correo
             tvRole.text = if (it.admin) "Administrador" else "Usuario Estándar"
             

@@ -21,8 +21,8 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(nombre: String, email: String, password: String) {
-        authRepository.register(nombre, email, password) { success, message ->
+    fun register(username: String, email: String, password: String) {
+        authRepository.register(username, email, password) { success, message ->
             _authResult.postValue(success to message)
         }
     }

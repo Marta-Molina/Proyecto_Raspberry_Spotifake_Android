@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         
         val ivUserThumb = header.findViewById<android.widget.ImageView>(R.id.ivUserThumb)
         authManager.getUrlImagen()?.let { url ->
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "")
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
             com.bumptech.glide.Glide.with(this)
                 .load(baseUrl + url)
                 .error(android.R.drawable.ic_menu_report_image)

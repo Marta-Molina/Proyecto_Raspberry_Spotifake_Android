@@ -56,7 +56,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             tvEmail.text = it.correo
             tvRole.text = if (it.admin) "Administrador" else "Usuario Estándar"
             
-            val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
+            val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
             it.urlImagen?.let { url ->
                 val glideUrl = GlideUrl(baseUrl + url, LazyHeaders.Builder()
                     .addHeader("ngrok-skip-browser-warning", "true")

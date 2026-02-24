@@ -61,8 +61,9 @@ class DetalleFragment : Fragment() {
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
 
+                // BASE_URL already has /api/ — static files are served at /api/archivos/
                 val portadaPath = it.urlPortada ?: ""
-                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
+                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
                 val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
                 
                 val glideUrl = GlideUrl(fullPortadaUrl, LazyHeaders.Builder()
@@ -143,7 +144,8 @@ class DetalleFragment : Fragment() {
             binding.playerView.player = player
         }
         
-        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
+        // BASE_URL already has /api/ — static files are served at /api/archivos/
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
         val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
 
         if (player?.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {

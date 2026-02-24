@@ -40,11 +40,12 @@ class ViewHCancion(
 
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
-            val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
-            
-            // Si la ruta ya es una URL completa (empieza por http), la usamos tal cual
+            // BASE_URL already ends with /api/ so just remove the trailing slash.
+            // Static files are served under /api/archivos/ due to rootPath in application.yaml
+            val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
+
             val fullUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
-            
+
             val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
                 .addHeader("ngrok-skip-browser-warning", "true")
                 .build())

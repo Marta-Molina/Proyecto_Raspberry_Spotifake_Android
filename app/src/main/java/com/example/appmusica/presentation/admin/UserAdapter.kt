@@ -45,7 +45,7 @@ class UserAdapter(
         // Hide promote button if already admin
         holder.btnPromoteAdmin.visibility = if (user.admin) View.GONE else View.VISIBLE
 
-        val baseUrl = NetworkModule.BASE_URL.replace("/api/", "").removeSuffix("/")
+        val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
         user.urlImagen?.let { url ->
             val glideUrl = GlideUrl(baseUrl + url, LazyHeaders.Builder()
                 .addHeader("ngrok-skip-browser-warning", "true")

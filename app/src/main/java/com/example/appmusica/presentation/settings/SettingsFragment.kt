@@ -97,7 +97,7 @@ class SettingsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         
-        ivProfile = view.findViewById(R.id.ivProfile)
+        ivProfile = view.findViewById(R.id.ivUserDetailPhoto)
         rvHistory = view.findViewById(R.id.rvHistory)
         val btnChangeProfile = view.findViewById<Button>(R.id.btnChangeProfile)
         val btnLogout = view.findViewById<Button>(R.id.btnLogout)

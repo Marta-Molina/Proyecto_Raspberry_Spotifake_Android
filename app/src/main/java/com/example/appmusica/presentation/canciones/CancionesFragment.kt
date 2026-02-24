@@ -40,6 +40,7 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
     private val viewModel: CancionesViewModel by activityViewModels()
     private val playlistViewModel: PlaylistViewModel by viewModels()
     private lateinit var adapter: AdapterCancion
+    private lateinit var artistAdapter: com.example.appmusica.presentation.canciones.adapter.ArtistAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,6 +70,17 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         binding.recyclerCanciones.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@CancionesFragment.adapter
+        }
+
+        // Recycler horizontal de artistas
+        artistAdapter = com.example.appmusica.presentation.canciones.adapter.ArtistAdapter(emptyList()) { artista ->
+            val bundle = Bundle().apply { putString("artistName", artista.nombre) }
+            findNavController().navigate(R.id.action_cancionesFragment_to_albumsFragment, bundle)
+        }
+
+        binding.recyclerArtistas.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext(), androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
+            adapter = artistAdapter
         }
 
         binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -111,6 +123,10 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
 
         viewModel.canciones.observe(viewLifecycleOwner) { lista ->
             adapter.updateList(lista)
+        }
+
+        viewModel.artistas.observe(viewLifecycleOwner) { artistas ->
+            artistAdapter.update(artistas)
         }
 
         binding.fabAdd.setOnClickListener {

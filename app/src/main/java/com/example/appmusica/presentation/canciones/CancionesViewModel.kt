@@ -29,6 +29,10 @@ class CancionesViewModel @Inject constructor(
     private val _canciones = MutableLiveData<List<Cancion>>()
     val canciones: LiveData<List<Cancion>> = _canciones
 
+    // Lista de artistas derivada de las canciones cargadas (para mostrar en la UI)
+    private val _artistas = MutableLiveData<List<com.example.appmusica.domain.model.Artista>>()
+    val artistas: LiveData<List<com.example.appmusica.domain.model.Artista>> = _artistas
+
     // Resultado de la última operación de borrado: true=ok, false=error, null=no hay evento
     private val _deleteResult = MutableLiveData<Boolean?>(null)
     val deleteResult: LiveData<Boolean?> = _deleteResult
@@ -80,7 +84,43 @@ class CancionesViewModel @Inject constructor(
             }
 
             _canciones.value = filtered
+            // Derivar artistas desde la lista filtrada para la UI de cards
+            deriveArtistasFrom(filtered)
         }
+    }
+
+    private fun deriveArtistasFrom(list: List<Cancion>) {
+        val artistas = list
+            .groupBy { it.artista }
+            .map { entry ->
+                val nombre = entry.key
+                val portada = entry.value.mapNotNull { it.urlPortada }.firstOrNull()
+                com.example.appmusica.domain.model.Artista(nombre, portada)
+            }
+        _artistas.value = artistas
+    }
+
+    /**
+     * Devuelve los álbumes para un artista (derivados de las canciones cargadas).
+     */
+    fun getAlbumsForArtist(artistName: String): List<com.example.appmusica.domain.model.Album> {
+        val source = fullList.ifEmpty { _canciones.value ?: emptyList() }
+        return source
+            .filter { it.artista.equals(artistName, ignoreCase = true) }
+            .groupBy { it.album }
+            .map { entry ->
+                val nombre = entry.key
+                val portada = entry.value.mapNotNull { it.urlPortada }.firstOrNull()
+                com.example.appmusica.domain.model.Album(nombre, artistName, portada)
+            }
+    }
+
+    /**
+     * Devuelve las canciones de un álbum de un artista.
+     */
+    fun getCancionesForAlbum(artistName: String, albumName: String): List<Cancion> {
+        val source = fullList.ifEmpty { _canciones.value ?: emptyList() }
+        return source.filter { it.artista.equals(artistName, true) && it.album.equals(albumName, true) }
     }
 
     fun addCancion(cancion: Cancion) {

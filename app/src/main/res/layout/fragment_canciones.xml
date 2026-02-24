@@ -48,6 +48,18 @@
                 android:backgroundTint="@color/spotify_light_grey" />
         </androidx.cardview.widget.CardView>
 
+        <!-- Lista horizontal de artistas (cards desplazables) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerArtistas"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:clipToPadding="false"
+            android:layout_marginBottom="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerCanciones"
             android:layout_width="match_parent"

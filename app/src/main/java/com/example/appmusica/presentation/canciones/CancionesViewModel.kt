@@ -82,6 +82,7 @@ class CancionesViewModel @Inject constructor(
     fun addCancion(cancion: Cancion) {
         viewModelScope.launch {
             addCancionUseCase(cancion)
+            fullList = emptyList()
             loadCanciones()
         }
     }
@@ -89,6 +90,7 @@ class CancionesViewModel @Inject constructor(
     fun deleteCancion(id: Int) {
         viewModelScope.launch {
             deleteCancionUseCase(id)
+            fullList = emptyList()
             loadCanciones()
         }
     }
@@ -96,6 +98,16 @@ class CancionesViewModel @Inject constructor(
     fun updateCancion(id: Int, cancion: Cancion) {
         viewModelScope.launch {
             updateCancionUseCase(id, cancion)
+            fullList = emptyList()
+            loadCanciones()
+        }
+    }
+
+    fun addLike(cancion: Cancion) {
+        viewModelScope.launch {
+            val updatedCancion = cancion.copy(likes = cancion.likes + 1)
+            updateCancionUseCase(cancion.id, updatedCancion)
+            fullList = emptyList() // invalidate cache so next load fetches fresh data
             loadCanciones()
         }
     }

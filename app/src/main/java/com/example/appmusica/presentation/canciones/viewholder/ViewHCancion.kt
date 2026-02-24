@@ -24,18 +24,23 @@ class ViewHCancion(
 
     private val binding = ItemCancionBinding.bind(view)
 
-    fun renderize(cancion: Cancion) {
+    fun renderize(cancion: Cancion, isLiked: Boolean = false) {
 
         binding.txtviewNombre.text = cancion.nombre
         binding.txtviewArtista.text = cancion.artista
         binding.txtviewAlbum.text = cancion.album
         binding.txtviewLikes.text = cancion.likes.toString()
 
-        // Cambiar icono de like si tiene likes (demo simple)
-        if (cancion.likes > 0) {
+        // Star appearance: green + filled when liked, grey when not
+        if (isLiked) {
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_on)
+            binding.btnLike.setColorFilter(
+                android.graphics.Color.parseColor("#1DB954"),
+                android.graphics.PorterDuff.Mode.SRC_IN
+            )
         } else {
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_off)
+            binding.btnLike.clearColorFilter()
         }
 
         // ✅ Cargar imagen solo si no es null

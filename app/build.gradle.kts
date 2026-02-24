@@ -90,4 +90,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+
+    // Konfetti - confetti celebration animation
+    implementation("nl.dionsegijn:konfetti-xml:2.0.4")
 }

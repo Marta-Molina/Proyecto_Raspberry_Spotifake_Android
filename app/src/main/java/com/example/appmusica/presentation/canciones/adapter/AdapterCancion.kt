@@ -14,7 +14,8 @@ class AdapterCancion(
     private val like: (Int) -> Unit,
     private val addToList: (Int) -> Unit,
     private val onRemove: ((Int) -> Unit)? = null,
-    private val onItemClick: (Int) -> Unit
+    private val onItemClick: (Int) -> Unit,
+    private val isLiked: (Int) -> Boolean = { false }
 ) : RecyclerView.Adapter<ViewHCancion>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHCancion {
@@ -24,7 +25,7 @@ class AdapterCancion(
     }
 
     override fun onBindViewHolder(holder: ViewHCancion, position: Int) {
-        holder.renderize(list[position])
+        holder.renderize(list[position], isLiked(list[position].id))
     }
 
     override fun getItemCount(): Int = list.size

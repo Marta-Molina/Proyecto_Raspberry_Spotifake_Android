@@ -82,18 +82,16 @@ class ManageUsersFragment : Fragment() {
             try {
                 // Preparamos el request con admin = true
                 val updateRequest = UserRequest(
-                    nombre = user.nombre,
+                    username = user.username,
                     correo = user.correo,
                     pass = "", // La API no debería cambiar la pass si viene vacía o nula en este endpoint de admin
-                    apellido1 = user.apellido1,
-                    apellido2 = user.apellido2,
                     admin = true,
                     premium = user.premium
                 )
                 val response = apiService.updateUsuario(user.id, updateRequest)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        Toast.makeText(context, "${user.nombre} ahora es administrador", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "${user.username} ahora es administrador", Toast.LENGTH_SHORT).show()
                         loadUsers()
                     } else {
                         Toast.makeText(context, "Error al promocionar usuario", Toast.LENGTH_SHORT).show()
@@ -110,7 +108,7 @@ class ManageUsersFragment : Fragment() {
     private fun deleteUser(user: UserResponse) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Eliminar usuario")
-            .setMessage("¿Estás seguro de que quieres eliminar a ${user.nombre}?")
+            .setMessage("¿Estás seguro de que quieres eliminar a ${user.username}?")
             .setPositiveButton("Eliminar") { _, _ ->
                 scope.launch {
                     try {

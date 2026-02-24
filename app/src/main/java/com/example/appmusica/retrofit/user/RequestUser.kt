@@ -8,17 +8,9 @@ class RequestUser(
     @Expose
     var idUser : String,
 
-    @SerializedName("name")
+    @SerializedName("username")
     @Expose
-    var name : String?,
-
-    @SerializedName("apellido1")
-    @Expose
-    var apellido1 : String?,
-
-    @SerializedName("apellido2")
-    @Expose
-    var apellido2 : String?,
+    var username : String?,
 
     @SerializedName("correo")
     @Expose

@@ -4,18 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.appmusica.R
+import com.example.appmusica.di.NetworkModule
 import com.example.appmusica.domain.repository.AuthRepository
 import com.example.appmusica.databinding.ActivityMainBinding
 import com.example.appmusica.presentation.login.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,18 +76,26 @@ class MainActivity : AppCompatActivity() {
 
         // Usuario en el header
         val header = binding.navigationView.getHeaderView(0)
-        // Intentar obtener el nombre si estuviera guardado, si no, uno genérico
         header.findViewById<TextView>(R.id.txtUser).text = "Usuario Spotifake"
-        
-        val ivUserThumb = header.findViewById<android.widget.ImageView>(R.id.ivUserThumb)
-        authManager.getUrlImagen()?.let { url ->
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
-            com.bumptech.glide.Glide.with(this)
-                .load(baseUrl + url)
-                .error(android.R.drawable.ic_menu_report_image)
-                .circleCrop()
-                .into(ivUserThumb)
+        val ivUserThumb = header.findViewById<ImageView>(R.id.ivUserThumb)
+
+        // Observe profile image reactively — updates instantly when changed in Settings
+        lifecycleScope.launch {
+            authManager.profileImageUrl.collectLatest { url ->
+                loadNavAvatar(ivUserThumb, url)
+            }
         }
+    }
+
+    private fun loadNavAvatar(iv: ImageView, url: String?) {
+        if (url == null) return
+        val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
+        Glide.with(this)
+            .load(baseUrl + url)
+            .placeholder(android.R.drawable.ic_menu_report_image)
+            .error(android.R.drawable.ic_menu_report_image)
+            .circleCrop()
+            .into(iv)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -2,6 +2,8 @@ package com.example.appmusica.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,6 +17,10 @@ class AuthManager @Inject constructor(context: Context) {
         private const val IS_ADMIN_KEY = "is_admin"
         private const val URL_IMAGEN_KEY = "url_imagen"
     }
+
+    // Reactive stream so any observer can react to profile picture changes immediately
+    private val _profileImageUrl = MutableStateFlow(getUrlImagen())
+    val profileImageUrl: StateFlow<String?> = _profileImageUrl
 
     fun saveToken(token: String) {
         prefs.edit().putString(TOKEN_KEY, token).apply()
@@ -42,6 +48,7 @@ class AuthManager @Inject constructor(context: Context) {
 
     fun saveUrlImagen(url: String?) {
         prefs.edit().putString(URL_IMAGEN_KEY, url).apply()
+        _profileImageUrl.value = url
     }
 
     fun getUrlImagen(): String? {

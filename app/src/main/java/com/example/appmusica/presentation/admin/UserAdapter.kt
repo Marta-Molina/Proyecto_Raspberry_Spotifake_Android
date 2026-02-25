@@ -40,10 +40,10 @@ class UserAdapter(
         val user = users[position]
         holder.tvUserName.text = user.username
         holder.tvUserEmail.text = user.correo
-        holder.tvAdminBadge.visibility = if (user.admin) View.VISIBLE else View.GONE
+        holder.tvAdminBadge.visibility = if (user.admin == 1) View.VISIBLE else View.GONE
         
         // Hide promote button if already admin
-        holder.btnPromoteAdmin.visibility = if (user.admin) View.GONE else View.VISIBLE
+        holder.btnPromoteAdmin.visibility = if (user.admin == 1) View.GONE else View.VISIBLE
 
         val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
         user.urlImagen?.let { url ->

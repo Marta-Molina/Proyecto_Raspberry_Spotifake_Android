@@ -54,7 +54,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         user?.let {
             tvName.text = it.username
             tvEmail.text = it.correo
-            tvRole.text = if (it.admin) "Administrador" else "Usuario Estándar"
+            tvRole.text = if (it.admin == 1) "Administrador" else "Usuario Estándar"
             
             val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
             it.urlImagen?.let { url ->

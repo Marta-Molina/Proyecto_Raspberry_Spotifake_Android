@@ -13,6 +13,7 @@ import com.example.appmusica.presentation.canciones.adapter.ArtistAdapter
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import com.example.appmusica.R
 
 @AndroidEntryPoint
 class AlbumsFragment : Fragment() {

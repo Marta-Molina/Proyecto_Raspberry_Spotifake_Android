@@ -51,9 +51,7 @@ class AuthRepositoryImpl @Inject constructor(
                     UserRequest(
                         username = username,
                         correo = correo,
-                        pass = password,
-                        admin = false,
-                        premium = false
+                        pass = password
                     )
                 )
                 if (response.isSuccessful && response.body() != null) {

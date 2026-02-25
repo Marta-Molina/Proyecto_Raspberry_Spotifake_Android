@@ -29,7 +29,7 @@ class AuthRepositoryImpl @Inject constructor(
                     val user = response.body()!!
                     authManager.saveToken(user.token ?: "")
                     authManager.saveUserId(user.id)
-                    authManager.saveIsAdmin(user.admin)
+                    authManager.saveIsAdmin(user.admin == 1) // Convertir 0/1 a Boolean
                     authManager.saveUrlImagen(user.urlImagen)
                     
                     recordSession(user.id, user.token ?: "", "Login")
@@ -58,7 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
                     val user = response.body()!!
                     authManager.saveToken(user.token ?: "")
                     authManager.saveUserId(user.id)
-                    authManager.saveIsAdmin(user.admin)
+                    authManager.saveIsAdmin(user.admin == 1) // Convertir 0/1 a Boolean
                     authManager.saveUrlImagen(user.urlImagen)
 
                     recordSession(user.id, user.token ?: "", "Register")

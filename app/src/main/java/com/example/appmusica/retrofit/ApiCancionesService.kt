@@ -13,6 +13,18 @@ interface ApiCancionesService {
         @Query("album") album: String? = null
     ): Response<List<Cancion>>
 
+    @GET("artistas")
+    suspend fun getArtistas(): Response<List<com.example.appmusica.domain.model.Artista>>
+
+    @GET("artistas/{artist}/albums")
+    suspend fun getAlbumsByArtist(@Path("artist") artist: String): Response<List<com.example.appmusica.domain.model.Album>>
+
+    @GET("artistas/{artist}/albums/{album}/canciones")
+    suspend fun getCancionesByAlbum(
+        @Path("artist") artist: String,
+        @Path("album") album: String
+    ): Response<List<Cancion>>
+
     @GET("canciones/{id}")
     suspend fun getCancionById(@Path("id") id: Int): Response<Cancion>
 

@@ -12,6 +12,9 @@ import com.example.appmusica.domain.usecase.DeleteCancionUseCase
 import com.example.appmusica.domain.usecase.UpdateCancionUseCase
 import com.example.appmusica.domain.usecase.GetCancionUseCase
 import com.example.appmusica.domain.usecase.GetGenerosUseCase
+import com.example.appmusica.domain.usecase.GetArtistasUseCase
+import com.example.appmusica.domain.usecase.GetAlbumsForArtistUseCase
+import com.example.appmusica.domain.usecase.GetCancionesForAlbumUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +27,10 @@ class CancionesViewModel @Inject constructor(
     private val updateCancionUseCase: UpdateCancionUseCase,
     private val getCancionUseCase: GetCancionUseCase,
     private val getGenerosUseCase: GetGenerosUseCase
+    ,
+    private val getArtistasUseCase: GetArtistasUseCase,
+    private val getAlbumsForArtistUseCase: GetAlbumsForArtistUseCase,
+    private val getCancionesForAlbumUseCase: GetCancionesForAlbumUseCase
 ) : ViewModel() {
 
     private val _canciones = MutableLiveData<List<Cancion>>()
@@ -32,6 +39,12 @@ class CancionesViewModel @Inject constructor(
     // Lista de artistas derivada de las canciones cargadas (para mostrar en la UI)
     private val _artistas = MutableLiveData<List<com.example.appmusica.domain.model.Artista>>()
     val artistas: LiveData<List<com.example.appmusica.domain.model.Artista>> = _artistas
+
+    private val _albums = MutableLiveData<List<com.example.appmusica.domain.model.Album>>()
+    val albums: LiveData<List<com.example.appmusica.domain.model.Album>> = _albums
+
+    private val _albumSongs = MutableLiveData<List<Cancion>>()
+    val albumSongs: LiveData<List<Cancion>> = _albumSongs
 
     // Resultado de la última operación de borrado: true=ok, false=error, null=no hay evento
     private val _deleteResult = MutableLiveData<Boolean?>(null)
@@ -50,11 +63,18 @@ class CancionesViewModel @Inject constructor(
     init {
         loadGeneros()
         loadCanciones()
+        loadArtistas()
     }
 
     private fun loadGeneros() {
         viewModelScope.launch {
             _generos.value = getGenerosUseCase()
+        }
+    }
+
+    private fun loadArtistas() {
+        viewModelScope.launch {
+            _artistas.value = getArtistasUseCase()
         }
     }
 
@@ -84,43 +104,24 @@ class CancionesViewModel @Inject constructor(
             }
 
             _canciones.value = filtered
-            // Derivar artistas desde la lista filtrada para la UI de cards
-            deriveArtistasFrom(filtered)
+        }
+    }
+    /**
+     * Carga los álbumes de un artista desde la API y publica en LiveData.
+     */
+    fun loadAlbumsForArtist(artistName: String) {
+        viewModelScope.launch {
+            _albums.value = getAlbumsForArtistUseCase(artistName)
         }
     }
 
-    private fun deriveArtistasFrom(list: List<Cancion>) {
-        val artistas = list
-            .groupBy { it.artista }
-            .map { entry ->
-                val nombre = entry.key
-                val portada = entry.value.mapNotNull { it.urlPortada }.firstOrNull()
-                com.example.appmusica.domain.model.Artista(nombre, portada)
-            }
-        _artistas.value = artistas
-    }
-
     /**
-     * Devuelve los álbumes para un artista (derivados de las canciones cargadas).
+     * Carga las canciones para un álbum de un artista desde la API y publica en LiveData.
      */
-    fun getAlbumsForArtist(artistName: String): List<com.example.appmusica.domain.model.Album> {
-        val source = fullList.ifEmpty { _canciones.value ?: emptyList() }
-        return source
-            .filter { it.artista.equals(artistName, ignoreCase = true) }
-            .groupBy { it.album }
-            .map { entry ->
-                val nombre = entry.key
-                val portada = entry.value.mapNotNull { it.urlPortada }.firstOrNull()
-                com.example.appmusica.domain.model.Album(nombre, artistName, portada)
-            }
-    }
-
-    /**
-     * Devuelve las canciones de un álbum de un artista.
-     */
-    fun getCancionesForAlbum(artistName: String, albumName: String): List<Cancion> {
-        val source = fullList.ifEmpty { _canciones.value ?: emptyList() }
-        return source.filter { it.artista.equals(artistName, true) && it.album.equals(albumName, true) }
+    fun loadCancionesForAlbum(artistName: String, albumName: String) {
+        viewModelScope.launch {
+            _albumSongs.value = getCancionesForAlbumUseCase(artistName, albumName)
+        }
     }
 
     fun addCancion(cancion: Cancion) {

@@ -102,4 +102,49 @@ class CancionRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun getArtistas(): List<com.example.appmusica.domain.model.Artista> {
+        return try {
+            val response = api.getArtistas()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("API_TEST", "Error fetching artistas: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception fetching artistas: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getAlbumsByArtist(artist: String): List<com.example.appmusica.domain.model.Album> {
+        return try {
+            val response = api.getAlbumsByArtist(artist)
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("API_TEST", "Error fetching albums for $artist: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception fetching albums for $artist: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getCancionesByAlbum(artist: String, album: String): List<Cancion> {
+        return try {
+            val response = api.getCancionesByAlbum(artist, album)
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("API_TEST", "Error fetching canciones for $artist/$album: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception fetching canciones for $artist/$album: ${e.message}", e)
+            emptyList()
+        }
+    }
 }

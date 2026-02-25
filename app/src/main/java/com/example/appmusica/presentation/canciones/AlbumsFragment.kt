@@ -34,9 +34,7 @@ class AlbumsFragment : Fragment() {
 
         val artistName = arguments?.getString("artistName") ?: ""
 
-        val albums = viewModel.getAlbumsForArtist(artistName)
-
-        albumAdapter = AlbumAdapter(albums) { album ->
+        albumAdapter = AlbumAdapter(emptyList()) { album ->
             val bundle = Bundle().apply {
                 putString("artistName", album.artista)
                 putString("albumName", album.nombre)
@@ -48,6 +46,13 @@ class AlbumsFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = albumAdapter
         }
+
+        // Cargar albums desde ViewModel (API)
+        viewModel.albums.observe(viewLifecycleOwner) { lista ->
+            albumAdapter.update(lista)
+        }
+
+        viewModel.loadAlbumsForArtist(artistName)
     }
 
     override fun onDestroyView() {

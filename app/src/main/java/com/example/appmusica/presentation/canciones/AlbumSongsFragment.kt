@@ -32,10 +32,8 @@ class AlbumSongsFragment : Fragment() {
         val artistName = arguments?.getString("artistName") ?: ""
         val albumName = arguments?.getString("albumName") ?: ""
 
-        val songs = viewModel.getCancionesForAlbum(artistName, albumName)
-
         adapter = AdapterCancion(
-            list = songs.toMutableList(),
+            list = mutableListOf(),
             delete = { pos -> viewModel.deleteCancion(adapter.getCancion(pos)?.id ?: -1) },
             update = { pos -> /* no-op */ },
             like = { pos -> viewModel.toggleLike(adapter.getCancion(pos)!!) },
@@ -48,6 +46,13 @@ class AlbumSongsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@AlbumSongsFragment.adapter
         }
+
+        // Observar canciones del álbum y cargarlas
+        viewModel.albumSongs.observe(viewLifecycleOwner) { lista ->
+            adapter.updateList(lista)
+        }
+
+        viewModel.loadCancionesForAlbum(artistName, albumName)
     }
 
     override fun onDestroyView() {

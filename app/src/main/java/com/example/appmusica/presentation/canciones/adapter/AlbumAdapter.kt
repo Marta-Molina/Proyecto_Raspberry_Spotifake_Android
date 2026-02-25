@@ -10,23 +10,32 @@ import com.example.appmusica.domain.model.Album
 
 class AlbumAdapter(
     private var items: List<Album>,
-    private val onClick: (Album) -> Unit
+    private val onClick: (Int) -> Unit
 ) : RecyclerView.Adapter<AlbumAdapter.AlbumVH>() {
 
     inner class AlbumVH(val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(album: Album) {
             binding.txtAlbumName.text = album.nombre
             val url = album.portadaUrl
-            if (!url.isNullOrEmpty()) {
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/").removeSuffix("/api")
+            val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
+
+            if (!fullUrl.isNullOrEmpty()) {
+                val glideUrl = com.bumptech.glide.load.model.GlideUrl(
+                    fullUrl,
+                    com.bumptech.glide.load.model.LazyHeaders.Builder()
+                        .addHeader("ngrok-skip-browser-warning", "true")
+                        .build()
+                )
                 Glide.with(binding.imgAlbum.context)
-                    .load(url)
+                    .load(glideUrl)
                     .placeholder(R.drawable.placeholder)
                     .into(binding.imgAlbum)
             } else {
                 binding.imgAlbum.setImageResource(R.drawable.placeholder)
             }
 
-            binding.root.setOnClickListener { onClick(album) }
+            binding.root.setOnClickListener { onClick(album.id) }
         }
     }
 

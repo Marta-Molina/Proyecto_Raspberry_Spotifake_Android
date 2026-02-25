@@ -109,18 +109,18 @@ class CancionesViewModel @Inject constructor(
     /**
      * Carga los álbumes de un artista desde la API y publica en LiveData.
      */
-    fun loadAlbumsForArtist(artistName: String) {
+    fun loadAlbumsForArtist(artistId: Int) {
         viewModelScope.launch {
-            _albums.value = getAlbumsForArtistUseCase(artistName)
+            _albums.value = getAlbumsForArtistUseCase(artistId)
         }
     }
 
     /**
      * Carga las canciones para un álbum de un artista desde la API y publica en LiveData.
      */
-    fun loadCancionesForAlbum(artistName: String, albumName: String) {
+    fun loadCancionesForAlbum(albumId: Int) {
         viewModelScope.launch {
-            _albumSongs.value = getCancionesForAlbumUseCase(artistName, albumName)
+            _albumSongs.value = getCancionesForAlbumUseCase(albumId)
         }
     }
 

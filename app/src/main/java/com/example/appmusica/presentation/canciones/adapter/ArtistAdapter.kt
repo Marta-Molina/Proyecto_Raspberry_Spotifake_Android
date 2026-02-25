@@ -11,23 +11,32 @@ import com.example.appmusica.domain.model.Artista
 
 class ArtistAdapter(
     private var items: List<Artista>,
-    private val onClick: (Artista) -> Unit
+    private val onClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ArtistAdapter.ArtistVH>() {
 
     inner class ArtistVH(val binding: ItemArtistCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(artista: Artista) {
             binding.txtArtistName.text = artista.nombre
-            val url = artista.fotoUrl
-            if (!url.isNullOrEmpty()) {
+            
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/").removeSuffix("/api")
+            val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
+
+            if (!fullUrl.isNullOrEmpty()) {
+                val glideUrl = com.bumptech.glide.load.model.GlideUrl(
+                    fullUrl,
+                    com.bumptech.glide.load.model.LazyHeaders.Builder()
+                        .addHeader("ngrok-skip-browser-warning", "true")
+                        .build()
+                )
                 Glide.with(binding.imgArtist.context)
-                    .load(url)
+                    .load(glideUrl)
                     .placeholder(R.drawable.placeholder)
                     .into(binding.imgArtist)
             } else {
                 binding.imgArtist.setImageResource(R.drawable.placeholder)
             }
 
-            binding.root.setOnClickListener { onClick(artista) }
+            binding.root.setOnClickListener { onClick(artista.id) }
         }
     }
 

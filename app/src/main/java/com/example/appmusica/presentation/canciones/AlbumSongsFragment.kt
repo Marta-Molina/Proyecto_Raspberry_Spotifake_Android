@@ -29,8 +29,7 @@ class AlbumSongsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val artistName = arguments?.getString("artistName") ?: ""
-        val albumName = arguments?.getString("albumName") ?: ""
+        val albumId = arguments?.getInt("albumId") ?: -1
 
         adapter = AdapterCancion(
             list = mutableListOf(),
@@ -52,7 +51,7 @@ class AlbumSongsFragment : Fragment() {
             adapter.updateList(lista)
         }
 
-        viewModel.loadCancionesForAlbum(artistName, albumName)
+        viewModel.loadCancionesForAlbum(albumId)
     }
 
     override fun onDestroyView() {

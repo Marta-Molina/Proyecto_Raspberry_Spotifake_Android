@@ -45,10 +45,9 @@ class ViewHCancion(
 
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
-            // BASE_URL already ends with /api/ so just remove the trailing slash.
-            // Static files are served under /api/archivos/ due to rootPath in application.yaml
-            val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
-
+            // Static files are served at the root level, but BASE_URL includes /api/
+            // We need to remove /api/ to get the host root.
+            val baseUrl = NetworkModule.BASE_URL.removeSuffix("/").removeSuffix("/api")
             val fullUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
             val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()

@@ -32,12 +32,11 @@ class AlbumsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val artistName = arguments?.getString("artistName") ?: ""
+        val artistId = arguments?.getInt("artistId") ?: -1
 
-        albumAdapter = AlbumAdapter(emptyList()) { album ->
+        albumAdapter = AlbumAdapter(emptyList()) { albumId ->
             val bundle = Bundle().apply {
-                putString("artistName", album.artista)
-                putString("albumName", album.nombre)
+                putInt("albumId", albumId)
             }
             findNavController().navigate(R.id.action_albumsFragment_to_albumSongsFragment, bundle)
         }
@@ -52,7 +51,7 @@ class AlbumsFragment : Fragment() {
             albumAdapter.update(lista)
         }
 
-        viewModel.loadAlbumsForArtist(artistName)
+        viewModel.loadAlbumsForArtist(artistId)
     }
 
     override fun onDestroyView() {

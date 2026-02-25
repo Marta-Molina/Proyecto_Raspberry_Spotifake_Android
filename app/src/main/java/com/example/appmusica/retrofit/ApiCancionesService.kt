@@ -16,13 +16,12 @@ interface ApiCancionesService {
     @GET("artistas")
     suspend fun getArtistas(): Response<List<com.example.appmusica.domain.model.Artista>>
 
-    @GET("artistas/{artist}/albums")
-    suspend fun getAlbumsByArtist(@Path("artist") artist: String): Response<List<com.example.appmusica.domain.model.Album>>
+    @GET("artistas/{id}/albums")
+    suspend fun getAlbumsByArtist(@Path("id") artistId: Int): Response<List<com.example.appmusica.domain.model.Album>>
 
-    @GET("artistas/{artist}/albums/{album}/canciones")
+    @GET("albums/{id}/canciones")
     suspend fun getCancionesByAlbum(
-        @Path("artist") artist: String,
-        @Path("album") album: String
+        @Path("id") albumId: Int
     ): Response<List<Cancion>>
 
     @GET("canciones/{id}")

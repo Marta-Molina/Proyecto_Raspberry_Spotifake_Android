@@ -73,8 +73,8 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         }
 
         // Recycler horizontal de artistas
-        artistAdapter = com.example.appmusica.presentation.canciones.adapter.ArtistAdapter(emptyList()) { artista ->
-            val bundle = Bundle().apply { putString("artistName", artista.nombre) }
+        artistAdapter = com.example.appmusica.presentation.canciones.adapter.ArtistAdapter(emptyList()) { artistId ->
+            val bundle = Bundle().apply { putInt("artistId", artistId) }
             findNavController().navigate(R.id.action_cancionesFragment_to_albumsFragment, bundle)
         }
 

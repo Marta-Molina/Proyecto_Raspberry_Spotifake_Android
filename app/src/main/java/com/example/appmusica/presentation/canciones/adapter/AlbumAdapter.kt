@@ -17,7 +17,7 @@ class AlbumAdapter(
         fun bind(album: Album) {
             binding.txtAlbumName.text = album.nombre
             val url = album.portadaUrl
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/").removeSuffix("/api")
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
             val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
 
             if (!fullUrl.isNullOrEmpty()) {

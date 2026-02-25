@@ -65,8 +65,10 @@ class CancionRepositoryImpl @Inject constructor(
             val album = cancion.album.toRequestBody(mediaType)
             val genero = cancion.genero.toString().toRequestBody(mediaType)
             val likes = cancion.likes.toString().toRequestBody(mediaType)
+            val artistaId = cancion.artistaId?.toString()?.toRequestBody(mediaType)
+            val albumId = cancion.albumId?.toString()?.toRequestBody(mediaType)
 
-            val response = api.updateCancion(id, nombre, artista, album, genero, likes)
+            val response = api.updateCancion(id, nombre, artista, album, genero, likes, artistaId, albumId)
             if (!response.isSuccessful) {
                 Log.e("API_TEST", "Error updating cancion $id: ${response.code()} ${response.errorBody()?.string()}")
             }

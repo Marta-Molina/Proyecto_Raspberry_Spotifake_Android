@@ -38,7 +38,9 @@ interface ApiCancionesService {
         @Part("artista") artista: okhttp3.RequestBody? = null,
         @Part("album") album: okhttp3.RequestBody? = null,
         @Part("genero") genero: okhttp3.RequestBody? = null,
-        @Part("likes") likes: okhttp3.RequestBody? = null
+        @Part("likes") likes: okhttp3.RequestBody? = null,
+        @Part("artistaId") artistaId: okhttp3.RequestBody? = null,
+        @Part("albumId") albumId: okhttp3.RequestBody? = null
     ): Response<Cancion>
 
     @DELETE("canciones/{id}")

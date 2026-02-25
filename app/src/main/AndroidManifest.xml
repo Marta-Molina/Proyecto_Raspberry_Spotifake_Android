@@ -19,7 +19,7 @@
             android:name=".presentation.canciones.edit.EditCancionActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.canciones.add.AddCancionActivity"
+            android:name="com.example.appmusica.presentation.canciones.add.AddCancionActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.MainActivity">

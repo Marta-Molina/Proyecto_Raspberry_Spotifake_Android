@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentAlbumSongsBinding
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,7 +61,7 @@ class AlbumSongsFragment : Fragment() {
         val bundle = Bundle().apply {
             putInt("position", position)
         }
-        androidx.navigation.fragment.findNavController().navigate(
+        findNavController().navigate(
             R.id.action_albumSongsFragment_to_detalleFragment,
             bundle
         )

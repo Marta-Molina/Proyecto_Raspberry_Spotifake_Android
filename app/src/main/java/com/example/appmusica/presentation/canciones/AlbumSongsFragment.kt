@@ -36,8 +36,8 @@ class AlbumSongsFragment : Fragment() {
             delete = { pos -> viewModel.deleteCancion(adapter.getCancion(pos)?.id ?: -1) },
             update = { pos -> /* no-op */ },
             like = { pos -> viewModel.toggleLike(adapter.getCancion(pos)!!) },
-            addToList = { pos -> /* no-op */ },
-            onItemClick = { pos -> /* no-op */ },
+            addToList = { pos -> /* can add items from album to playlists if needed */ },
+            onItemClick = { pos -> navegarADetalle(pos) },
             isLiked = { _ -> false }
         )
 
@@ -49,9 +49,20 @@ class AlbumSongsFragment : Fragment() {
         // Observar canciones del álbum y cargarlas
         viewModel.albumSongs.observe(viewLifecycleOwner) { lista ->
             adapter.updateList(lista)
+            viewModel.setCanciones(lista)
         }
 
         viewModel.loadCancionesForAlbum(albumId)
+    }
+
+    private fun navegarADetalle(position: Int) {
+        val bundle = Bundle().apply {
+            putInt("position", position)
+        }
+        androidx.navigation.fragment.findNavController().navigate(
+            R.id.action_albumSongsFragment_to_detalleFragment,
+            bundle
+        )
     }
 
     override fun onDestroyView() {

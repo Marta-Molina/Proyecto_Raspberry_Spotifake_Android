@@ -138,6 +138,9 @@
         <argument
             android:name="albumName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_albumSongsFragment_to_detalleFragment"
+            app:destination="@id/detalleFragment" />
     </fragment>
 
 </navigation>

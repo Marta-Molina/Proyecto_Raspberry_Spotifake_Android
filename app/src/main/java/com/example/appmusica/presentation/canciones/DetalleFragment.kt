@@ -8,12 +8,14 @@ import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.media3.common.MediaItem
-import androidx.media3.common.util.Log
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
+import com.example.appmusica.service.PlaybackService
+import android.content.ComponentName
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
@@ -30,7 +32,9 @@ class DetalleFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CancionesViewModel by activityViewModels()
-    private var player: ExoPlayer? = null
+    private var controllerFuture: ListenableFuture<MediaController>? = null
+    private var mediaController: MediaController? = null
+    private val player: Player? get() = mediaController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +65,6 @@ class DetalleFragment : Fragment() {
                 binding.txtArtista.text = it.artista
                 binding.txtAlbum.text = it.album
 
-                // BASE_URL already has /api/ — static files are served at /api/archivos/
                 val portadaPath = it.urlPortada ?: ""
                 val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
                 val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
@@ -77,9 +80,8 @@ class DetalleFragment : Fragment() {
                     .error(R.drawable.portada_generica)
                     .into(binding.imgCancion)
 
-                it.urlAudio?.let { audioUrl ->
-                    setupPlayer(audioUrl)
-                }
+                // The controller might not be ready yet, so we'll try to setup when it is
+                trySetupPlayerWithCurrentCancion()
             }
         }
 
@@ -116,17 +118,49 @@ class DetalleFragment : Fragment() {
         binding.btnNext.setClickAnimation()
     }
 
-    @OptIn(UnstableApi::class)
-    private fun setupPlayer(audioUrl: String) {
-        if (player == null) {
-            val dataSourceFactory = DefaultHttpDataSource.Factory()
-                .setDefaultRequestProperties(mapOf("ngrok-skip-browser-warning" to "true"))
-            
-            player = ExoPlayer.Builder(requireContext())
-                .setMediaSourceFactory(DefaultMediaSourceFactory(requireContext()).setDataSourceFactory(dataSourceFactory))
+    private fun trySetupPlayerWithCurrentCancion() {
+        val controller = mediaController ?: return
+        val cancion = viewModel.selectedCancion.value ?: return
+        
+        cancion.urlAudio?.let { audioUrl ->
+            val portadaPath = cancion.urlPortada ?: ""
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+            val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
+
+            val metadata = MediaMetadata.Builder()
+                .setTitle(cancion.nombre)
+                .setArtist(cancion.artista)
+                .setAlbumTitle(cancion.album)
+                .setArtworkUri(android.net.Uri.parse(fullPortadaUrl))
                 .build()
-            
-            player?.addListener(object : androidx.media3.common.Player.Listener {
+
+            val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
+
+            if (controller.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {
+                return
+            }
+
+            val mediaItem = androidx.media3.common.MediaItem.Builder()
+                .setUri(fullAudioUrl)
+                .setMediaMetadata(metadata)
+                .build()
+
+            controller.setMediaItem(mediaItem)
+            controller.prepare()
+            controller.playWhenReady = true
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val sessionToken = SessionToken(requireContext(), ComponentName(requireContext(), PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(requireContext(), sessionToken).buildAsync()
+        controllerFuture?.addListener({
+            // controllerFuture.get() is safe here because the listener is only called when ready
+            val controller = controllerFuture?.get() ?: return@addListener
+            mediaController = controller
+            binding.playerView.player = controller
+            controller.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     updatePlayPauseIcon()
                     if (isPlaying) {
@@ -140,22 +174,24 @@ class DetalleFragment : Fragment() {
                     updatePlayPauseIcon()
                 }
             })
+            updatePlayPauseIcon()
+            if (controller.isPlaying) {
+                binding.root.post(updateProgressRunnable)
+            }
+            
+            // Now that controller is ready, try to setup the player if we have a song selected
+            trySetupPlayerWithCurrentCancion()
+        }, requireContext().mainExecutor)
+    }
 
-            binding.playerView.player = player
+    override fun onStop() {
+        super.onStop()
+        binding.root.removeCallbacks(updateProgressRunnable)
+        controllerFuture?.let {
+            MediaController.releaseFuture(it)
         }
-        
-        // BASE_URL already has /api/ — static files are served at /api/archivos/
-        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
-        val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
-
-        if (player?.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {
-            return
-        }
-        
-        val mediaItem = MediaItem.fromUri(fullAudioUrl)
-        player?.setMediaItem(mediaItem)
-        player?.prepare()
-        player?.playWhenReady = true
+        controllerFuture = null
+        mediaController = null
     }
 
     private fun updatePlayPauseIcon() {
@@ -186,17 +222,8 @@ class DetalleFragment : Fragment() {
         return String.format("%d:%02d", minutes, seconds)
     }
 
-    override fun onPause() {
-        super.onPause()
-        binding.root.removeCallbacks(updateProgressRunnable)
-        player?.pause()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.root.removeCallbacks(updateProgressRunnable)
-        player?.release()
-        player = null
         _binding = null
     }
 }

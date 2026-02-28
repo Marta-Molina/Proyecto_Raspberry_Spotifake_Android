@@ -31,7 +31,7 @@ interface ApiCancionesService {
     suspend fun addCancion(@Body cancion: Cancion): Response<Cancion>
 
     @Multipart
-    @PUT("canciones/{id}")
+    @PATCH("canciones/{id}")
     suspend fun updateCancion(
         @Path("id") id: Int,
         @Part("nombre") nombre: okhttp3.RequestBody? = null,
@@ -54,7 +54,7 @@ interface ApiCancionesService {
     @POST("listas")
     suspend fun createLista(@Body lista: com.example.appmusica.domain.model.Playlist): Response<com.example.appmusica.domain.model.Playlist>
 
-    @PUT("listas/{id}")
+    @PATCH("listas/{id}")
     suspend fun updateLista(@Path("id") id: Int, @Body lista: com.example.appmusica.domain.model.Playlist): Response<com.example.appmusica.domain.model.Playlist>
 
     @DELETE("listas/{id}")
@@ -79,7 +79,7 @@ interface ApiCancionesService {
     suspend fun login(@Body userRequest: com.example.appmusica.data.remote.request.UserRequest): Response<com.example.appmusica.data.remote.response.UserResponse>
 
     @Multipart
-    @POST("usuarios/{id}/perfil")
+    @PATCH("usuarios/{id}/perfil")
     suspend fun uploadProfileImage(
         @Path("id") userId: Long,
         @Part imagen: okhttp3.MultipartBody.Part
@@ -91,7 +91,7 @@ interface ApiCancionesService {
     @POST("generos")
     suspend fun addGenero(@Body genero: com.example.appmusica.domain.model.Genero): Response<com.example.appmusica.domain.model.Genero>
 
-    @PUT("generos/{id}")
+    @PATCH("generos/{id}")
     suspend fun updateGenero(@Path("id") id: Int, @Body genero: com.example.appmusica.domain.model.Genero): Response<com.example.appmusica.domain.model.Genero>
 
     @DELETE("generos/{id}")
@@ -100,7 +100,7 @@ interface ApiCancionesService {
     @GET("usuarios")
     suspend fun getUsuarios(): Response<List<com.example.appmusica.data.remote.response.UserResponse>>
 
-    @PUT("usuarios/{id}")
+    @PATCH("usuarios/{id}")
     suspend fun updateUsuario(
         @Path("id") id: Long,
         @Body updateRequest: com.example.appmusica.data.remote.request.UserRequest

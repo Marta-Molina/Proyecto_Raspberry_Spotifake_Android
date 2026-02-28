@@ -118,10 +118,19 @@
             app:layout_constraintTop_toBottomOf="@id/txtCurrentTime">
 
             <ImageButton
+                android:id="@+id/btnRepeat"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_repeat"
+                app:tint="@color/white" />
+
+            <ImageButton
                 android:id="@+id/btnPrev"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:srcCompat="@drawable/exo_ic_skip_previous"
                 app:tint="@color/white" />
@@ -139,7 +148,7 @@
                 android:id="@+id/btnNext"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:srcCompat="@drawable/exo_ic_skip_next"
                 app:tint="@color/white" />

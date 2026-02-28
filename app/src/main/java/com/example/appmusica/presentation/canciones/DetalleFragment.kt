@@ -57,35 +57,42 @@ class DetalleFragment : Fragment() {
 
         val position = arguments?.getInt("position") ?: return
 
+        // Note: we don't call viewModel.selectCancion(position) here if we want to support 
+        // external list management, but the current logic uses it for the initial meta.
         viewModel.selectCancion(position)
 
         viewModel.selectedCancion.observe(viewLifecycleOwner) { cancion ->
             cancion?.let {
-                binding.txtNombre.text = it.nombre
-                binding.txtArtista.text = it.artista
-                binding.txtAlbum.text = it.album
-
-                val portadaPath = it.urlPortada ?: ""
-                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
-                val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
-                
-                val glideUrl = GlideUrl(fullPortadaUrl, LazyHeaders.Builder()
-                    .addHeader("ngrok-skip-browser-warning", "true")
-                    .build())
-
-                Glide.with(this)
-                    .load(glideUrl)
-                    .centerCrop()
-                    .placeholder(R.drawable.portada_generica)
-                    .error(R.drawable.portada_generica)
-                    .into(binding.imgCancion)
-
-                // The controller might not be ready yet, so we'll try to setup when it is
-                trySetupPlayerWithCurrentCancion()
+                updateUI(it)
+                // Try setup, but only if the controller is ready
+                trySetupPlayerWithCurrentList()
             }
         }
 
         setupManualControls()
+    }
+
+    private fun updateUI(cancion: com.example.appmusica.domain.model.Cancion) {
+        binding.txtNombre.text = cancion.nombre
+        binding.txtArtista.text = cancion.artista
+        binding.txtAlbum.text = cancion.album
+
+        val portadaPath = cancion.urlPortada ?: ""
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+        val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
+
+        val glideUrl = GlideUrl(
+            fullPortadaUrl, LazyHeaders.Builder()
+                .addHeader("ngrok-skip-browser-warning", "true")
+                .build()
+        )
+
+        Glide.with(this)
+            .load(glideUrl)
+            .centerCrop()
+            .placeholder(R.drawable.portada_generica)
+            .error(R.drawable.portada_generica)
+            .into(binding.imgCancion)
     }
 
     private fun setupManualControls() {
@@ -116,39 +123,58 @@ class DetalleFragment : Fragment() {
         binding.btnPrev.setClickAnimation()
         binding.btnNext.setOnClickListener { player?.seekToNext() }
         binding.btnNext.setClickAnimation()
+
+        binding.btnRepeat.setOnClickListener {
+            player?.let {
+                it.repeatMode = if (it.repeatMode == Player.REPEAT_MODE_OFF) {
+                    Player.REPEAT_MODE_ONE
+                } else {
+                    Player.REPEAT_MODE_OFF
+                }
+                updateRepeatIcon()
+            }
+        }
+        binding.btnRepeat.setClickAnimation()
     }
 
-    private fun trySetupPlayerWithCurrentCancion() {
+    private fun trySetupPlayerWithCurrentList() {
         val controller = mediaController ?: return
-        val cancion = viewModel.selectedCancion.value ?: return
-        
-        cancion.urlAudio?.let { audioUrl ->
-            val portadaPath = cancion.urlPortada ?: ""
+        val cancionList = viewModel.canciones.value ?: return
+        val initialPosition = arguments?.getInt("position") ?: return
+
+        if (cancionList.isEmpty() || initialPosition >= cancionList.size) return
+
+        val mediaItems = cancionList.map { song ->
+            val audioUrl = song.urlAudio ?: ""
+            val portadaPath = song.urlPortada ?: ""
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+            val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
             val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
             val metadata = MediaMetadata.Builder()
-                .setTitle(cancion.nombre)
-                .setArtist(cancion.artista)
-                .setAlbumTitle(cancion.album)
+                .setTitle(song.nombre)
+                .setArtist(song.artista)
+                .setAlbumTitle(song.album)
                 .setArtworkUri(android.net.Uri.parse(fullPortadaUrl))
                 .build()
 
-            val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
-
-            if (controller.currentMediaItem?.localConfiguration?.uri?.toString() == fullAudioUrl) {
-                return
-            }
-
-            val mediaItem = androidx.media3.common.MediaItem.Builder()
+            androidx.media3.common.MediaItem.Builder()
                 .setUri(fullAudioUrl)
                 .setMediaMetadata(metadata)
                 .build()
-
-            controller.setMediaItem(mediaItem)
-            controller.prepare()
-            controller.playWhenReady = true
         }
+
+        // Check if we already have this list loaded to avoid restarting
+        val currentPlayingUri = controller.currentMediaItem?.localConfiguration?.uri?.toString()
+        val targetUri = mediaItems[initialPosition].localConfiguration?.uri?.toString()
+
+        if (currentPlayingUri == targetUri) {
+            return
+        }
+
+        controller.setMediaItems(mediaItems, initialPosition, 0)
+        controller.prepare()
+        controller.playWhenReady = true
     }
 
     override fun onStart() {
@@ -156,7 +182,6 @@ class DetalleFragment : Fragment() {
         val sessionToken = SessionToken(requireContext(), ComponentName(requireContext(), PlaybackService::class.java))
         controllerFuture = MediaController.Builder(requireContext(), sessionToken).buildAsync()
         controllerFuture?.addListener({
-            // controllerFuture.get() is safe here because the listener is only called when ready
             val controller = controllerFuture?.get() ?: return@addListener
             mediaController = controller
             binding.playerView.player = controller
@@ -173,15 +198,58 @@ class DetalleFragment : Fragment() {
                 override fun onPlaybackStateChanged(state: Int) {
                     updatePlayPauseIcon()
                 }
+
+                override fun onMediaItemTransition(mediaItem: androidx.media3.common.MediaItem?, reason: Int) {
+                    super.onMediaItemTransition(mediaItem, reason)
+                    // Update UI when song changes (auto-next or manual next/prev)
+                    mediaItem?.mediaMetadata?.let { metadata ->
+                        binding.txtNombre.text = metadata.title
+                        binding.txtArtista.text = metadata.artist
+                        binding.txtAlbum.text = metadata.albumTitle
+                        
+                        metadata.artworkUri?.let { uri ->
+                            val glideUrl = GlideUrl(uri.toString(), LazyHeaders.Builder()
+                                .addHeader("ngrok-skip-browser-warning", "true")
+                                .build())
+                            Glide.with(this@DetalleFragment)
+                                .load(glideUrl)
+                                .centerCrop()
+                                .placeholder(R.drawable.portada_generica)
+                                .into(binding.imgCancion)
+                        }
+                    }
+                }
+
+                override fun onRepeatModeChanged(repeatMode: Int) {
+                    updateRepeatIcon()
+                }
             })
             updatePlayPauseIcon()
+            updateRepeatIcon()
             if (controller.isPlaying) {
                 binding.root.post(updateProgressRunnable)
             }
             
-            // Now that controller is ready, try to setup the player if we have a song selected
-            trySetupPlayerWithCurrentCancion()
+            trySetupPlayerWithCurrentList()
         }, requireContext().mainExecutor)
+    }
+
+    private fun updateRepeatIcon() {
+        val repeatMode = player?.repeatMode ?: Player.REPEAT_MODE_OFF
+        val iconRes = if (repeatMode == Player.REPEAT_MODE_ONE) {
+            R.drawable.ic_repeat_one
+        } else {
+            R.drawable.ic_repeat
+        }
+        binding.btnRepeat.setImageResource(iconRes)
+        
+        // Change tint to indicate active state
+        val color = if (repeatMode == Player.REPEAT_MODE_ONE) {
+            resources.getColor(R.color.spotify_green, null)
+        } else {
+            resources.getColor(R.color.white, null)
+        }
+        binding.btnRepeat.setColorFilter(color)
     }
 
     override fun onStop() {

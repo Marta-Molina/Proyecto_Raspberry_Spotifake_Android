@@ -32,10 +32,6 @@ class AdminFragment : Fragment() {
             findNavController().navigate(R.id.action_adminFragment_to_manageGenresFragment)
         }
 
-        view.findViewById<Button>(R.id.btnManagePlaylists).setOnClickListener {
-            findNavController().navigate(R.id.action_adminFragment_to_managePlaylistsFragment)
-        }
-
         return view
     }
 }

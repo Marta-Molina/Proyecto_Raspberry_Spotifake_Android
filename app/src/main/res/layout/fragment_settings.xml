@@ -37,16 +37,32 @@
             android:scaleType="centerCrop"
             android:src="@drawable/user" />
 
-        <Button
-            android:id="@+id/btnChangeProfile"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/ivUserDetailPhoto"
-            android:text="Cambiar foto de perfil"
-            android:textColor="@color/spotify_green" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtSettingsUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnChangeProfile"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="0dp"
+                android:text="Cambiar foto de perfil"
+                android:textColor="@color/spotify_green" />
+        </LinearLayout>
     </RelativeLayout>
 
     <TextView
@@ -59,10 +75,11 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/txtAccountType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Usuario Premium"
+        android:text="..."
         android:textColor="@color/spotify_light_grey"
         android:textSize="16sp" />
 

@@ -8,6 +8,10 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 
+import androidx.media3.session.DefaultMediaNotificationProvider
+import androidx.media3.session.MediaNotification
+import com.example.appmusica.R
+
 class PlaybackService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null
@@ -24,6 +28,12 @@ class PlaybackService : MediaSessionService() {
             .build()
             
         mediaSession = MediaSession.Builder(this, player).build()
+
+        // Configurar el icono pequeño de la notificación (vectorial) para la barra de estado
+        val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
+            .build()
+        notificationProvider.setSmallIcon(R.drawable.ic_notification_music_vector)
+        setMediaNotificationProvider(notificationProvider)
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession

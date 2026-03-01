@@ -58,6 +58,12 @@ class DetalleFragment : Fragment() {
 
         val position = arguments?.getInt("position") ?: -1
 
+        // Default: show full player immediately (we're always opened with STATE_EXPANDED)
+        binding.fullPlayerLayout.visibility = View.VISIBLE
+        binding.fullPlayerLayout.alpha = 1f
+        binding.miniPlayerLayout.visibility = View.INVISIBLE
+        binding.miniPlayerLayout.alpha = 0f
+
         if (position != -1) {
             viewModel.selectCancion(position)
         }
@@ -82,6 +88,13 @@ class DetalleFragment : Fragment() {
         if (position >= 0 && position < cancionList.size) {
             controller.seekTo(position, 0)
             controller.play()
+        }
+    }
+
+    fun stopPlayback() {
+        mediaController?.let {
+            it.stop()
+            it.clearMediaItems()
         }
     }
 

@@ -130,10 +130,6 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
             artistAdapter.update(artistas)
         }
 
-        binding.fabAdd.setOnClickListener {
-            startActivity(Intent(requireContext(), AddCancionActivity::class.java))
-        }
-
         viewModel.loadCanciones()
         playlistViewModel.loadPlaylists(authManager.getUserId().toInt())
 

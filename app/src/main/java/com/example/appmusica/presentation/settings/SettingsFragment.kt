@@ -102,6 +102,12 @@ class SettingsFragment : Fragment() {
         val btnChangeProfile = view.findViewById<Button>(R.id.btnChangeProfile)
         val btnLogout = view.findViewById<Button>(R.id.btnLogout)
         val btnDeleteHistory = view.findViewById<TextView>(R.id.btnDeleteHistory)
+        val txtUsername = view.findViewById<TextView>(R.id.txtSettingsUsername)
+        val txtAccountType = view.findViewById<TextView>(R.id.txtAccountType)
+
+        // Populate user info from AuthManager
+        txtUsername.text = authManager.getUsername() ?: ""
+        txtAccountType.text = if (authManager.isPremium()) "Usuario Premium" else "Usuario Estándar"
 
         setupRecyclerView()
         observeSessionHistory()

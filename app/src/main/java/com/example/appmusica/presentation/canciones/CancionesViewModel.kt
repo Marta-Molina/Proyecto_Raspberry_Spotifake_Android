@@ -30,7 +30,8 @@ class CancionesViewModel @Inject constructor(
     ,
     private val getArtistasUseCase: GetArtistasUseCase,
     private val getAlbumsForArtistUseCase: GetAlbumsForArtistUseCase,
-    private val getCancionesForAlbumUseCase: GetCancionesForAlbumUseCase
+    private val getCancionesForAlbumUseCase: GetCancionesForAlbumUseCase,
+    private val cancionRepository: com.example.appmusica.domain.repository.CancionRepository
 ) : ViewModel() {
 
     private val _canciones = MutableLiveData<List<Cancion>>()
@@ -162,28 +163,42 @@ class CancionesViewModel @Inject constructor(
 
     fun addLike(cancion: Cancion) {
         viewModelScope.launch {
-            val updatedCancion = cancion.copy(likes = cancion.likes + 1)
-            updateCancionUseCase(cancion.id, updatedCancion)
-            fullList = emptyList()
-            loadCanciones()
+            // Optimistically update local UI immediately
+            val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
+            val idx = currentList.indexOfFirst { it.id == cancion.id }
+            if (idx != -1) {
+                currentList[idx] = cancion.copy(likes = cancion.likes + 1)
+                _canciones.value = currentList
+            }
+            // Call dedicated public likes endpoint (not admin-only)
+            cancionRepository.likeCancion(cancion.id)
         }
     }
 
     fun removeLike(cancion: Cancion) {
         viewModelScope.launch {
-            val updatedCancion = cancion.copy(likes = maxOf(0, cancion.likes - 1))
-            updateCancionUseCase(cancion.id, updatedCancion)
-            fullList = emptyList()
-            loadCanciones()
+            // Optimistically update local UI immediately
+            val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
+            val idx = currentList.indexOfFirst { it.id == cancion.id }
+            if (idx != -1) {
+                currentList[idx] = cancion.copy(likes = maxOf(0, cancion.likes - 1))
+                _canciones.value = currentList
+            }
+            // Call dedicated public unlike endpoint
+            cancionRepository.unlikeCancion(cancion.id)
         }
     }
 
     fun toggleLike(cancion: Cancion) {
         viewModelScope.launch {
-            // Decidimos que por ahora el like solo incremente para asegurar que se vea el cambio
-            val updatedCancion = cancion.copy(likes = cancion.likes + 1)
-            updateCancionUseCase(cancion.id, updatedCancion)
-            loadCanciones()
+            // Optimistically update local UI immediately
+            val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
+            val idx = currentList.indexOfFirst { it.id == cancion.id }
+            if (idx != -1) {
+                currentList[idx] = cancion.copy(likes = cancion.likes + 1)
+                _canciones.value = currentList
+            }
+            cancionRepository.likeCancion(cancion.id)
         }
     }
 

@@ -16,6 +16,8 @@ class AuthManager @Inject constructor(context: Context) {
         private const val USER_ID_KEY = "user_id"
         private const val IS_ADMIN_KEY = "is_admin"
         private const val URL_IMAGEN_KEY = "url_imagen"
+        private const val USERNAME_KEY = "username"
+        private const val IS_PREMIUM_KEY = "is_premium"
     }
 
     // Reactive stream so any observer can react to profile picture changes immediately
@@ -53,6 +55,22 @@ class AuthManager @Inject constructor(context: Context) {
 
     fun getUrlImagen(): String? {
         return prefs.getString(URL_IMAGEN_KEY, null)
+    }
+
+    fun saveUsername(name: String) {
+        prefs.edit().putString(USERNAME_KEY, name).apply()
+    }
+
+    fun getUsername(): String? {
+        return prefs.getString(USERNAME_KEY, null)
+    }
+
+    fun saveIsPremium(isPremium: Boolean) {
+        prefs.edit().putBoolean(IS_PREMIUM_KEY, isPremium).apply()
+    }
+
+    fun isPremium(): Boolean {
+        return prefs.getBoolean(IS_PREMIUM_KEY, false)
     }
 
     fun clear() {

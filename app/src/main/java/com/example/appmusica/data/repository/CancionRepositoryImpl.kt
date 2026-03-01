@@ -77,6 +77,37 @@ class CancionRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun likeCancion(id: Int): Cancion? {
+        return try {
+            val response = api.likeCancion(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("API_TEST", "Error liking cancion $id: ${response.code()} ${response.errorBody()?.string()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception liking cancion $id: ${e.message}")
+            null
+        }
+    }
+
+    override suspend fun unlikeCancion(id: Int): Cancion? {
+        return try {
+            val response = api.unlikeCancion(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("API_TEST", "Error unliking cancion $id: ${response.code()} ${response.errorBody()?.string()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception unliking cancion $id: ${e.message}")
+            null
+        }
+    }
+
+
     override suspend fun deleteCancion(id: Int): Boolean {
         return try {
             val response = api.deleteCancion(id)

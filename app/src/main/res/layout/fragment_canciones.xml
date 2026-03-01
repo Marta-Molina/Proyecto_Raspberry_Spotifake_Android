@@ -78,6 +78,7 @@
         android:layout_marginBottom="80dp"
         android:contentDescription="Agregar canción"
         android:src="@drawable/add_ic_baseline_add_24"
+        android:visibility="gone"
         app:backgroundTint="@color/spotify_green"
         app:elevation="8dp"
         app:layout_anchorGravity="bottom|end"

@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         // Usuario en el header
         val header = binding.navigationView.getHeaderView(0)
-        header.findViewById<TextView>(R.id.txtUser).text = "Usuario Spotifake"
+        header.findViewById<TextView>(R.id.txtUser).text = authManager.getUsername() ?: "Usuario Spotifake"
         val ivUserThumb = header.findViewById<ImageView>(R.id.ivUserThumb)
 
         // Observe profile image reactively — updates instantly when changed in Settings
@@ -110,6 +110,9 @@ class MainActivity : AppCompatActivity() {
             override fun onStateChanged(bottomSheet: android.view.View, newState: Int) {
                 if (newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN) {
                     binding.playerContainer.visibility = android.view.View.GONE
+                    // Detener reproducción al ocultar el reproductor
+                    val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
+                    fragment?.stopPlayback()
                 }
                 
                 // Notify fragment of state change

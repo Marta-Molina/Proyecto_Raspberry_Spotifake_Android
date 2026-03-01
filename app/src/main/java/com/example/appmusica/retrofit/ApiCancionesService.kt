@@ -46,6 +46,12 @@ interface ApiCancionesService {
     @DELETE("canciones/{id}")
     suspend fun deleteCancion(@Path("id") id: Int): Response<Unit>
 
+    @PATCH("canciones/{id}/likes")
+    suspend fun likeCancion(@Path("id") id: Int): Response<Cancion>
+
+    @PATCH("canciones/{id}/likes/remove")
+    suspend fun unlikeCancion(@Path("id") id: Int): Response<Cancion>
+
     // --- Playlists ---
 
     @GET("listas")

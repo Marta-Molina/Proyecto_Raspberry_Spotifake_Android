@@ -35,37 +35,82 @@
                 app:srcCompat="@drawable/ic_chevron_down"
                 app:tint="@color/white" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardImage"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:layout_constraintDimensionRatio="1:1"
+            <!-- Vinyl Disc Container -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/vinylContainer"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_marginTop="-70dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnMinimize">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/imgCancion"
+                <!-- The Vinyl Disc (Background / Border) -->
+                <View
+                    android:id="@+id/viewVinylDisc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/ic_launcher_background" />
-            </androidx.cardview.widget.CardView>
+                    android:background="@drawable/vinyl_disc" />
+
+                <!-- Circular Song Cover (Now fills the disc!) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    app:cardCornerRadius="140dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/imgCancion"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        tools:src="@drawable/portada_generica" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Center Vinyl Label (Semi-transparent white circle) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:cardBackgroundColor="#44FFFFFF"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Actual Center Hole (Black) -->
+                <View
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/spotify_black_circle"
+                    android:elevation="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/txtNombre"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardImage"
+                app:layout_constraintTop_toBottomOf="@id/vinylContainer"
                 tools:text="Froot" />
 
             <TextView

@@ -29,11 +29,14 @@ class PlaybackService : MediaSessionService() {
             
         mediaSession = MediaSession.Builder(this, player).build()
 
-        // Configurar el icono pequeño de la notificación (vectorial) para la barra de estado
-        val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
-            .build()
-        notificationProvider.setSmallIcon(R.drawable.ic_notification_music_vector)
-        setMediaNotificationProvider(notificationProvider)
+        // Configurar el icono pequeño de la notificación para la barra de estado
+        setMediaNotificationProvider(
+            DefaultMediaNotificationProvider.Builder(this)
+                .setNotificationId(1001)
+                .build().apply {
+                    setSmallIcon(R.drawable.ic_notification_music_vector)
+                }
+        )
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession

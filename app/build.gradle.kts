@@ -94,4 +94,5 @@ dependencies {
 
     // Konfetti - confetti celebration animation
     implementation("nl.dionsegijn:konfetti-xml:2.0.4")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

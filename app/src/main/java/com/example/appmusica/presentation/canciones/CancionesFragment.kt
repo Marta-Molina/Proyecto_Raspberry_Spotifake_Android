@@ -122,8 +122,13 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
         }
 
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.loadCanciones()
+        }
+
         viewModel.canciones.observe(viewLifecycleOwner) { lista ->
             adapter.updateList(lista)
+            binding.swipeRefresh.isRefreshing = false
         }
 
         viewModel.artistas.observe(viewLifecycleOwner) { artistas ->

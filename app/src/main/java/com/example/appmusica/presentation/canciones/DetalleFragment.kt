@@ -121,6 +121,7 @@ class DetalleFragment : Fragment() {
         Glide.with(this)
             .load(glideUrl)
             .centerCrop()
+            .circleCrop()
             .placeholder(R.drawable.portada_generica)
             .into(binding.imgCancion)
 
@@ -246,6 +247,7 @@ class DetalleFragment : Fragment() {
             controller.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     updatePlayPauseIcon()
+                    updateVinylAnimation(isPlaying)
                     if (isPlaying) {
                         binding.root.post(updateProgressRunnable)
                     } else {
@@ -268,10 +270,10 @@ class DetalleFragment : Fragment() {
                         binding.txtMiniArtista.text = metadata.artist
                         
                         metadata.artworkUri?.let { uri ->
-                            val glideUrl = GlideUrl(uri.toString(), LazyHeaders.Builder()
+                            val glideUrl = com.bumptech.glide.load.model.GlideUrl(uri.toString(), com.bumptech.glide.load.model.LazyHeaders.Builder()
                                 .addHeader("ngrok-skip-browser-warning", "true")
                                 .build())
-                            Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().into(binding.imgCancion)
+                            Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().circleCrop().into(binding.imgCancion)
                             Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().into(binding.imgMiniCancion)
                         }
                     }
@@ -283,6 +285,7 @@ class DetalleFragment : Fragment() {
             })
             updatePlayPauseIcon()
             updateRepeatIcon()
+            updateVinylAnimation(controller.isPlaying)
             if (controller.isPlaying) {
                 binding.root.post(updateProgressRunnable)
             }
@@ -292,8 +295,31 @@ class DetalleFragment : Fragment() {
 
         // Initial sync with BottomSheet state
         (activity as? MainActivity)?.let { activity ->
-            val state = com.google.android.material.bottomsheet.BottomSheetBehavior.from(activity.findViewById<View>(R.id.playerContainer)).state
-            onBottomSheetStateChanged(state)
+            if (activity.findViewById<View>(R.id.playerContainer) != null) {
+                val state = com.google.android.material.bottomsheet.BottomSheetBehavior.from(activity.findViewById<View>(R.id.playerContainer)).state
+                onBottomSheetStateChanged(state)
+            }
+        }
+    }
+
+    private var vinylAnimator: android.animation.ObjectAnimator? = null
+
+    private fun updateVinylAnimation(isPlaying: Boolean) {
+        if (_binding == null) return
+        
+        if (isPlaying) {
+            if (vinylAnimator == null) {
+                vinylAnimator = android.animation.ObjectAnimator.ofFloat(binding.vinylContainer, "rotation", 0f, 360f).apply {
+                    duration = 15000 // Even slower rotation
+                    repeatCount = android.animation.ValueAnimator.INFINITE
+                    interpolator = android.view.animation.LinearInterpolator()
+                }
+                vinylAnimator?.start()
+            } else if (vinylAnimator?.isPaused == true) {
+                vinylAnimator?.resume()
+            }
+        } else {
+            vinylAnimator?.pause()
         }
     }
 

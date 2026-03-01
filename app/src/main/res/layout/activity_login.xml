@@ -18,8 +18,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginBottom="48dp"
-            android:src="@drawable/ic_launcher_foreground"
-            app:tint="@color/spotify_green" />
+            android:src="@drawable/spotifake_icon_transparent_background" />
 
         <TextView
             android:layout_width="match_parent"

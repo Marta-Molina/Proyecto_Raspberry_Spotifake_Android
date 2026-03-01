@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var bottomSheetBehavior: com.google.android.material.bottomsheet.BottomSheetBehavior<android.widget.FrameLayout>
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -96,6 +98,56 @@ class MainActivity : AppCompatActivity() {
                 loadNavAvatar(ivUserThumb, url)
             }
         }
+
+        setupBottomSheet()
+    }
+
+    private fun setupBottomSheet() {
+        bottomSheetBehavior = com.google.android.material.bottomsheet.BottomSheetBehavior.from(binding.playerContainer)
+        bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+        
+        bottomSheetBehavior.addBottomSheetCallback(object : com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: android.view.View, newState: Int) {
+                if (newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN) {
+                    binding.playerContainer.visibility = android.view.View.GONE
+                }
+                
+                // Notify fragment of state change
+                val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
+                fragment?.onBottomSheetStateChanged(newState)
+            }
+
+            override fun onSlide(bottomSheet: android.view.View, slideOffset: Float) {
+                // Transition between mini and full UI
+                val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
+                fragment?.onBottomSheetSlide(slideOffset)
+            }
+        })
+    }
+
+    fun expandPlayer(position: Int) {
+        binding.playerContainer.visibility = android.view.View.VISIBLE
+        val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
+        
+        if (fragment == null) {
+            val bundle = Bundle().apply { putInt("position", position) }
+            val newFragment = com.example.appmusica.presentation.canciones.DetalleFragment().apply {
+                arguments = bundle
+            }
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.playerContainer, newFragment)
+                .commitNow()
+        } else {
+            fragment.updatePlaylistPosition(position)
+            // Manual sync in case the state doesn't change (e.g. already expanded)
+            fragment.onBottomSheetStateChanged(com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED)
+        }
+        
+        bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    fun minimizePlayer() {
+        bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun checkNotificationPermission() {

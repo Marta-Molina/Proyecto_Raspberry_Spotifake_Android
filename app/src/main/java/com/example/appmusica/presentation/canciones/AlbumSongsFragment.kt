@@ -58,13 +58,7 @@ class AlbumSongsFragment : Fragment() {
     }
 
     private fun navegarADetalle(position: Int) {
-        val bundle = Bundle().apply {
-            putInt("position", position)
-        }
-        findNavController().navigate(
-            R.id.action_albumSongsFragment_to_detalleFragment,
-            bundle
-        )
+        (activity as? com.example.appmusica.presentation.MainActivity)?.expandPlayer(position)
     }
 
     override fun onDestroyView() {

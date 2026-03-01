@@ -12,6 +12,7 @@ import com.example.appmusica.databinding.FragmentListadoCancionesBinding
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.edit.EditCancionActivity
+import com.example.appmusica.presentation.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.fragment.findNavController
 
@@ -70,13 +71,7 @@ class ListadoCancionesFragment : Fragment() {
     }
 
     private fun openDetalle(pos: Int) {
-        val bundle = Bundle().apply {
-            putInt("position", pos)
-        }
-        findNavController().navigate(
-            com.example.appmusica.R.id.action_cancionesFragment_to_detalleFragment,
-            bundle
-        )
+        (activity as? com.example.appmusica.presentation.MainActivity)?.expandPlayer(pos)
     }
 
     override fun onDestroyView() {

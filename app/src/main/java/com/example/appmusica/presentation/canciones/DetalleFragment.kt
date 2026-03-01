@@ -14,6 +14,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
+import com.example.appmusica.presentation.MainActivity
 import com.example.appmusica.service.PlaybackService
 import android.content.ComponentName
 import com.bumptech.glide.Glide
@@ -55,27 +56,44 @@ class DetalleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val position = arguments?.getInt("position") ?: return
+        val position = arguments?.getInt("position") ?: -1
 
-        // Note: we don't call viewModel.selectCancion(position) here if we want to support 
-        // external list management, but the current logic uses it for the initial meta.
-        viewModel.selectCancion(position)
+        if (position != -1) {
+            viewModel.selectCancion(position)
+        }
 
         viewModel.selectedCancion.observe(viewLifecycleOwner) { cancion ->
             cancion?.let {
                 updateUI(it)
-                // Try setup, but only if the controller is ready
                 trySetupPlayerWithCurrentList()
             }
         }
 
         setupManualControls()
+        setupMiniPlayerControls()
+    }
+
+    fun updatePlaylistPosition(position: Int) {
+        if (position == -1) return // Just expand, don't change song
+        
+        viewModel.selectCancion(position)
+        val controller = mediaController ?: return
+        val cancionList = viewModel.canciones.value ?: return
+        if (position >= 0 && position < cancionList.size) {
+            controller.seekTo(position, 0)
+            controller.play()
+        }
     }
 
     private fun updateUI(cancion: com.example.appmusica.domain.model.Cancion) {
+        // Full player
         binding.txtNombre.text = cancion.nombre
         binding.txtArtista.text = cancion.artista
         binding.txtAlbum.text = cancion.album
+
+        // Mini player
+        binding.txtMiniNombre.text = cancion.nombre
+        binding.txtMiniArtista.text = cancion.artista
 
         val portadaPath = cancion.urlPortada ?: ""
         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
@@ -91,21 +109,17 @@ class DetalleFragment : Fragment() {
             .load(glideUrl)
             .centerCrop()
             .placeholder(R.drawable.portada_generica)
-            .error(R.drawable.portada_generica)
             .into(binding.imgCancion)
+
+        Glide.with(this)
+            .load(glideUrl)
+            .centerCrop()
+            .placeholder(R.drawable.portada_generica)
+            .into(binding.imgMiniCancion)
     }
 
     private fun setupManualControls() {
-        binding.btnPlayPause.setOnClickListener {
-            player?.let {
-                if (it.isPlaying) {
-                    it.pause()
-                } else {
-                    it.play()
-                }
-                updatePlayPauseIcon()
-            }
-        }
+        binding.btnPlayPause.setOnClickListener { togglePlayPause() }
         binding.btnPlayPause.setClickAnimation()
 
         binding.sliderProgress.addOnChangeListener { _, value, fromUser ->
@@ -135,12 +149,43 @@ class DetalleFragment : Fragment() {
             }
         }
         binding.btnRepeat.setClickAnimation()
+
+        binding.btnMinimize.setOnClickListener {
+            (activity as? MainActivity)?.minimizePlayer()
+        }
+    }
+
+    private fun setupMiniPlayerControls() {
+        binding.miniPlayerLayout.setOnClickListener {
+            // Expand on click
+            val activity = activity as? MainActivity
+            // Using a large position just to trigger expansion without reloading
+            activity?.expandPlayer(-1) 
+        }
+
+        binding.btnMiniPlayPause.setOnClickListener { togglePlayPause() }
+        binding.btnMiniPrev.setOnClickListener { player?.seekToPrevious() }
+        binding.btnMiniNext.setOnClickListener { player?.seekToNext() }
+    }
+
+    private fun togglePlayPause() {
+        player?.let {
+            if (it.isPlaying) {
+                it.pause()
+            } else {
+                it.play()
+            }
+            updatePlayPauseIcon()
+        }
     }
 
     private fun trySetupPlayerWithCurrentList() {
         val controller = mediaController ?: return
         val cancionList = viewModel.canciones.value ?: return
-        val initialPosition = arguments?.getInt("position") ?: return
+        
+        // Use the saved position from arguments or default to 0
+        var initialPosition = arguments?.getInt("position") ?: 0
+        if (initialPosition == -1) initialPosition = 0 // Safety check
 
         if (cancionList.isEmpty() || initialPosition >= cancionList.size) return
 
@@ -201,21 +246,20 @@ class DetalleFragment : Fragment() {
 
                 override fun onMediaItemTransition(mediaItem: androidx.media3.common.MediaItem?, reason: Int) {
                     super.onMediaItemTransition(mediaItem, reason)
-                    // Update UI when song changes (auto-next or manual next/prev)
                     mediaItem?.mediaMetadata?.let { metadata ->
                         binding.txtNombre.text = metadata.title
                         binding.txtArtista.text = metadata.artist
                         binding.txtAlbum.text = metadata.albumTitle
                         
+                        binding.txtMiniNombre.text = metadata.title
+                        binding.txtMiniArtista.text = metadata.artist
+                        
                         metadata.artworkUri?.let { uri ->
                             val glideUrl = GlideUrl(uri.toString(), LazyHeaders.Builder()
                                 .addHeader("ngrok-skip-browser-warning", "true")
                                 .build())
-                            Glide.with(this@DetalleFragment)
-                                .load(glideUrl)
-                                .centerCrop()
-                                .placeholder(R.drawable.portada_generica)
-                                .into(binding.imgCancion)
+                            Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().into(binding.imgCancion)
+                            Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().into(binding.imgMiniCancion)
                         }
                     }
                 }
@@ -232,6 +276,48 @@ class DetalleFragment : Fragment() {
             
             trySetupPlayerWithCurrentList()
         }, requireContext().mainExecutor)
+
+        // Initial sync with BottomSheet state
+        (activity as? MainActivity)?.let { activity ->
+            val state = com.google.android.material.bottomsheet.BottomSheetBehavior.from(activity.findViewById<View>(R.id.playerContainer)).state
+            onBottomSheetStateChanged(state)
+        }
+    }
+
+    fun onBottomSheetStateChanged(newState: Int) {
+        if (_binding == null) return
+        
+        val isExpanded = newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+        val isDragging = newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING
+        val isSettling = newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_SETTLING
+
+        if (isExpanded) {
+            binding.miniPlayerLayout.alpha = 0f
+            binding.fullPlayerLayout.alpha = 1f
+            binding.miniPlayerLayout.visibility = View.INVISIBLE
+            binding.fullPlayerLayout.visibility = View.VISIBLE
+        } else if (newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED) {
+            binding.miniPlayerLayout.alpha = 1f
+            binding.fullPlayerLayout.alpha = 0f
+            binding.miniPlayerLayout.visibility = View.VISIBLE
+            binding.fullPlayerLayout.visibility = View.INVISIBLE
+        }
+    }
+
+    fun onBottomSheetSlide(slideOffset: Float) {
+        if (_binding == null) return
+        
+        // slideOffset: 0 (collapsed) -> 1 (expanded)
+        binding.miniPlayerLayout.alpha = (1 - slideOffset * 2).coerceIn(0f, 1f)
+        binding.fullPlayerLayout.alpha = (slideOffset * 2 - 1).coerceIn(0f, 1f)
+        
+        if (slideOffset > 0.5f) {
+            binding.miniPlayerLayout.visibility = View.INVISIBLE
+            binding.fullPlayerLayout.visibility = View.VISIBLE
+        } else {
+            binding.miniPlayerLayout.visibility = View.VISIBLE
+            binding.fullPlayerLayout.visibility = View.INVISIBLE
+        }
     }
 
     private fun updateRepeatIcon() {
@@ -243,7 +329,6 @@ class DetalleFragment : Fragment() {
         }
         binding.btnRepeat.setImageResource(iconRes)
         
-        // Change tint to indicate active state
         val color = if (repeatMode == Player.REPEAT_MODE_ONE) {
             resources.getColor(R.color.spotify_green, null)
         } else {
@@ -254,7 +339,14 @@ class DetalleFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+        // DO NOT release controller here because it's persistent!
+        // But we should stop the progress runnable
         binding.root.removeCallbacks(updateProgressRunnable)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Release here as it's the final destruction
         controllerFuture?.let {
             MediaController.releaseFuture(it)
         }
@@ -270,6 +362,7 @@ class DetalleFragment : Fragment() {
             androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
         }
         binding.btnPlayPause.setImageResource(iconRes)
+        binding.btnMiniPlayPause.setImageResource(iconRes)
     }
 
     private fun updateProgress() {

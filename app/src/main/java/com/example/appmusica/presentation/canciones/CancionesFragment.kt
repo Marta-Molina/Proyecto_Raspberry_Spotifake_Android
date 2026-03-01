@@ -14,6 +14,7 @@ import com.example.appmusica.data.local.AuthManager
 import com.example.appmusica.data.local.LikedSongsManager
 import com.example.appmusica.databinding.FragmentCancionesBinding
 import com.example.appmusica.domain.model.Cancion
+import com.example.appmusica.presentation.MainActivity
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.add.AddCancionActivity
@@ -198,12 +199,6 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
     }
 
     private fun navegarADetalle(position: Int) {
-        val bundle = Bundle().apply {
-            putInt("position", position)
-        }
-        findNavController().navigate(
-            R.id.action_cancionesFragment_to_detalleFragment,
-            bundle
-        )
+        (activity as? MainActivity)?.expandPlayer(position)
     }
 }

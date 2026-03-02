@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -80,12 +81,12 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navigationView.setupWithNavController(navController)
-        binding.bottomNavigationView.setupWithNavController(navController)
 
-        // Configurar visibilidad del menú Admin
-        val adminVisible = authManager.isAdmin()
-        binding.bottomNavigationView.menu.findItem(R.id.adminFragment)?.isVisible = adminVisible
-        binding.navigationView.menu.findItem(R.id.adminFragment)?.isVisible = adminVisible
+        // Setup CurvedBottomNavigation
+        setupCurvedBottomNavigation(navController)
+        
+        // Drawer admin visibility
+        binding.navigationView.menu.findItem(R.id.adminFragment)?.isVisible = authManager.isAdmin()
 
         // Usuario en el header
         val header = binding.navigationView.getHeaderView(0)
@@ -100,6 +101,50 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupBottomSheet()
+    }
+
+    private fun setupCurvedBottomNavigation(navController: androidx.navigation.NavController) {
+        val bottomNav = binding.bottomNavigation as np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
+        
+        // Styling programmatically with properties
+        val greenColor = androidx.core.content.ContextCompat.getColor(this, R.color.spotify_green)
+        bottomNav.navBackgroundColor = greenColor
+        bottomNav.fabBackgroundColor = greenColor
+        bottomNav.unSelectedColor = android.graphics.Color.WHITE
+        bottomNav.selectedColor = android.graphics.Color.BLACK
+        
+        // Items definition (icon, avdIcon, destinationId)
+        val menuItems = mutableListOf(
+            np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
+                R.drawable.ic_nav_music,
+                R.drawable.avd_nav_music,
+                R.id.cancionesFragment
+            ),
+            np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
+                R.drawable.ic_nav_playlist,
+                R.drawable.avd_nav_playlist,
+                R.id.playlistsFragment
+            ),
+            np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
+                R.drawable.ic_nav_settings,
+                R.drawable.avd_nav_settings,
+                R.id.settingsFragment
+            )
+        )
+        
+        if (authManager.isAdmin()) {
+            menuItems.add(
+                np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
+                    R.drawable.ic_nav_admin,
+                    R.drawable.avd_nav_admin,
+                    R.id.adminFragment
+                )
+            )
+        }
+
+        // Must pass as Array, not List
+        bottomNav.setMenuItems(menuItems.toTypedArray(), 0)
+        bottomNav.setupWithNavController(navController)
     }
 
     private fun setupBottomSheet() {

@@ -11,6 +11,7 @@ dependencyResolutionManagement {
     repositories {
         google()       // Muy importante: Firebase y Hilt están aquí
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 

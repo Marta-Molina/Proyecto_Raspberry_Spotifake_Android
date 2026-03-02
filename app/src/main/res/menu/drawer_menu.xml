@@ -7,22 +7,22 @@
         <item
             android:id="@+id/cancionesFragment"
             android:title="Canciones"
-            android:icon="@android:drawable/ic_media_play" />
+            android:icon="@drawable/ic_nav_music" />
 
         <item
             android:id="@+id/playlistsFragment"
             android:title="Listas"
-            android:icon="@android:drawable/ic_menu_agenda" />
+            android:icon="@drawable/ic_nav_playlist" />
 
         <item
             android:id="@+id/settingsFragment"
             android:title="Settings"
-            android:icon="@android:drawable/ic_menu_preferences" />
+            android:icon="@drawable/ic_nav_settings" />
 
         <item
             android:id="@+id/adminFragment"
             android:title="Administración"
-            android:icon="@android:drawable/ic_menu_edit"
+            android:icon="@drawable/ic_nav_admin"
             android:visible="false" />
 
     </group>

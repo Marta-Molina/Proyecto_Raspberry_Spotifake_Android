@@ -95,4 +95,7 @@ dependencies {
     // Konfetti - confetti celebration animation
     implementation("nl.dionsegijn:konfetti-xml:2.0.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // Modern Curved Navigation (Via Maven Central)
+    implementation("np.com.susanthapa:curved_bottom_navigation:0.6.5")
 }

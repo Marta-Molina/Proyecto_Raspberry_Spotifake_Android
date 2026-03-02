@@ -35,30 +35,30 @@
                 app:srcCompat="@drawable/ic_chevron_down"
                 app:tint="@color/white" />
 
-            <!-- Vinyl Disc Container -->
+            <!-- Vinyl Disc Container (Lowered and Enlarged to Max) -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/vinylContainer"
-                android:layout_width="280dp"
-                android:layout_height="280dp"
-                android:layout_marginTop="-70dp"
+                android:layout_width="340dp"
+                android:layout_height="340dp"
+                android:layout_marginTop="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!-- The Vinyl Disc (Background / Border) -->
+                <!-- The Vinyl Disc -->
                 <View
                     android:id="@+id/viewVinylDisc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/vinyl_disc" />
 
-                <!-- Circular Song Cover (Now fills the disc!) -->
+                <!-- Circular Song Cover -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
-                    app:cardCornerRadius="140dp"
+                    app:cardCornerRadius="160dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -74,12 +74,12 @@
                         tools:src="@drawable/portada_generica" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Center Vinyl Label (Semi-transparent white circle) -->
+                <!-- Center Vinyl Label -->
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     app:cardBackgroundColor="#44FFFFFF"
-                    app:cardCornerRadius="30dp"
+                    app:cardCornerRadius="32dp"
                     app:cardElevation="2dp"
                     app:strokeWidth="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -87,10 +87,10 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- Actual Center Hole (Black) -->
+                <!-- Actual Center Hole -->
                 <View
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:background="@drawable/spotify_black_circle"
                     android:elevation="3dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -104,14 +104,37 @@
                 android:id="@+id/txtNombre"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnLike"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/vinylContainer"
                 tools:text="Froot" />
+
+            <ImageButton
+                android:id="@+id/btnLike"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="@+id/txtNombre"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/txtNombre"
+                app:srcCompat="@android:drawable/btn_star_big_off"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/txtLikesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/spotify_light_grey"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/btnLike"
+                app:layout_constraintStart_toStartOf="@+id/btnLike"
+                app:layout_constraintTop_toBottomOf="@+id/btnLike"
+                tools:text="125 likes" />
 
             <TextView
                 android:id="@+id/txtArtista"
@@ -132,6 +155,7 @@
                 android:layout_marginTop="8dp"
                 android:textColor="@color/spotify_light_grey"
                 android:textSize="14sp"
+                android:alpha="0.8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtArtista"

@@ -85,6 +85,14 @@ class MainActivity : AppCompatActivity() {
         // Setup CurvedBottomNavigation
         setupCurvedBottomNavigation(navController)
         
+        // Auto-minimize player on navigation
+        navController.addOnDestinationChangedListener { _, _, _ ->
+            if (binding.playerContainer.visibility == View.VISIBLE && 
+                bottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+            }
+        }
+        
         // Drawer admin visibility
         binding.navigationView.menu.findItem(R.id.adminFragment)?.isVisible = authManager.isAdmin()
 
@@ -101,12 +109,85 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupBottomSheet()
+
+        // Control del botón atrás del sistema
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 1. Si el reproductor está expandido, minimizarlo
+                if (binding.playerContainer.visibility == View.VISIBLE && 
+                    bottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
+                    
+                    bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+                    
+                    // Si estamos en una pantalla secundaria, volvemos atrás. 
+                    // Si estamos en la principal, solo hemos minimizado el player.
+                    if (navController.currentDestination?.id != R.id.cancionesFragment) {
+                        checkAndNavigateBack(navController)
+                    }
+                    return
+                }
+
+                // 2. Lógica de navegación general
+                checkAndNavigateBack(navController)
+            }
+        })
+    }
+
+    private fun checkAndNavigateBack(navController: androidx.navigation.NavController) {
+        val currentId = navController.currentDestination?.id ?: return
+
+        // Pantallas "Raíz" o de primer nivel
+        val topLevelDestinations = setOf(
+            R.id.cancionesFragment, 
+            R.id.playlistsFragment, 
+            R.id.settingsFragment, 
+            R.id.adminFragment
+        )
+
+        // Si estamos en una pantalla profunda (Detalles, Gestión técnica, etc.), volvemos al nivel anterior
+        if (currentId !in topLevelDestinations) {
+            navController.popBackStack()
+            return
+        }
+
+        // Si estamos en una de las pestañas principales (que no es Home), volvemos a Home
+        if (currentId != R.id.cancionesFragment) {
+            navController.navigate(R.id.cancionesFragment)
+            syncBottomNavSelection(R.id.cancionesFragment)
+            return
+        }
+
+        // Si ya estamos en Home, pedimos confirmación para salir
+        showExitConfirmation()
+    }
+
+    private fun showExitConfirmation() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Cerrar Spotifake")
+            .setMessage("¿Estás seguro de que deseas salir?")
+            .setPositiveButton("Sí") { _, _ -> finish() }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun syncBottomNavSelection(destinationId: Int) {
+        val bottomNav = binding.bottomNavigation as? np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
+        bottomNav?.let {
+            val items = it.getMenuItems()
+            val index = items.indexOfFirst { item -> item.destinationId == destinationId }
+            if (index != -1) {
+                it.setMenuItems(items, index)
+            }
+        }
     }
 
     private fun setupCurvedBottomNavigation(navController: androidx.navigation.NavController) {
         val bottomNav = binding.bottomNavigation as np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
         
-        // Styling programmatically with properties
+        // Transparencia total del fondo para el efecto flotante
+        bottomNav.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        
+        // Colores de la barra
         val greenColor = androidx.core.content.ContextCompat.getColor(this, R.color.spotify_green)
         bottomNav.navBackgroundColor = greenColor
         bottomNav.fabBackgroundColor = greenColor

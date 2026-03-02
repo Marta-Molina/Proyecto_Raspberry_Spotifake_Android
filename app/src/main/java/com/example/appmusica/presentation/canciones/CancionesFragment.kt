@@ -146,12 +146,14 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
     // ── Like logic ──────────────────────────────────────────────────────────────
 
     private fun handleLike(cancion: Cancion) {
+        val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
         val nowLiked = likedSongsManager.toggleLike(cancion.id)
+        
+        // Sync with backend and update global state via ViewModel
+        viewModel.toggleLike(cancion, isCurrentlyLiked)
+        
         if (nowLiked) {
-            viewModel.addLike(cancion)
             showLikeConfetti()
-        } else {
-            viewModel.removeLike(cancion)
         }
     }
 

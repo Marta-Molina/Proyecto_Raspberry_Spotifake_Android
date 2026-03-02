@@ -20,6 +20,9 @@ class AlbumSongsFragment : Fragment() {
     private var _binding: FragmentAlbumSongsBinding? = null
     private val binding get() = _binding!!
 
+    @javax.inject.Inject
+    lateinit var likedSongsManager: com.example.appmusica.data.local.LikedSongsManager
+
     private val viewModel: CancionesViewModel by activityViewModels()
     private lateinit var adapter: AdapterCancion
 
@@ -37,10 +40,18 @@ class AlbumSongsFragment : Fragment() {
             list = mutableListOf(),
             delete = { pos -> viewModel.deleteCancion(adapter.getCancion(pos)?.id ?: -1) },
             update = { pos -> /* no-op */ },
-            like = { pos -> viewModel.toggleLike(adapter.getCancion(pos)!!) },
+            like = { pos -> 
+                val cancion = adapter.getCancion(pos)
+                if (cancion != null) {
+                    val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
+                    likedSongsManager.toggleLike(cancion.id)
+                    viewModel.toggleLike(cancion, isCurrentlyLiked)
+                    adapter.notifyItemChanged(pos)
+                }
+            },
             addToList = { pos -> /* can add items from album to playlists if needed */ },
             onItemClick = { pos -> navegarADetalle(pos) },
-            isLiked = { _ -> false }
+            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) }
         )
 
         binding.recyclerAlbumSongs.apply {

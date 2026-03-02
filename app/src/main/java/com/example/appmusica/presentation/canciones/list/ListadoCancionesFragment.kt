@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.databinding.FragmentListadoCancionesBinding
@@ -22,7 +23,10 @@ class ListadoCancionesFragment : Fragment() {
     private var _binding: FragmentListadoCancionesBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CancionesViewModel by viewModels()
+    @javax.inject.Inject
+    lateinit var likedSongsManager: com.example.appmusica.data.local.LikedSongsManager
+
+    private val viewModel: CancionesViewModel by activityViewModels()
     private lateinit var adapter: AdapterCancion
 
     override fun onCreateView(
@@ -45,12 +49,19 @@ class ListadoCancionesFragment : Fragment() {
             },
             update = { pos -> openEdit(pos) },
             like = { pos ->
-                adapter.getCancion(pos)?.let { viewModel.toggleLike(it) }
+                val cancion = adapter.getCancion(pos)
+                if (cancion != null) {
+                    val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
+                    likedSongsManager.toggleLike(cancion.id)
+                    viewModel.toggleLike(cancion, isCurrentlyLiked)
+                    adapter.notifyItemChanged(pos)
+                }
             },
             addToList = { pos ->
                 // Por ahora no implementamos el diálogo aquí si no es necesario
             },
-            onItemClick = { pos -> openDetalle(pos) }
+            onItemClick = { pos -> openDetalle(pos) },
+            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) }
         )
 
         binding.recyclerView.layoutManager =

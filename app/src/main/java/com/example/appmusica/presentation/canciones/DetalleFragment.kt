@@ -8,6 +8,7 @@ import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -98,11 +99,52 @@ class DetalleFragment : Fragment() {
         }
     }
 
+    @javax.inject.Inject
+    lateinit var likedSongsManager: com.example.appmusica.data.local.LikedSongsManager
+
     private fun updateUI(cancion: com.example.appmusica.domain.model.Cancion) {
         // Full player
         binding.txtNombre.text = cancion.nombre
         binding.txtArtista.text = cancion.artista
         binding.txtAlbum.text = cancion.album
+
+        // Styling for interactivity
+        binding.txtArtista.paintFlags = binding.txtArtista.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+        binding.txtAlbum.paintFlags = binding.txtAlbum.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+
+        binding.txtArtista.setOnClickListener {
+            cancion.artistaId?.let { id ->
+                (activity as? MainActivity)?.minimizePlayer()
+                val bundle = Bundle().apply { putInt("artistId", id) }
+                findNavController().navigate(R.id.albumsFragment, bundle)
+            }
+        }
+
+        binding.txtAlbum.setOnClickListener {
+            cancion.albumId?.let { id ->
+                (activity as? MainActivity)?.minimizePlayer()
+                val bundle = Bundle().apply { putInt("albumId", id) }
+                findNavController().navigate(R.id.albumSongsFragment, bundle)
+            }
+        }
+
+        // Like button and counts
+        updateLikeIcon(cancion.id)
+        binding.txtLikesCount.text = "${cancion.likes} likes"
+        
+        binding.btnLike.setOnClickListener {
+            val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
+            val nowLiked = likedSongsManager.toggleLike(cancion.id)
+            
+            // Sync with backend and update global state via ViewModel
+            viewModel.toggleLike(cancion, isCurrentlyLiked)
+            
+            if (nowLiked) {
+                showLikeConfetti()
+            }
+            updateLikeIcon(cancion.id)
+            binding.btnLike.setClickAnimation()
+        }
 
         // Mini player
         binding.txtMiniNombre.text = cancion.nombre
@@ -130,6 +172,36 @@ class DetalleFragment : Fragment() {
             .centerCrop()
             .placeholder(R.drawable.portada_generica)
             .into(binding.imgMiniCancion)
+    }
+
+    private fun updateLikeIcon(cancionId: Int) {
+        val isLiked = likedSongsManager.isLiked(cancionId)
+        val icon = if (isLiked) android.R.drawable.btn_star_big_on else android.R.drawable.btn_star_big_off
+        binding.btnLike.setImageResource(icon)
+        val color = if (isLiked) resources.getColor(R.color.spotify_green, null) else android.graphics.Color.WHITE
+        binding.btnLike.setColorFilter(color)
+    }
+
+    private fun showLikeConfetti() {
+        val konfettiView = (activity as? MainActivity)?.findViewById<nl.dionsegijn.konfetti.xml.KonfettiView>(R.id.konfettiView)
+        konfettiView?.start(
+            nl.dionsegijn.konfetti.core.Party(
+                speed = 0f,
+                maxSpeed = 25f,
+                damping = 0.9f,
+                spread = 360,
+                colors = listOf(
+                    android.graphics.Color.parseColor("#1DB954"),
+                    android.graphics.Color.parseColor("#FFE137"),
+                    android.graphics.Color.parseColor("#FF5C5C")
+                ),
+                shapes = listOf(nl.dionsegijn.konfetti.core.models.Shape.Circle, nl.dionsegijn.konfetti.core.models.Shape.Square),
+                size = listOf(nl.dionsegijn.konfetti.core.models.Size.SMALL, nl.dionsegijn.konfetti.core.models.Size.LARGE),
+                timeToLive = 2000L,
+                emitter = nl.dionsegijn.konfetti.core.emitter.Emitter(duration = 150, java.util.concurrent.TimeUnit.MILLISECONDS).max(100),
+                position = nl.dionsegijn.konfetti.core.Position.Relative(0.5, 0.4)
+            )
+        )
     }
 
     private fun setupManualControls() {

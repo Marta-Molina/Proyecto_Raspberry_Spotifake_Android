@@ -19,6 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
 
     private lateinit var binding: FragmentPlaylistSongsBinding
+    @javax.inject.Inject
+    lateinit var likedSongsManager: com.example.appmusica.data.local.LikedSongsManager
+
     private val viewModel: PlaylistViewModel by viewModels()
     private val cancionesViewModel: CancionesViewModel by activityViewModels()
     private lateinit var adapter: AdapterCancion
@@ -42,7 +45,13 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
                 startActivity(intent)
             },
             like = { pos -> 
-                // Podríamos inyectar CancionesViewModel aquí también si quisiéramos Likes
+                val cancion = adapter.getCancion(pos)
+                if (cancion != null) {
+                    val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
+                    likedSongsManager.toggleLike(cancion.id)
+                    cancionesViewModel.toggleLike(cancion, isCurrentlyLiked)
+                    adapter.notifyItemChanged(pos)
+                }
             },
             addToList = { _ ->
                 // Ya estamos en una lista
@@ -58,7 +67,8 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
                     .setNegativeButton("Cancelar", null)
                     .show()
             },
-            onItemClick = { pos -> navegarADetalle(pos) }
+            onItemClick = { pos -> navegarADetalle(pos) },
+            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) }
         )
 
         binding.recyclerPlaylistSongs.apply {

@@ -163,42 +163,48 @@ class CancionesViewModel @Inject constructor(
 
     fun addLike(cancion: Cancion) {
         viewModelScope.launch {
-            // Optimistically update local UI immediately
-            val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
-            val idx = currentList.indexOfFirst { it.id == cancion.id }
-            if (idx != -1) {
-                currentList[idx] = cancion.copy(likes = cancion.likes + 1)
-                _canciones.value = currentList
-            }
-            // Call dedicated public likes endpoint (not admin-only)
+            val updatedCancion = cancion.copy(likes = cancion.likes + 1)
+            updateLocalSongState(updatedCancion)
             cancionRepository.likeCancion(cancion.id)
         }
     }
 
     fun removeLike(cancion: Cancion) {
         viewModelScope.launch {
-            // Optimistically update local UI immediately
-            val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
-            val idx = currentList.indexOfFirst { it.id == cancion.id }
-            if (idx != -1) {
-                currentList[idx] = cancion.copy(likes = maxOf(0, cancion.likes - 1))
-                _canciones.value = currentList
-            }
-            // Call dedicated public unlike endpoint
+            val updatedCancion = cancion.copy(likes = maxOf(0, cancion.likes - 1))
+            updateLocalSongState(updatedCancion)
             cancionRepository.unlikeCancion(cancion.id)
         }
     }
 
-    fun toggleLike(cancion: Cancion) {
-        viewModelScope.launch {
-            // Optimistically update local UI immediately
-            val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
-            val idx = currentList.indexOfFirst { it.id == cancion.id }
-            if (idx != -1) {
-                currentList[idx] = cancion.copy(likes = cancion.likes + 1)
-                _canciones.value = currentList
-            }
-            cancionRepository.likeCancion(cancion.id)
+    fun toggleLike(cancion: Cancion, isCurrentlyLiked: Boolean) {
+        if (isCurrentlyLiked) {
+            removeLike(cancion)
+        } else {
+            addLike(cancion)
+        }
+    }
+
+    private fun updateLocalSongState(updatedCancion: Cancion) {
+        // Update in main list
+        val currentList = _canciones.value?.toMutableList() ?: mutableListOf()
+        val idx = currentList.indexOfFirst { it.id == updatedCancion.id }
+        if (idx != -1) {
+            currentList[idx] = updatedCancion
+            _canciones.value = currentList
+        }
+
+        // Update in album songs list if active
+        val currentAlbumList = _albumSongs.value?.toMutableList() ?: mutableListOf()
+        val albumIdx = currentAlbumList.indexOfFirst { it.id == updatedCancion.id }
+        if (albumIdx != -1) {
+            currentAlbumList[albumIdx] = updatedCancion
+            _albumSongs.value = currentAlbumList
+        }
+
+        // Update selected song (Detail screen)
+        if (_selectedCancion.value?.id == updatedCancion.id) {
+            _selectedCancion.value = updatedCancion
         }
     }
 

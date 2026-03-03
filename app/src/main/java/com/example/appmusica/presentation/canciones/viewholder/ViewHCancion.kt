@@ -45,7 +45,7 @@ class ViewHCancion(
 
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
-            val baseUrl = NetworkModule.BASE_STATIC_URL.removeSuffix("/")
+            val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
             Glide.with(binding.imgCancion.context)

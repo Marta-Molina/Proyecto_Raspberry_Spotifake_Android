@@ -291,7 +291,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadNavAvatar(iv: ImageView, url: String?) {
         if (url == null) return
-        val baseUrl = NetworkModule.BASE_STATIC_URL.removeSuffix("/")
+        val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
         Glide.with(this)
             .load(baseUrl + url)
             .placeholder(android.R.drawable.ic_menu_report_image)

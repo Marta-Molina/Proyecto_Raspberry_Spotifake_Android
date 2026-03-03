@@ -156,7 +156,7 @@ class DetalleFragment : Fragment() {
         binding.txtMiniArtista.text = cancion.artista
 
         val portadaPath = cancion.urlPortada ?: ""
-        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/")
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
         val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
         Glide.with(this)
@@ -275,7 +275,7 @@ class DetalleFragment : Fragment() {
         val mediaItems = cancionList.map { song ->
             val audioUrl = song.urlAudio ?: ""
             val portadaPath = song.urlPortada ?: ""
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/")
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
             val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 

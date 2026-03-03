@@ -39,7 +39,7 @@ class ManageSongsAdapter(
         holder.tvSongName.text = song.nombre
         holder.tvSongArtist.text = song.artista
 
-        val baseUrl = NetworkModule.BASE_STATIC_URL.removeSuffix("/")
+        val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
         song.urlPortada?.let { url ->
             // Si la ruta ya es una URL completa (empieza por http), la usamos tal cual
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url

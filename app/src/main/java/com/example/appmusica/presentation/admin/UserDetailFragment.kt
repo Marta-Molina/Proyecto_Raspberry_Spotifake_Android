@@ -56,7 +56,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             tvEmail.text = it.correo
             tvRole.text = if (it.admin == 1) "Administrador" else "Usuario Estándar"
             
-            val baseUrl = NetworkModule.BASE_STATIC_URL.removeSuffix("/")
+            val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             it.urlImagen?.let { url ->
                 val fullUrl = if (url.startsWith("http")) url else baseUrl + url
                 Glide.with(this)

@@ -69,10 +69,15 @@ class DetalleFragment : Fragment() {
             viewModel.selectCancion(position)
         }
 
+        var lastCancionId: Int? = null
         viewModel.selectedCancion.observe(viewLifecycleOwner) { cancion ->
             cancion?.let {
                 updateUI(it)
-                trySetupPlayerWithCurrentList()
+                // Solo reiniciar el reproductor si la canción realmente cambió
+                if (lastCancionId != it.id) {
+                    trySetupPlayerWithCurrentList()
+                }
+                lastCancionId = it.id
             }
         }
 
@@ -268,10 +273,8 @@ class DetalleFragment : Fragment() {
     private fun trySetupPlayerWithCurrentList() {
         val controller = mediaController ?: return
         val cancionList = viewModel.canciones.value ?: return
-        
-        // Use the saved position from arguments or default to 0
-        var initialPosition = arguments?.getInt("position") ?: 0
-        if (initialPosition == -1) initialPosition = 0 // Safety check
+        val selectedCancion = viewModel.selectedCancion.value
+        val initialPosition = cancionList.indexOfFirst { it.id == selectedCancion?.id }.takeIf { it >= 0 } ?: 0
 
         if (cancionList.isEmpty() || initialPosition >= cancionList.size) return
 

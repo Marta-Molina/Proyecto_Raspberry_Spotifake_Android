@@ -99,3 +99,16 @@ dependencies {
     // Modern Curved Navigation (Via Maven Central)
     implementation("np.com.susanthapa:curved_bottom_navigation:0.6.5")
 }
+
+android {
+    // ...tu configuración existente...
+    applicationVariants.all {
+        outputs.all {
+            val output = this
+            if (output is com.android.build.gradle.internal.api.BaseVariantOutputImpl) {
+                val appName = "Spotifake"
+                output.outputFileName = "$appName-${name}.apk"
+            }
+        }
+    }
+}

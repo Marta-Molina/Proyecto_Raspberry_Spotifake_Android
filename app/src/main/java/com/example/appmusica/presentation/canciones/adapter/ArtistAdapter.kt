@@ -23,14 +23,8 @@ class ArtistAdapter(
             val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
 
             if (!fullUrl.isNullOrEmpty()) {
-                val glideUrl = com.bumptech.glide.load.model.GlideUrl(
-                    fullUrl,
-                    com.bumptech.glide.load.model.LazyHeaders.Builder()
-                        .addHeader("ngrok-skip-browser-warning", "true")
-                        .build()
-                )
                 Glide.with(binding.imgArtist.context)
-                    .load(glideUrl)
+                    .load(fullUrl)
                     .placeholder(R.drawable.placeholder)
                     .into(binding.imgArtist)
             } else {

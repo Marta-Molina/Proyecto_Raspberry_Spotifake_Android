@@ -58,12 +58,9 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             
             val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
             it.urlImagen?.let { url ->
-                val glideUrl = GlideUrl(baseUrl + url, LazyHeaders.Builder()
-                    .addHeader("ngrok-skip-browser-warning", "true")
-                    .build())
-
+                val fullUrl = if (url.startsWith("http")) url else baseUrl + url
                 Glide.with(this)
-                    .load(glideUrl)
+                    .load(fullUrl)
                     .placeholder(R.drawable.user)
                     .error(R.drawable.user)
                     .circleCrop()

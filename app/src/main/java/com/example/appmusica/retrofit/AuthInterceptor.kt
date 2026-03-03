@@ -14,7 +14,6 @@ class AuthInterceptor @Inject constructor(
                 authManager.getToken()?.let {
                     addHeader("Authorization", "Bearer $it")
                 }
-                addHeader("ngrok-skip-browser-warning", "true")
             }
             .build()
         return chain.proceed(request)

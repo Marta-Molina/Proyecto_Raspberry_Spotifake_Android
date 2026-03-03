@@ -159,21 +159,15 @@ class DetalleFragment : Fragment() {
         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
         val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
-        val glideUrl = GlideUrl(
-            fullPortadaUrl, LazyHeaders.Builder()
-                .addHeader("ngrok-skip-browser-warning", "true")
-                .build()
-        )
-
         Glide.with(this)
-            .load(glideUrl)
+            .load(fullPortadaUrl)
             .centerCrop()
             .circleCrop()
             .placeholder(R.drawable.portada_generica)
             .into(binding.imgCancion)
 
         Glide.with(this)
-            .load(glideUrl)
+            .load(fullPortadaUrl)
             .centerCrop()
             .placeholder(R.drawable.portada_generica)
             .into(binding.imgMiniCancion)

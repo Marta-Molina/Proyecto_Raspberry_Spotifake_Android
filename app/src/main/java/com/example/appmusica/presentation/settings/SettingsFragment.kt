@@ -154,12 +154,8 @@ class SettingsFragment : Fragment() {
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url
             
-            val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
-                .addHeader("ngrok-skip-browser-warning", "true")
-                .build())
-
             Glide.with(this)
-                .load(glideUrl)
+                .load(fullUrl)
                 .error(android.R.drawable.ic_menu_report_image)
                 .circleCrop()
                 .into(ivProfile)
@@ -205,12 +201,8 @@ class SettingsFragment : Fragment() {
                         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
                         val fullUrl = baseUrl + user.urlImagen
                         
-                        val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
-                            .addHeader("ngrok-skip-browser-warning", "true")
-                            .build())
-
                         Glide.with(this@SettingsFragment)
-                            .load(glideUrl)
+                            .load(fullUrl)
                             .placeholder(R.drawable.user)
                             .error(android.R.drawable.ic_menu_report_image)
                             .circleCrop()

@@ -21,7 +21,6 @@ class PlaybackService : MediaSessionService() {
         super.onCreate()
         
         val dataSourceFactory = DefaultHttpDataSource.Factory()
-            .setDefaultRequestProperties(mapOf("ngrok-skip-browser-warning" to "true"))
             
         val player = ExoPlayer.Builder(this)
             .setMediaSourceFactory(DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory))

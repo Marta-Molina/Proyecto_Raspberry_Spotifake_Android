@@ -20,20 +20,11 @@ class AlbumAdapter(
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
             val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
 
-            if (!fullUrl.isNullOrEmpty()) {
-                val glideUrl = com.bumptech.glide.load.model.GlideUrl(
-                    fullUrl,
-                    com.bumptech.glide.load.model.LazyHeaders.Builder()
-                        .addHeader("ngrok-skip-browser-warning", "true")
-                        .build()
-                )
-                Glide.with(binding.imgAlbum.context)
-                    .load(glideUrl)
-                    .placeholder(R.drawable.placeholder)
-                    .into(binding.imgAlbum)
-            } else {
-                binding.imgAlbum.setImageResource(R.drawable.placeholder)
-            }
+            Glide.with(binding.imgAlbum.context)
+                .load(fullUrl)
+                .placeholder(R.drawable.portada_generica)
+                .error(R.drawable.portada_generica) // Fallback for errors
+                .into(binding.imgAlbum)
 
             binding.root.setOnClickListener { onClick(album.id) }
         }

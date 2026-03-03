@@ -50,12 +50,8 @@ class ViewHCancion(
             val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
             val fullUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
-            val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
-                .addHeader("ngrok-skip-browser-warning", "true")
-                .build())
-
             Glide.with(binding.imgCancion.context)
-                .load(glideUrl)
+                .load(fullUrl)
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.portada_generica)

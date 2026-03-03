@@ -44,12 +44,8 @@ class ManageSongsAdapter(
             // Si la ruta ya es una URL completa (empieza por http), la usamos tal cual
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url
             
-            val glideUrl = GlideUrl(fullUrl, LazyHeaders.Builder()
-                .addHeader("ngrok-skip-browser-warning", "true")
-                .build())
-
             Glide.with(holder.itemView.context)
-                .load(glideUrl)
+                .load(fullUrl)
                 .placeholder(R.drawable.portada_generica)
                 .error(R.drawable.portada_generica)
                 .into(holder.ivSongPortada)

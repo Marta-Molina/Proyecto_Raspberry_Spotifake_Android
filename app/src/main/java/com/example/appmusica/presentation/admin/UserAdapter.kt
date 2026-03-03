@@ -47,12 +47,9 @@ class UserAdapter(
 
         val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
         user.urlImagen?.let { url ->
-            val glideUrl = GlideUrl(baseUrl + url, LazyHeaders.Builder()
-                .addHeader("ngrok-skip-browser-warning", "true")
-                .build())
-
+            val fullUrl = if (url.startsWith("http")) url else baseUrl + url
             Glide.with(holder.itemView.context)
-                .load(glideUrl)
+                .load(fullUrl)
                 .placeholder(R.drawable.user)
                 .error(R.drawable.user)
                 .circleCrop()

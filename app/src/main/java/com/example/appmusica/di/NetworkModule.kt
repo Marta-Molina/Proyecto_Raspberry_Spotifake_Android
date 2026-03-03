@@ -13,7 +13,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    const val BASE_URL = "https://graduation-charms-ethernet-anne.trycloudflare.com/api/"
+    const val BASE_API_URL = "https://graduation-charms-ethernet-anne.trycloudflare.com/api/"
+    const val BASE_STATIC_URL = "https://graduation-charms-ethernet-anne.trycloudflare.com/"
 
     @Provides
     @Singleton
@@ -37,7 +38,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: okhttp3.OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_API_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

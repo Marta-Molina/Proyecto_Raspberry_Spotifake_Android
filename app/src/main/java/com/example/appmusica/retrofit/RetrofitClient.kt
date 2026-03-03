@@ -7,7 +7,7 @@ object RetrofitClient {
 
     val api: ApiCancionesService by lazy {
         Retrofit.Builder()
-            .baseUrl(com.example.appmusica.di.NetworkModule.BASE_URL)
+            .baseUrl(com.example.appmusica.di.NetworkModule.BASE_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiCancionesService::class.java)

@@ -19,7 +19,7 @@ class ArtistAdapter(
             binding.txtArtistName.text = artista.nombre
             
             val url = artista.fotoUrl
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/")
             val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
 
             if (!fullUrl.isNullOrEmpty()) {

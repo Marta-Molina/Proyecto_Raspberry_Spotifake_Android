@@ -17,7 +17,7 @@ class AlbumAdapter(
         fun bind(album: Album) {
             binding.txtAlbumName.text = album.nombre
             val url = album.portadaUrl
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/")
             val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url
 
             Glide.with(binding.imgAlbum.context)

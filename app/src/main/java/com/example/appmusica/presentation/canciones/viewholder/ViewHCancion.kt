@@ -45,9 +45,7 @@ class ViewHCancion(
 
         // ✅ Cargar imagen solo si no es null
         cancion.urlPortada?.let { portadaPath ->
-            // Static files are served at the root level, but BASE_URL includes /api/
-            // We need to remove /api/ to get the host root.
-            val baseUrl = NetworkModule.BASE_URL.removeSuffix("/")
+            val baseUrl = NetworkModule.BASE_STATIC_URL.removeSuffix("/")
             val fullUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
 
             Glide.with(binding.imgCancion.context)

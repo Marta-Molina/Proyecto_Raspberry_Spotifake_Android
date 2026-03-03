@@ -151,7 +151,7 @@ class SettingsFragment : Fragment() {
 
         // Cargar imagen de perfil si existe
         authManager.getUrlImagen()?.let { url ->
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/")
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url
             
             Glide.with(this)
@@ -198,9 +198,9 @@ class SettingsFragment : Fragment() {
                         Toast.makeText(context, "Imagen de perfil actualizada", Toast.LENGTH_SHORT).show()
                         
                         // Cargar la imagen usando la URL devuelta por el servidor
-                        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/")
+                        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/")
                         val fullUrl = baseUrl + user.urlImagen
-                        
+
                         Glide.with(this@SettingsFragment)
                             .load(fullUrl)
                             .placeholder(R.drawable.user)

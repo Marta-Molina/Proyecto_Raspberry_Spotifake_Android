@@ -340,16 +340,23 @@ class DetalleFragment : Fragment() {
                         binding.txtNombre.text = metadata.title
                         binding.txtArtista.text = metadata.artist
                         binding.txtAlbum.text = metadata.albumTitle
-                        
+
                         binding.txtMiniNombre.text = metadata.title
                         binding.txtMiniArtista.text = metadata.artist
-                        
+
                         metadata.artworkUri?.let { uri ->
                             val glideUrl = com.bumptech.glide.load.model.GlideUrl(uri.toString(), com.bumptech.glide.load.model.LazyHeaders.Builder()
                                 .addHeader("ngrok-skip-browser-warning", "true")
                                 .build())
                             Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().circleCrop().into(binding.imgCancion)
                             Glide.with(this@DetalleFragment).load(glideUrl).centerCrop().into(binding.imgMiniCancion)
+                        }
+
+                        // Actualizar selectedCancion en el ViewModel para refrescar likes y datos
+                        val canciones = viewModel.canciones.value
+                        val nuevaCancion = canciones?.find { it.nombre == metadata.title && it.artista == metadata.artist }
+                        nuevaCancion?.let {
+                            viewModel.selectCancion(canciones.indexOf(it))
                         }
                     }
                 }

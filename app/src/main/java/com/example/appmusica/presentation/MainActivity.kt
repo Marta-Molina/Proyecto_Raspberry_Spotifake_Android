@@ -186,6 +186,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupCurvedBottomNavigation(navController: androidx.navigation.NavController) {
         val bottomNav = binding.bottomNavigation as np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
+        val themeManager = com.example.appmusica.util.ThemeManager(this)
         
         // Transparencia total del fondo para el efecto flotante
         bottomNav.setBackgroundColor(android.graphics.Color.TRANSPARENT)
@@ -194,8 +195,15 @@ class MainActivity : AppCompatActivity() {
         val greenColor = androidx.core.content.ContextCompat.getColor(this, R.color.spotify_green)
         bottomNav.navBackgroundColor = greenColor
         bottomNav.fabBackgroundColor = greenColor
-        bottomNav.unSelectedColor = android.graphics.Color.WHITE
-        bottomNav.selectedColor = android.graphics.Color.BLACK
+        
+        // Mejora de colores según el tema para evitar iconos invisibles
+        if (themeManager.getTheme() == com.example.appmusica.util.ThemeManager.THEME_LIGHT) {
+            bottomNav.unSelectedColor = android.graphics.Color.parseColor("#666666")
+            bottomNav.selectedColor = android.graphics.Color.WHITE
+        } else {
+            bottomNav.unSelectedColor = android.graphics.Color.WHITE
+            bottomNav.selectedColor = android.graphics.Color.BLACK
+        }
         
         // Items definition (icon, avdIcon, destinationId)
         val menuItems = mutableListOf(
@@ -226,8 +234,17 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        // Determinar el índice actual para evitar que el icono "salte" a Home al cambiar de tema
+        val currentIndex = when(navController.currentDestination?.id) {
+            R.id.cancionesFragment -> 0
+            R.id.playlistsFragment -> 1
+            R.id.settingsFragment -> 2
+            R.id.adminFragment -> if (authManager.isAdmin()) 3 else 0
+            else -> 0
+        }
+
         // Must pass as Array, not List
-        bottomNav.setMenuItems(menuItems.toTypedArray(), 0)
+        bottomNav.setMenuItems(menuItems.toTypedArray(), currentIndex)
         bottomNav.setupWithNavController(navController)
     }
 

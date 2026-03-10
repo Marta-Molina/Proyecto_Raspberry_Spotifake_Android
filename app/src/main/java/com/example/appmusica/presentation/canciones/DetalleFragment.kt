@@ -327,6 +327,7 @@ class DetalleFragment : Fragment() {
                         binding.root.post(updateProgressRunnable)
                     } else {
                         binding.root.removeCallbacks(updateProgressRunnable)
+                        updateProgress()
                     }
                 }
 
@@ -414,8 +415,6 @@ class DetalleFragment : Fragment() {
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    // Calculate angle relative to the pivot
-                    // Pivot is at binding.imgTonearm.x + transformPivotX, etc.
                     val parent = v.parent as View
                     val pivotX = v.left + v.pivotX
                     val pivotY = v.top + v.pivotY
@@ -424,19 +423,18 @@ class DetalleFragment : Fragment() {
                     val dy = event.rawY - (parent.top + pivotY)
                     
                     var angle = Math.toDegrees(Math.atan2(dy.toDouble(), dx.toDouble())).toFloat()
+                    angle -= 90f // Base is at top, pointing down is 90 degrees in atan2 math. We want down to be 0 degrees rotation.
                     
-                    // Adjust angle: our asset is vertical, pivot is near bottom.
-                    // -90 is pointing straight up. We want 0 to be parked (-30 in XML).
-                    angle += 90f
-                    
-                    val clampedAngle = angle.coerceIn(-30f, 45f)
+                    // Allow dragging between 0 (parked) and 40 (end of record)
+                    val clampedAngle = angle.coerceIn(0f, 40f)
                     v.rotation = clampedAngle
                     
-                    // If over vinyl (angle > 0), seek
-                    if (clampedAngle > 0) {
+                    if (clampedAngle > 10f) {
                         player?.let { p ->
-                            val progress = (clampedAngle / 45f).coerceIn(0f, 1f)
-                            p.seekTo((progress * p.duration).toLong())
+                            // Map 8f..28f to 0..1 progress
+                            val progress = ((clampedAngle - 8f) / 20f).coerceIn(0f, 1f)
+                            val seekTo = (progress * p.duration).toLong()
+                            p.seekTo(seekTo)
                         }
                     }
                     true
@@ -445,10 +443,19 @@ class DetalleFragment : Fragment() {
                     isTonearmDragging = false
                     val angle = v.rotation
                     player?.let { p ->
-                        if (angle <= 0) {
-                            if (p.isPlaying) p.pause()
+                        if (angle <= 10f) {
+                            p.pause()
+                            p.seekTo(0)
                         } else {
                             if (!p.isPlaying) p.play()
+                        }
+                    }
+                    
+                    // If pausing, immediately animate back to 0
+                    if (angle <= 10f) {
+                        ObjectAnimator.ofFloat(v, "rotation", v.rotation, 0f).apply {
+                            duration = 300
+                            start()
                         }
                     }
                     true
@@ -539,6 +546,8 @@ class DetalleFragment : Fragment() {
         binding.btnMiniPlayPause.setImageResource(iconRes)
     }
 
+    private var tonearmAnimator: ObjectAnimator? = null
+
     private fun updateProgress() {
         player?.let {
             val current = it.currentPosition
@@ -548,10 +557,25 @@ class DetalleFragment : Fragment() {
                 binding.txtCurrentTime.text = formatTime(current)
                 binding.txtTotalTime.text = formatTime(duration)
                 
-                // Update tonearm rotation if not dragging
                 if (!isTonearmDragging) {
-                    val angle = (current.toFloat() / duration.toFloat() * 45f).coerceIn(0f, 45f)
-                    binding.imgTonearm.rotation = if (it.isPlaying) angle else -30f
+                    val targetAngle = if (it.isPlaying) {
+                        // Map progress to 8 degrees (start) to 28 degrees (end)
+                        8f + (current.toFloat() / duration.toFloat() * 20f).coerceIn(0f, 20f)
+                    } else {
+                        0f // Parked vertically
+                    }
+                    
+                    // Smoothly animate if the difference is significant, else just set to avoid jitter
+                    val currentAngle = binding.imgTonearm.rotation
+                    if (Math.abs(targetAngle - currentAngle) > 2f) {
+                        tonearmAnimator?.cancel()
+                        tonearmAnimator = ObjectAnimator.ofFloat(binding.imgTonearm, "rotation", currentAngle, targetAngle).apply {
+                            this.duration = 500
+                            start()
+                        }
+                    } else {
+                        binding.imgTonearm.rotation = targetAngle
+                    }
                 }
             }
         }
@@ -565,6 +589,7 @@ class DetalleFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        tonearmAnimator?.cancel()
         _binding = null
     }
 }

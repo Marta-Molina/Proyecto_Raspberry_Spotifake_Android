@@ -1,0 +1,42 @@
+<!-- ic_tonearm_minimal.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="200dp"
+    android:viewportWidth="60"
+    android:viewportHeight="200">
+    
+    <!-- We draw the tonearm so its pivot is near the TOP right. 
+         Let's place the pivot at X=30, Y=30. It will hang downwards to Y=180.
+         When rotated around (30,30), 0 degrees means pointing straight down.
+         Rotating left (positive degrees in Android canvas) means it swings inwards left over the vinyl. -->
+
+    <!-- Center dot on base (Pivot point 30,30) -->
+    <path
+        android:fillColor="#1DB954"
+        android:pathData="M30,30 A5,5 0 1,1 30,29.9 Z" />
+
+    <!-- Base / Hinge -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M30,30 A20,20 0 1,1 30,29.9 Z" />
+
+    <!-- Counterweight (above the hinge now, e.g., Y=10) -->
+    <path
+        android:fillColor="#424242"
+        android:pathData="M20,5 L40,5 L40,20 L20,20 Z" />
+
+    <!-- Main Arm (straight down from 50 to 150) -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M27,50 L33,50 L31,150 L29,150 Z" />
+
+    <!-- Headshell (angling left towards the vinyl) -->
+    <path
+        android:fillColor="#1DB954"
+        android:pathData="M26,150 L34,150 L22,180 L14,175 Z" />
+        
+    <!-- Stylus tip -->
+    <path
+        android:fillColor="#424242"
+        android:pathData="M16,177 L10,185 L12,186 L18,179 Z" />
+</vector>

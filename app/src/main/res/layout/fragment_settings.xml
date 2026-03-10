@@ -135,14 +135,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="..."
-        android:textColor="@color/spotify_light_grey"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="16sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="24dp"
-        android:background="#282828" />
+        android:background="?attr/colorSurface" />
 
     <RelativeLayout
         android:layout_width="match_parent"

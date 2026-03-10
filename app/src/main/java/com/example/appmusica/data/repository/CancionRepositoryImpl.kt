@@ -180,4 +180,17 @@ class CancionRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun incrementReproducciones(id: Int): Boolean {
+        return try {
+            val response = api.incrementReproducciones(id)
+            if (!response.isSuccessful) {
+                Log.e("API_TEST", "Error incrementing reproductions for cancionId $id: ${response.code()}")
+            }
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Exception incrementing reproductions for cancionId $id: ${e.message}", e)
+            false
+        }
+    }
 }

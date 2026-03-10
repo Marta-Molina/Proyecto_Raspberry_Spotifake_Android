@@ -5,12 +5,13 @@ import com.google.gson.annotations.SerializedName
 data class Cancion(
     val id: Int,
     val nombre: String,
-    val artistaId: Int? = null,
-    val albumId: Int? = null,
-    val artista: String,
-    val album: String,
+    val artistasIds: List<Int>? = emptyList(),
+    val albumesIds: List<Int>? = emptyList(),
+    val artistas: List<String>? = emptyList(),
+    val albumes: List<String>? = emptyList(),
     val genero: Int,
     val likes: Int,
+    val reproducciones: Int = 0,
 
     @SerializedName("urlAudio")
     val urlAudio: String?,

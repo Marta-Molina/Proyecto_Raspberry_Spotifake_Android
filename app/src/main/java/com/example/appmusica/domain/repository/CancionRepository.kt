@@ -14,4 +14,5 @@ interface CancionRepository {
     suspend fun getArtistas(): List<com.example.appmusica.domain.model.Artista>
     suspend fun getAlbumsByArtist(artistId: Int): List<com.example.appmusica.domain.model.Album>
     suspend fun getCancionesByAlbum(albumId: Int): List<Cancion>
+    suspend fun incrementReproducciones(id: Int): Boolean
 }

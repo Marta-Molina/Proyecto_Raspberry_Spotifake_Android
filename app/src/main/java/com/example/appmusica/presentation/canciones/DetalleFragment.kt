@@ -116,18 +116,18 @@ class DetalleFragment : Fragment() {
     private fun updateUI(cancion: com.example.appmusica.domain.model.Cancion) {
         // Full player
         binding.txtNombre.text = cancion.nombre
-        binding.txtArtista.text = cancion.artista
-        binding.txtAlbum.text = cancion.album
+        binding.txtArtista.text = cancion.artistas?.joinToString(", ") ?: ""
+        binding.txtAlbum.text = cancion.albumes?.joinToString(", ") ?: ""
 
         // Styling for interactivity
         binding.txtArtista.paintFlags = binding.txtArtista.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
         binding.txtAlbum.paintFlags = binding.txtAlbum.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
 
         binding.txtArtista.setOnClickListener {
-            cancion.artistaId?.let { id ->
+            cancion.artistasIds?.firstOrNull()?.let { id ->
                 (activity as? MainActivity)?.minimizePlayer()
                 val bundle = Bundle().apply { putInt("artistId", id) }
-                findNavController().navigate(R.id.albumsFragment, bundle)
+                findNavController().navigate(R.id.artistaDetalleFragment, bundle)
             }
         }
 
@@ -159,7 +159,7 @@ class DetalleFragment : Fragment() {
 
         // Mini player
         binding.txtMiniNombre.text = cancion.nombre
-        binding.txtMiniArtista.text = cancion.artista
+        binding.txtMiniArtista.text = cancion.artistas?.joinToString(", ") ?: ""
 
         val portadaPath = cancion.urlPortada ?: ""
         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
@@ -287,8 +287,8 @@ class DetalleFragment : Fragment() {
 
             val metadata = MediaMetadata.Builder()
                 .setTitle(song.nombre)
-                .setArtist(song.artista)
-                .setAlbumTitle(song.album)
+                .setArtist(song.artistas?.joinToString(", "))
+                .setAlbumTitle(song.albumes?.joinToString(", "))
                 .setArtworkUri(android.net.Uri.parse(fullPortadaUrl))
                 .build()
 
@@ -355,9 +355,11 @@ class DetalleFragment : Fragment() {
 
                         // Actualizar selectedCancion en el ViewModel para refrescar likes y datos
                         val canciones = viewModel.canciones.value
-                        val nuevaCancion = canciones?.find { it.nombre == metadata.title && it.artista == metadata.artist }
+                        val nuevaCancion = canciones?.find { it.nombre == metadata.title && it.artistas?.joinToString(", ") == metadata.artist }
                         nuevaCancion?.let {
                             viewModel.selectCancion(canciones.indexOf(it))
+                            // Incrementar reproducciones en la API
+                            viewModel.incrementReproducciones(it.id)
                         }
                     }
                 }

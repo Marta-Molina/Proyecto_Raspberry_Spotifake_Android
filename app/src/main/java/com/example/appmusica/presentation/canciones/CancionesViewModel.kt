@@ -31,7 +31,8 @@ class CancionesViewModel @Inject constructor(
     private val getArtistasUseCase: GetArtistasUseCase,
     private val getAlbumsForArtistUseCase: GetAlbumsForArtistUseCase,
     private val getCancionesForAlbumUseCase: GetCancionesForAlbumUseCase,
-    private val cancionRepository: com.example.appmusica.domain.repository.CancionRepository
+    private val cancionRepository: com.example.appmusica.domain.repository.CancionRepository,
+    private val artistaRepository: com.example.appmusica.domain.repository.ArtistaRepository
 ) : ViewModel() {
 
     private val _canciones = MutableLiveData<List<Cancion>>()
@@ -47,6 +48,9 @@ class CancionesViewModel @Inject constructor(
     private val _albumSongs = MutableLiveData<List<Cancion>>()
     val albumSongs: LiveData<List<Cancion>> = _albumSongs
 
+    private val _currentAlbum = MutableLiveData<com.example.appmusica.domain.model.Album?>()
+    val currentAlbum: LiveData<com.example.appmusica.domain.model.Album?> = _currentAlbum
+
     // Resultado de la última operación de borrado: true=ok, false=error, null=no hay evento
     private val _deleteResult = MutableLiveData<Boolean?>(null)
     val deleteResult: LiveData<Boolean?> = _deleteResult
@@ -56,6 +60,12 @@ class CancionesViewModel @Inject constructor(
 
     private val _selectedCancion = MutableLiveData<Cancion?>()
     val selectedCancion: LiveData<Cancion?> = _selectedCancion
+
+    private val _currentArtista = MutableLiveData<com.example.appmusica.domain.model.Artista?>()
+    val currentArtista: LiveData<com.example.appmusica.domain.model.Artista?> = _currentArtista
+
+    private val _popularSongs = MutableLiveData<List<Cancion>>()
+    val popularSongs: LiveData<List<Cancion>> = _popularSongs
 
     private var fullList: List<Cancion> = emptyList()
     private var currentQuery: String? = null
@@ -94,8 +104,8 @@ class CancionesViewModel @Inject constructor(
             if (!currentQuery.isNullOrBlank()) {
                 filtered = filtered.filter { cancion ->
                     cancion.nombre.contains(currentQuery!!, ignoreCase = true) ||
-                    cancion.artista.contains(currentQuery!!, ignoreCase = true) ||
-                    cancion.album.contains(currentQuery!!, ignoreCase = true)
+                    cancion.artistas?.any { it.contains(currentQuery!!, ignoreCase = true) } == true ||
+                    cancion.albumes?.any { it.contains(currentQuery!!, ignoreCase = true) } == true
                 }
             }
 
@@ -121,7 +131,52 @@ class CancionesViewModel @Inject constructor(
      */
     fun loadCancionesForAlbum(albumId: Int) {
         viewModelScope.launch {
+            _currentAlbum.value = _albums.value?.find { it.id == albumId }
             _albumSongs.value = getCancionesForAlbumUseCase(albumId)
+        }
+    }
+
+    fun loadArtistaDetalle(artistId: Int) {
+        viewModelScope.launch {
+            // Cargar el artista directamente del repo para tener datos frescos (seguidores, likes)
+            val artista = artistaRepository.getArtistaById(artistId)
+            _currentArtista.value = artista
+
+            // Cargar canciones "populares" del artista (ordenar por reproducciones)
+            if (fullList.isEmpty()) fullList = getCancionesUseCase()
+            val artistSongs = fullList.filter { it.artistasIds?.contains(artistId) == true }
+            _popularSongs.value = artistSongs.sortedByDescending { it.reproducciones }.take(5)
+            
+            // Cargar álbumes del artista
+            _albums.value = getAlbumsForArtistUseCase(artistId)
+        }
+    }
+
+    fun followArtista(id: Int) {
+        viewModelScope.launch {
+            val success = artistaRepository.followArtista(id)
+            if (success) {
+                // Refresh artist info
+                val updated = artistaRepository.getArtistaById(id)
+                _currentArtista.value = updated
+            }
+        }
+    }
+
+    fun unfollowArtista(id: Int) {
+        viewModelScope.launch {
+            val success = artistaRepository.unfollowArtista(id)
+            if (success) {
+                // Refresh artist info
+                val updated = artistaRepository.getArtistaById(id)
+                _currentArtista.value = updated
+            }
+        }
+    }
+
+    fun incrementReproducciones(id: Int) {
+        viewModelScope.launch {
+            cancionRepository.incrementReproducciones(id)
         }
     }
 

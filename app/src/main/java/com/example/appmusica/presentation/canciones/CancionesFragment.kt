@@ -16,6 +16,7 @@ import com.example.appmusica.databinding.FragmentCancionesBinding
 import com.example.appmusica.domain.model.Cancion
 import com.example.appmusica.presentation.MainActivity
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
+import com.example.appmusica.presentation.canciones.adapter.AlbumAdapter
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.add.AddCancionActivity
 import com.example.appmusica.presentation.canciones.edit.EditCancionActivity
@@ -75,8 +76,8 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
 
         // Recycler horizontal de artistas
         artistAdapter = com.example.appmusica.presentation.canciones.adapter.ArtistAdapter(emptyList()) { artistId ->
-            val bundle = Bundle().apply { putInt("artistId", artistId) }
-            findNavController().navigate(R.id.action_cancionesFragment_to_albumsFragment, bundle)
+            val action = CancionesFragmentDirections.actionCancionesFragmentToArtistaDetalleFragment(artistId)
+            findNavController().navigate(action)
         }
 
         binding.recyclerArtistas.apply {

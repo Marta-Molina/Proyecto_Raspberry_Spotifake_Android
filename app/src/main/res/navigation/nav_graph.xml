@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_cancionesFragment_to_albumsFragment"
             app:destination="@id/albumsFragment" />
+        <action
+            android:id="@+id/action_cancionesFragment_to_artistaDetalleFragment"
+            app:destination="@id/artistaDetalleFragment" />
     </fragment>
 
     <fragment
@@ -111,6 +114,21 @@
     </fragment>
 
     <fragment
+        android:id="@+id/artistaDetalleFragment"
+        android:name="com.example.appmusica.presentation.artista.ArtistaDetalleFragment"
+        android:label="Artista">
+        <argument
+            android:name="artistId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_artistaDetalleFragment_to_albumsFragment"
+            app:destination="@id/albumsFragment" />
+        <action
+            android:id="@+id/action_artistaDetalleFragment_to_albumSongsFragment"
+            app:destination="@id/albumSongsFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/albumSongsFragment"
         android:name="com.example.appmusica.presentation.canciones.AlbumSongsFragment"
         android:label="Canciones del Álbum">
@@ -118,5 +136,4 @@
             android:name="albumId"
             app:argType="integer" />
     </fragment>
-
 </navigation>

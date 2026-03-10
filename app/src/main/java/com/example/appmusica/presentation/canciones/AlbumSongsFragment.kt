@@ -11,7 +11,10 @@ import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentAlbumSongsBinding
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
+import com.bumptech.glide.Glide
+import com.example.appmusica.di.NetworkModule
 import androidx.navigation.fragment.findNavController
+import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -65,7 +68,29 @@ class AlbumSongsFragment : Fragment() {
             viewModel.setCanciones(lista)
         }
 
+        viewModel.currentAlbum.observe(viewLifecycleOwner) { album ->
+            album?.let {
+                binding.txtAlbumTitleLarge.text = it.nombre
+                binding.txtAlbumArtistLarge.text = it.artistasNombre?.joinToString(", ") ?: ""
+
+                val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
+                val fullUrl = if (it.portadaUrl?.startsWith("http") == true) it.portadaUrl else baseUrl + it.portadaUrl
+
+                Glide.with(this)
+                    .load(fullUrl)
+                    .placeholder(R.drawable.portada_generica)
+                    .into(binding.imgAlbumCoverLarge)
+            }
+        }
+
         viewModel.loadCancionesForAlbum(albumId)
+
+        binding.btnPlayAlbum.setOnClickListener {
+            if (adapter.itemCount > 0) {
+                navegarADetalle(0)
+            }
+        }
+        binding.btnPlayAlbum.setClickAnimation()
     }
 
     private fun navegarADetalle(position: Int) {

@@ -27,8 +27,8 @@ class ViewHCancion(
     fun renderize(cancion: Cancion, isLiked: Boolean = false) {
 
         binding.txtviewNombre.text = cancion.nombre
-        binding.txtviewArtista.text = cancion.artista
-        binding.txtviewAlbum.text = cancion.album
+        binding.txtviewArtista.text = cancion.artistas?.joinToString(", ") ?: ""
+        binding.txtviewAlbum.text = cancion.albumes?.joinToString(", ") ?: ""
         binding.txtviewLikes.text = cancion.likes.toString()
 
         // Star appearance: green + filled when liked, grey when not

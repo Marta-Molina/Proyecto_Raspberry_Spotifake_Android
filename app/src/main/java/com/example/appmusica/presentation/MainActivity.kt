@@ -191,13 +191,17 @@ class MainActivity : AppCompatActivity() {
         // Transparencia total del fondo para el efecto flotante
         bottomNav.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         
-        // Colores de la barra
-        val greenColor = androidx.core.content.ContextCompat.getColor(this, R.color.spotify_green)
-        bottomNav.navBackgroundColor = greenColor
-        bottomNav.fabBackgroundColor = greenColor
+        // Colores de la barra extraídos del tema
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        val primaryColor = typedValue.data
+        
+        bottomNav.navBackgroundColor = primaryColor
+        bottomNav.fabBackgroundColor = primaryColor
         
         // Mejora de colores según el tema para evitar iconos invisibles
-        if (themeManager.getTheme() == com.example.appmusica.util.ThemeManager.THEME_LIGHT) {
+        val currentTheme = themeManager.getTheme()
+        if (currentTheme == com.example.appmusica.util.ThemeManager.THEME_LIGHT) {
             bottomNav.unSelectedColor = android.graphics.Color.parseColor("#666666")
             bottomNav.selectedColor = android.graphics.Color.WHITE
         } else {
@@ -297,6 +301,14 @@ class MainActivity : AppCompatActivity() {
 
     fun minimizePlayer() {
         bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    fun navigateToArtist(artistId: Int) {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        val bundle = Bundle().apply { putInt("artistId", artistId) }
+        navController.navigate(R.id.artistaDetalleFragment, bundle)
     }
 
     private fun checkNotificationPermission() {

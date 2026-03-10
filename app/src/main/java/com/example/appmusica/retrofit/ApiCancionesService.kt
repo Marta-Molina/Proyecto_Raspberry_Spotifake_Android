@@ -52,6 +52,18 @@ interface ApiCancionesService {
     @PATCH("canciones/{id}/likes/remove")
     suspend fun unlikeCancion(@Path("id") id: Int): Response<Cancion>
 
+    @PATCH("canciones/{id}/reproducciones")
+    suspend fun incrementReproducciones(@Path("id") id: Int): Response<Unit>
+
+    @GET("artistas/{id}")
+    suspend fun getArtistaById(@Path("id") id: Int): Response<com.example.appmusica.domain.model.Artista>
+
+    @PATCH("artistas/{id}/follow")
+    suspend fun followArtista(@Path("id") id: Int): Response<Unit>
+
+    @PATCH("artistas/{id}/unfollow")
+    suspend fun unfollowArtista(@Path("id") id: Int): Response<Unit>
+
     // --- Playlists ---
 
     @GET("listas")

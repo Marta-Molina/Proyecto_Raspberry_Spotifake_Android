@@ -49,6 +49,9 @@ class MainActivity : AppCompatActivity() {
     ) { _ -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val themeManager = com.example.appmusica.util.ThemeManager(this)
+        setTheme(themeManager.getThemeResId())
+        
         super.onCreate(savedInstanceState)
         
         checkNotificationPermission()

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/spotify_black">
+    android:background="?android:attr/windowBackground">
 
     <!-- Full Player Layout (visible when expanded) -->
     <ScrollView
@@ -100,19 +100,36 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Turntable Tonearm (Patilla) -->
+            <ImageView
+                android:id="@+id/imgTonearm"
+                android:layout_width="160dp"
+                android:layout_height="320dp"
+                android:layout_marginTop="20dp"
+                android:paddingBottom="40dp"
+                android:src="@drawable/ic_tonearm"
+                android:elevation="10dp"
+                android:transformPivotX="80dp"
+                android:transformPivotY="260dp"
+                android:rotation="-30"
+                app:layout_constraintTop_toTopOf="@id/vinylContainer"
+                app:layout_constraintStart_toEndOf="@id/vinylContainer"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="-60dp" />
+
             <TextView
                 android:id="@+id/txtNombre"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:textColor="@color/white"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/btnLike"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/vinylContainer"
-                tools:text="Froot" />
+                app:layout_constraintTop_toBottomOf="@+id/vinylContainer"
+                tools:text="Song title" />
 
             <ImageButton
                 android:id="@+id/btnLike"
@@ -129,7 +146,7 @@
                 android:id="@+id/txtLikesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/spotify_light_grey"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="@+id/btnLike"
                 app:layout_constraintStart_toStartOf="@+id/btnLike"
@@ -141,7 +158,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="@color/spotify_light_grey"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -153,7 +170,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="@color/spotify_light_grey"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp"
                 android:alpha="0.8"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -213,7 +230,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_repeat"
-                    app:tint="@color/white" />
+                    app:tint="?android:attr/textColorPrimary" />
 
                 <ImageButton
                     android:id="@+id/btnPrev"
@@ -222,7 +239,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/exo_ic_skip_previous"
-                    app:tint="@color/white" />
+                    app:tint="?android:attr/textColorPrimary" />
 
                 <ImageButton
                     android:id="@+id/btnPlayPause"
@@ -235,12 +252,12 @@
 
                 <ImageButton
                     android:id="@+id/btnNext"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/exo_ic_skip_next"
-                    app:tint="@color/white" />
+                    app:tint="?android:attr/textColorPrimary" />
             </LinearLayout>
 
             <!-- Invisible PlayerView to avoid ExoPlayer issues if needed -->

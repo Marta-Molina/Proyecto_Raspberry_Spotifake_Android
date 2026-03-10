@@ -6,4 +6,15 @@
     <color name="spotify_black">#121212</color>
     <color name="spotify_dark_grey">#181818</color>
     <color name="spotify_light_grey">#B3B3B3</color>
+    
+    <!-- Theme Specific -->
+    <color name="theme_light_background">#F5F5F5</color>
+    <color name="theme_light_surface">#FFFFFF</color>
+    <color name="theme_light_text">#121212</color>
+    
+    <!-- Premium Colors -->
+    <color name="premium_gold">#FFD700</color>
+    <color name="premium_pink">#FF69B4</color>
+    <color name="premium_blue">#1E90FF</color>
+    <color name="premium_emerald">#50C878</color>
 </resources>

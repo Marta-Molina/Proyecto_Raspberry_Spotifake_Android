@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/spotify_black"
+    android:background="?android:attr/windowBackground"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Configuración"
-        android:textColor="@color/white"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="28sp"
         android:textStyle="bold" />
 
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Perfil"
-        android:textColor="@color/white"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textColor="@color/white"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -64,13 +64,68 @@
                 android:textColor="@color/spotify_green" />
         </LinearLayout>
     </RelativeLayout>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Temas"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Standard: Light/Dark Switch -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchLightTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Tema Claro"
+        android:textColor="?android:attr/textColorPrimary" />
+    
+    <!-- Premium: Theme Carousel -->
+    <LinearLayout
+        android:id="@+id/premiumThemesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Estilos Premium"
+            android:textColor="@color/premium_gold"
+            android:textSize="14sp"
+            android:textStyle="italic" />
+            
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+            
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                
+                <View android:id="@+id/themeDark" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/spotify_black" />
+                <View android:id="@+id/themeGold" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_gold" />
+                <View android:id="@+id/themePink" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_pink" />
+                <View android:id="@+id/themeBlue" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_blue" />
+                <View android:id="@+id/themeEmerald" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_emerald" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Cuenta"
-        android:textColor="@color/white"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -98,7 +153,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Historial de Sesiones"
-            android:textColor="@color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
 

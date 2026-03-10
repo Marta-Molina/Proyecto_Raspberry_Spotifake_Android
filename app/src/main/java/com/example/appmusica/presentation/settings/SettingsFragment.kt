@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +24,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.appmusica.util.ThemeManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
@@ -109,6 +112,7 @@ class SettingsFragment : Fragment() {
         txtUsername.text = authManager.getUsername() ?: ""
         txtAccountType.text = if (authManager.isPremium()) "Usuario Premium" else "Usuario Estándar"
 
+        setupThemeSelection(view)
         setupRecyclerView()
         observeSessionHistory()
 
@@ -162,6 +166,47 @@ class SettingsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun setupThemeSelection(view: View) {
+        val themeManager = ThemeManager(requireContext())
+        val isPremium = authManager.isPremium()
+
+        val switchLight = view.findViewById<SwitchMaterial>(R.id.switchLightTheme)
+        val premiumLayout = view.findViewById<LinearLayout>(R.id.premiumThemesLayout)
+
+        // Initial state
+        switchLight.isChecked = themeManager.getTheme() == ThemeManager.THEME_LIGHT
+
+        if (isPremium) {
+            premiumLayout.visibility = View.VISIBLE
+            // Setup clicks for colored views
+            view.findViewById<View>(R.id.themeDark).setOnClickListener { changeTheme(ThemeManager.THEME_DARK) }
+            view.findViewById<View>(R.id.themeGold).setOnClickListener { changeTheme(ThemeManager.THEME_GOLD) }
+            view.findViewById<View>(R.id.themePink).setOnClickListener { changeTheme(ThemeManager.THEME_PINK) }
+            view.findViewById<View>(R.id.themeBlue).setOnClickListener { changeTheme(ThemeManager.THEME_BLUE) }
+            view.findViewById<View>(R.id.themeEmerald).setOnClickListener { changeTheme(ThemeManager.THEME_EMERALD) }
+            
+            // Add click animations to these views too
+            view.findViewById<View>(R.id.themeDark).setClickAnimation()
+            view.findViewById<View>(R.id.themeGold).setClickAnimation()
+            view.findViewById<View>(R.id.themePink).setClickAnimation()
+            view.findViewById<View>(R.id.themeBlue).setClickAnimation()
+            view.findViewById<View>(R.id.themeEmerald).setClickAnimation()
+        }
+
+        switchLight.setOnCheckedChangeListener { _, isChecked ->
+            val newTheme = if (isChecked) ThemeManager.THEME_LIGHT else ThemeManager.THEME_DARK
+            changeTheme(newTheme)
+        }
+    }
+
+    private fun changeTheme(theme: String) {
+        val themeManager = ThemeManager(requireContext())
+        if (themeManager.getTheme() != theme) {
+            themeManager.setTheme(theme)
+            activity?.recreate() // Restart activity to apply theme
+        }
     }
 
     private fun setupRecyclerView() {

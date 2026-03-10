@@ -2,8 +2,12 @@ package com.example.appmusica.presentation.canciones
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -37,6 +41,7 @@ class DetalleFragment : Fragment() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var mediaController: MediaController? = null
     private val player: Player? get() = mediaController
+    private var isTonearmDragging = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,6 +88,7 @@ class DetalleFragment : Fragment() {
 
         setupManualControls()
         setupMiniPlayerControls()
+        setupTonearm()
     }
 
     fun updatePlaylistPosition(position: Int) {
@@ -399,6 +405,59 @@ class DetalleFragment : Fragment() {
         }
     }
 
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private fun setupTonearm() {
+        binding.imgTonearm.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isTonearmDragging = true
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    // Calculate angle relative to the pivot
+                    // Pivot is at binding.imgTonearm.x + transformPivotX, etc.
+                    val parent = v.parent as View
+                    val pivotX = v.left + v.pivotX
+                    val pivotY = v.top + v.pivotY
+                    
+                    val dx = event.rawX - (parent.left + pivotX)
+                    val dy = event.rawY - (parent.top + pivotY)
+                    
+                    var angle = Math.toDegrees(Math.atan2(dy.toDouble(), dx.toDouble())).toFloat()
+                    
+                    // Adjust angle: our asset is vertical, pivot is near bottom.
+                    // -90 is pointing straight up. We want 0 to be parked (-30 in XML).
+                    angle += 90f
+                    
+                    val clampedAngle = angle.coerceIn(-30f, 45f)
+                    v.rotation = clampedAngle
+                    
+                    // If over vinyl (angle > 0), seek
+                    if (clampedAngle > 0) {
+                        player?.let { p ->
+                            val progress = (clampedAngle / 45f).coerceIn(0f, 1f)
+                            p.seekTo((progress * p.duration).toLong())
+                        }
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    isTonearmDragging = false
+                    val angle = v.rotation
+                    player?.let { p ->
+                        if (angle <= 0) {
+                            if (p.isPlaying) p.pause()
+                        } else {
+                            if (!p.isPlaying) p.play()
+                        }
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
     fun onBottomSheetStateChanged(newState: Int) {
         if (_binding == null) return
         
@@ -488,6 +547,12 @@ class DetalleFragment : Fragment() {
                 binding.sliderProgress.value = (current.toFloat() / duration.toFloat() * 100).coerceIn(0f, 100f)
                 binding.txtCurrentTime.text = formatTime(current)
                 binding.txtTotalTime.text = formatTime(duration)
+                
+                // Update tonearm rotation if not dragging
+                if (!isTonearmDragging) {
+                    val angle = (current.toFloat() / duration.toFloat() * 45f).coerceIn(0f, 45f)
+                    binding.imgTonearm.rotation = if (it.isPlaying) angle else -30f
+                }
             }
         }
     }

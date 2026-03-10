@@ -34,7 +34,7 @@
                 android:id="@+id/playerContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/spotify_black"
+                android:background="?android:attr/windowBackground"
                 android:visibility="gone"
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
                 app:behavior_peekHeight="72dp"
@@ -47,7 +47,7 @@
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/spotify_black"
+            android:background="?android:attr/windowBackground"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ToolbarPopupThemeLight"
             app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +59,7 @@
             android:id="@+id/bottomNavBase"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/spotify_black"
+            android:background="?android:attr/windowBackground"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <!-- Refined Curved Bottom Navigation (Elevated) -->

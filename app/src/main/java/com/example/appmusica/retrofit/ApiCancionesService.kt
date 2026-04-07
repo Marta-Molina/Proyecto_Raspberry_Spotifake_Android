@@ -126,4 +126,7 @@ interface ApiCancionesService {
 
     @DELETE("usuarios/{id}")
     suspend fun deleteUsuario(@Path("id") id: Long): Response<Unit>
+
+    @GET("ads/random")
+    suspend fun getRandomAd(): Response<com.example.appmusica.domain.model.Anuncio>
 }

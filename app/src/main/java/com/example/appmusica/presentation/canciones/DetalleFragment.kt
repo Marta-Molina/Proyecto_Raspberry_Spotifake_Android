@@ -41,6 +41,7 @@ class DetalleFragment : Fragment() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var mediaController: MediaController? = null
     private val player: Player? get() = mediaController
+    @Inject lateinit var authManager: com.example.appmusica.data.local.AuthManager
     private var isTonearmDragging = false
 
     override fun onCreateView(
@@ -224,9 +225,23 @@ class DetalleFragment : Fragment() {
             }
         }
 
-        binding.btnPrev.setOnClickListener { player?.seekToPrevious() }
+        binding.btnPrev.setOnClickListener {
+            if (!authManager.canSkip()) {
+                android.widget.Toast.makeText(requireContext(), "Límite de saltos alcanzado. ¡Hazte Premium!", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            authManager.incrementSkip()
+            player?.seekToPrevious() 
+        }
         binding.btnPrev.setClickAnimation()
-        binding.btnNext.setOnClickListener { player?.seekToNext() }
+        binding.btnNext.setOnClickListener {
+            if (!authManager.canSkip()) {
+                android.widget.Toast.makeText(requireContext(), "Límite de saltos alcanzado. ¡Hazte Premium!", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            authManager.incrementSkip()
+            player?.seekToNext() 
+        }
         binding.btnNext.setClickAnimation()
 
         binding.btnRepeat.setOnClickListener {

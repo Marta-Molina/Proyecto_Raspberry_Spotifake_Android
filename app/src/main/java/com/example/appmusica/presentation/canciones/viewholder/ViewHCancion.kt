@@ -31,11 +31,16 @@ class ViewHCancion(
         binding.txtviewAlbum.text = cancion.albumes?.joinToString(", ") ?: ""
         binding.txtviewLikes.text = cancion.likes.toString()
 
-        // Star appearance: green + filled when liked, grey when not
+        // Star appearance: primary color + filled when liked, grey when not
         if (isLiked) {
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_on)
+            
+            val typedValue = android.util.TypedValue()
+            itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            val primaryColor = typedValue.data
+            
             binding.btnLike.setColorFilter(
-                android.graphics.Color.parseColor("#1DB954"),
+                primaryColor,
                 android.graphics.PorterDuff.Mode.SRC_IN
             )
         } else {

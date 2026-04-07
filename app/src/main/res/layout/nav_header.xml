@@ -6,7 +6,7 @@
     android:padding="24dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/spotify_dark_grey">
+    android:background="?attr/colorSurface">
 
     <androidx.cardview.widget.CardView
         android:layout_width="80dp"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Usuario Premium"
-        android:textColor="@color/white"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="20sp"
         android:textStyle="bold" />
 

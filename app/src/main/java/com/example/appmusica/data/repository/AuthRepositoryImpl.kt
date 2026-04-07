@@ -29,10 +29,10 @@ class AuthRepositoryImpl @Inject constructor(
                     val user = response.body()!!
                     authManager.saveToken(user.token ?: "")
                     authManager.saveUserId(user.id)
-                    authManager.saveIsAdmin(user.admin == 1)
+                    authManager.saveIsAdmin(user.admin)
                     authManager.saveUrlImagen(user.urlImagen)
                     authManager.saveUsername(user.username)
-                    authManager.saveIsPremium(user.premium == 1)
+                    authManager.saveIsPremium(user.premium)
                     
                     recordSession(user.id, user.token ?: "", "Login")
                     
@@ -60,10 +60,10 @@ class AuthRepositoryImpl @Inject constructor(
                     val user = response.body()!!
                     authManager.saveToken(user.token ?: "")
                     authManager.saveUserId(user.id)
-                    authManager.saveIsAdmin(user.admin == 1)
+                    authManager.saveIsAdmin(user.admin)
                     authManager.saveUrlImagen(user.urlImagen)
                     authManager.saveUsername(user.username)
-                    authManager.saveIsPremium(user.premium == 1)
+                    authManager.saveIsPremium(user.premium)
 
                     recordSession(user.id, user.token ?: "", "Register")
 

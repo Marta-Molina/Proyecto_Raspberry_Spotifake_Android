@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupBottomSheet()
+        setupAds()
 
         // Control del botón atrás del sistema
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
@@ -247,9 +248,58 @@ class MainActivity : AppCompatActivity() {
             else -> 0
         }
 
-        // Must pass as Array, not List
-        bottomNav.setMenuItems(menuItems.toTypedArray(), currentIndex)
-        bottomNav.setupWithNavController(navController)
+        // Delay slightly or use post to ensure view is measured, preventing displacement
+        bottomNav.post {
+            bottomNav.setMenuItems(menuItems.toTypedArray(), currentIndex)
+            bottomNav.setupWithNavController(navController)
+        }
+    }
+
+    private fun setupAds() {
+        val adView = binding.adBannerInclude.root
+        if (authManager.isPremium()) {
+            adView.visibility = View.GONE
+            return
+        }
+        
+        adView.visibility = View.VISIBLE
+        adView.setOnClickListener { showPremiumInfo() }
+        
+        // Load a "random" ad or just show the default one
+        // Ideally we fetch from API: /ads/random
+        lifecycleScope.launch {
+            try {
+                val api = NetworkModule.provideApiCancionesService(NetworkModule.provideRetrofit(NetworkModule.provideOkHttpClient(this@MainActivity)))
+                val response = api.getRandomAd() // Assuming this exists in ApiService
+                if (response.isSuccessful && response.body() != null) {
+                    val ad = response.body()!!
+                    binding.adBannerInclude.tvAdTitle.text = ad.titulo
+                    binding.adBannerInclude.tvAdDescription.text = ad.descripcion
+                    
+                    val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
+                    val fullUrl = if (ad.urlImagen.startsWith("http")) ad.urlImagen else baseUrl + ad.urlImagen
+                    
+                    Glide.with(this@MainActivity)
+                        .load(fullUrl)
+                        .placeholder(R.drawable.placeholder)
+                        .into(binding.adBannerInclude.ivAdImage)
+                }
+            } catch (e: Exception) {
+                // Keep default ad content
+            }
+        }
+    }
+
+    fun showPremiumInfo() {
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle("¡Pásate a Spotifake Premium!")
+            .setMessage("Disfruta de música sin anuncios, saltos ilimitados de canciones, temas personalizados exclusivos y mucho más.")
+            .setPositiveButton("Ver Planes") { _, _ ->
+                // TODO: Redirect to payment or premium settings
+                Toast.makeText(this, "Funcionalidad de pago en desarrollo", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Más tarde", null)
+            .show()
     }
 
     private fun setupBottomSheet() {

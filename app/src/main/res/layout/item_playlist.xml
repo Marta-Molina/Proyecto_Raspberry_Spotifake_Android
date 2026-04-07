@@ -20,7 +20,7 @@
             android:id="@+id/cardIcon"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            app:cardBackgroundColor="#282828"
+            app:cardBackgroundColor="?attr/colorSurface"
             app:cardCornerRadius="4dp"
             app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"

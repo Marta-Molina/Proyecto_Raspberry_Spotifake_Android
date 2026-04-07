@@ -62,6 +62,15 @@
             android:background="?android:attr/windowBackground"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <!-- Ad Banner for Free Users -->
+        <include
+            layout="@layout/item_ad_banner"
+            android:id="@+id/adBannerInclude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
         <!-- Refined Curved Bottom Navigation (Elevated) -->
         <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
             android:id="@+id/bottomNavigation"

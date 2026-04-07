@@ -18,6 +18,8 @@ class AuthManager @Inject constructor(context: Context) {
         private const val URL_IMAGEN_KEY = "url_imagen"
         private const val USERNAME_KEY = "username"
         private const val IS_PREMIUM_KEY = "is_premium"
+        private const val SKIPS_COUNT_KEY = "skips_count"
+        const val MAX_FREE_SKIPS = 6
     }
 
     // Reactive stream so any observer can react to profile picture changes immediately
@@ -71,6 +73,16 @@ class AuthManager @Inject constructor(context: Context) {
 
     fun isPremium(): Boolean {
         return prefs.getBoolean(IS_PREMIUM_KEY, false)
+    }
+
+    fun canSkip(): Boolean {
+        if (isPremium()) return true
+        return prefs.getInt(SKIPS_COUNT_KEY, 0) < MAX_FREE_SKIPS
+    }
+
+    fun incrementSkip() {
+        val current = prefs.getInt(SKIPS_COUNT_KEY, 0)
+        prefs.edit().putInt(SKIPS_COUNT_KEY, current + 1).apply()
     }
 
     fun clear() {

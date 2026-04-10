@@ -55,10 +55,13 @@ class SettingsFragment : Fragment() {
 
     private val authViewModel: AuthViewModel by viewModels()
     private val sessionViewModel: SessionViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     private lateinit var ivProfile: ImageView
     private lateinit var rvHistory: RecyclerView
+    private lateinit var rvMascotas: RecyclerView
     private lateinit var sessionAdapter: SessionAdapter
+    private lateinit var mascotaAdapter: MascotaAdapter
     private var selectedImageUri: Uri? = null
 
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -152,6 +155,9 @@ class SettingsFragment : Fragment() {
             sessionViewModel.clearHistory()
         }
         btnDeleteHistory.setClickAnimation()
+
+        setupMascotas(view)
+        setupUtilities(view)
 
         // Cargar imagen de perfil si existe
         authManager.getUrlImagen()?.let { url ->
@@ -262,6 +268,63 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setupMascotas(view: View) {
+        val isPremium = authManager.isPremium()
+        val layout = view.findViewById<LinearLayout>(R.id.mascotaSelectionLayout)
+        if (!isPremium) {
+            layout.visibility = View.GONE
+            return
+        }
+        layout.visibility = View.VISIBLE
+        
+        rvMascotas = view.findViewById(R.id.rvMascotas)
+        mascotaAdapter = MascotaAdapter { mascota ->
+            settingsViewModel.selectMascota(mascota)
+        }
+        rvMascotas.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = mascotaAdapter
+        }
+
+        settingsViewModel.mascotas.observe(viewLifecycleOwner) {
+            mascotaAdapter.update(it)
+        }
+        settingsViewModel.loadMascotas()
+    }
+
+    private fun setupUtilities(view: View) {
+        view.findViewById<Button>(R.id.btnSleepTimer).setOnClickListener {
+            showSleepTimerDialog()
+        }
+        view.findViewById<Button>(R.id.btnManageAlarms).setOnClickListener {
+            // TODO: Navigate to Alarms management
+            Toast.makeText(context, "Gestión de alarmas (Próximamente)", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showSleepTimerDialog() {
+        val options = arrayOf("15 minutos", "30 minutos", "45 minutos", "1 hora", "Desactivar")
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Temporizador de apagado")
+            .setItems(options) { _, which ->
+                val minutes = when (which) {
+                    0 -> 15
+                    1 -> 30
+                    2 -> 45
+                    3 -> 60
+                    else -> 0
+                }
+                if (minutes > 0) {
+                    (activity as? com.example.appmusica.presentation.MainActivity)?.startSleepTimer(minutes)
+                    Toast.makeText(context, "Temporizador activado: $minutes min", Toast.LENGTH_SHORT).show()
+                } else {
+                    (activity as? com.example.appmusica.presentation.MainActivity)?.stopSleepTimer()
+                    Toast.makeText(context, "Temporizador desactivado", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .show()
     }
 
     private fun getFileFromUri(uri: Uri): File? {

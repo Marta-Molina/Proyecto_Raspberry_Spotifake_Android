@@ -20,6 +20,11 @@
             android:icon="@drawable/ic_nav_settings" />
 
         <item
+            android:id="@+id/socialFragment"
+            android:title="Comunidad"
+            android:icon="@drawable/ic_nav_social" />
+
+        <item
             android:id="@+id/adminFragment"
             android:title="Administración"
             android:icon="@drawable/ic_nav_admin"

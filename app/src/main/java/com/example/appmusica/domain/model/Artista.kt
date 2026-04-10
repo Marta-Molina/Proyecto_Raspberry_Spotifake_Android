@@ -7,6 +7,7 @@ data class Artista(
     val nombre: String,
     val seguidores: Int = 0,
     val likesTotales: Int = 0,
+    val siguiendo: Boolean = false,
 
     @SerializedName("fotoUrl")
     val fotoUrl: String?

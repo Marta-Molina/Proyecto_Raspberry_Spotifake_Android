@@ -1,13 +1,7 @@
 package com.example.appmusica.di
 
-import com.example.appmusica.data.repository.AuthRepositoryImpl
-import com.example.appmusica.data.repository.CancionRepositoryImpl
-import com.example.appmusica.data.repository.PlaylistRepositoryImpl
-import com.example.appmusica.domain.repository.AuthRepository
-import com.example.appmusica.domain.repository.CancionRepository
-import com.example.appmusica.domain.repository.PlaylistRepository
-import com.example.appmusica.domain.repository.ArtistaRepository
-import com.example.appmusica.data.repository.ArtistaRepositoryImpl
+import com.example.appmusica.data.repository.*
+import com.example.appmusica.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +35,22 @@ abstract class RepositoryModule {
     abstract fun bindArtistaRepository(
         impl: ArtistaRepositoryImpl
     ): ArtistaRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSocialRepository(
+        impl: SocialRepositoryImpl
+    ): SocialRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMascotaRepository(
+        impl: MascotaRepositoryImpl
+    ): MascotaRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAlarmaRepository(
+        impl: AlarmaRepositoryImpl
+    ): AlarmaRepository
 }

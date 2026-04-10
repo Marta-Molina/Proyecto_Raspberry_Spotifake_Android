@@ -32,7 +32,9 @@ class CancionesViewModel @Inject constructor(
     private val getAlbumsForArtistUseCase: GetAlbumsForArtistUseCase,
     private val getCancionesForAlbumUseCase: GetCancionesForAlbumUseCase,
     private val cancionRepository: com.example.appmusica.domain.repository.CancionRepository,
-    private val artistaRepository: com.example.appmusica.domain.repository.ArtistaRepository
+    private val artistaRepository: com.example.appmusica.domain.repository.ArtistaRepository,
+    private val socialRepository: com.example.appmusica.domain.repository.SocialRepository,
+    private val mascotaRepository: com.example.appmusica.domain.repository.MascotaRepository
 ) : ViewModel() {
 
     private val _canciones = MutableLiveData<List<Cancion>>()
@@ -67,6 +69,12 @@ class CancionesViewModel @Inject constructor(
     private val _popularSongs = MutableLiveData<List<Cancion>>()
     val popularSongs: LiveData<List<Cancion>> = _popularSongs
 
+    private val _lyrics = MutableLiveData<com.example.appmusica.domain.model.Letra?>()
+    val lyrics: LiveData<com.example.appmusica.domain.model.Letra?> = _lyrics
+
+    private val _activeMascota = MutableLiveData<com.example.appmusica.domain.model.Mascota?>()
+    val activeMascota: LiveData<com.example.appmusica.domain.model.Mascota?> = _activeMascota
+
     private var fullList: List<Cancion> = emptyList()
     private var currentQuery: String? = null
     private var selectedGeneroId: Int? = null
@@ -75,6 +83,7 @@ class CancionesViewModel @Inject constructor(
         loadGeneros()
         loadCanciones()
         loadArtistas()
+        loadActiveMascota()
     }
 
     private fun loadGeneros() {
@@ -284,4 +293,15 @@ class CancionesViewModel @Inject constructor(
         return if (list != null && position < list.size) list[position] else null
     }
 
+    fun loadLyrics(cancionId: Int) {
+        viewModelScope.launch {
+            _lyrics.value = socialRepository.getLyrics(cancionId)
+        }
+    }
+
+    fun loadActiveMascota() {
+        viewModelScope.launch {
+            _activeMascota.value = mascotaRepository.getActiveMascota()
+        }
+    }
 }

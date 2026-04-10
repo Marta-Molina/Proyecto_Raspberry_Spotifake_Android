@@ -1,6 +1,6 @@
 package com.example.appmusica.retrofit
 
-import com.example.appmusica.domain.model.Cancion
+import com.example.appmusica.domain.model.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -129,4 +129,63 @@ interface ApiCancionesService {
 
     @GET("ads/random")
     suspend fun getRandomAd(): Response<com.example.appmusica.domain.model.Anuncio>
+
+    // --- Lyrics ---
+    @GET("lyrics/{cancionId}")
+    suspend fun getLyrics(@Path("cancionId") cancionId: Int): Response<Letra>
+
+    // --- Reproducciones ---
+    @POST("reproducir")
+    suspend fun registerReproduccion(@Body repro: Reproduccion): Response<Reproduccion>
+
+    @GET("history")
+    suspend fun getHistory(): Response<List<Reproduccion>>
+
+    @GET("stats/{year}")
+    suspend fun getStats(@Path("year") year: Int): Response<Map<String, Any>>
+
+    // --- Social (Friend Requests) ---
+    @POST("social/friend/request/{destinatarioId}")
+    suspend fun sendFriendRequest(@Path("destinatarioId") destId: Long): Response<Unit>
+
+    @POST("social/friend/accept/{requestId}")
+    suspend fun acceptFriendRequest(@Path("requestId") requestId: Int): Response<Unit>
+
+    @GET("social/friends")
+    suspend fun getFriends(): Response<List<Long>>
+
+    // --- Mascotas ---
+    @GET("mascotas")
+    suspend fun getAllMascotas(): Response<List<Mascota>>
+
+    @GET("mascotas/user")
+    suspend fun getUserMascotas(): Response<List<Mascota>>
+
+    @POST("mascotas/buy/{mascotaId}")
+    suspend fun buyMascota(@Path("mascotaId") mascotaId: Int): Response<Unit>
+
+    @POST("mascotas/active/{mascotaId}")
+    suspend fun setActiveMascota(@Path("mascotaId") mascotaId: Int): Response<Unit>
+
+    @POST("mascotas/active")
+    suspend fun clearActiveMascota(): Response<Unit>
+
+    @GET("mascotas/active")
+    suspend fun getActiveMascota(): Response<Mascota>
+
+    // --- Alarmas ---
+    @GET("alarms")
+    suspend fun getAlarms(): Response<List<Alarma>>
+
+    @POST("alarms")
+    suspend fun createAlarm(@Body alarm: Alarma): Response<Alarma>
+
+    @PUT("alarms/{id}")
+    suspend fun updateAlarm(@Path("id") id: Int, @Body alarm: Alarma): Response<Unit>
+
+    @DELETE("alarms/{id}")
+    suspend fun deleteAlarm(@Path("id") id: Int): Response<Unit>
+
+    @GET("usuarios/search")
+    suspend fun searchUsers(@Query("q") query: String): Response<List<com.example.appmusica.data.remote.response.UserResponse>>
 }

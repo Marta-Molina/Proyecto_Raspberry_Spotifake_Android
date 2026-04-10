@@ -41,8 +41,9 @@ class DetalleFragment : Fragment() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var mediaController: MediaController? = null
     private val player: Player? get() = mediaController
-    @Inject lateinit var authManager: com.example.appmusica.data.local.AuthManager
+    @javax.inject.Inject lateinit var authManager: com.example.appmusica.data.local.AuthManager
     private var isTonearmDragging = false
+    private lateinit var lyricsAdapter: com.example.appmusica.presentation.canciones.adapter.LyricsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +80,7 @@ class DetalleFragment : Fragment() {
         viewModel.selectedCancion.observe(viewLifecycleOwner) { cancion ->
             cancion?.let {
                 updateUI(it)
+                viewModel.loadLyrics(it.id)
                 // Solo reiniciar el reproductor si la canción realmente cambió
                 if (lastCancionId != it.id) {
                     trySetupPlayerWithCurrentList()
@@ -90,6 +92,8 @@ class DetalleFragment : Fragment() {
         setupManualControls()
         setupMiniPlayerControls()
         setupTonearm()
+        setupLyrics()
+        observeLyricsAndMascota()
     }
 
     fun updatePlaylistPosition(position: Int) {
@@ -565,6 +569,58 @@ class DetalleFragment : Fragment() {
 
     private var tonearmAnimator: ObjectAnimator? = null
 
+    private fun setupLyrics() {
+        lyricsAdapter = com.example.appmusica.presentation.canciones.adapter.LyricsAdapter()
+        binding.rvLyrics.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+            adapter = lyricsAdapter
+        }
+
+        binding.btnLyrics.setOnClickListener {
+            binding.lyricsOverlay.visibility = View.VISIBLE
+            binding.lyricsOverlay.animate().alpha(1f).duration = 300
+        }
+
+        binding.btnCloseLyrics.setOnClickListener {
+            binding.lyricsOverlay.animate().alpha(0f).setDuration(300).withEndAction {
+                binding.lyricsOverlay.visibility = View.GONE
+            }.start()
+        }
+    }
+
+    private fun observeLyricsAndMascota() {
+        viewModel.lyrics.observe(viewLifecycleOwner) { letra ->
+            letra?.lineas?.let { lyricsAdapter.updateLyrics(it) }
+        }
+
+        viewModel.activeMascota.observe(viewLifecycleOwner) { mascota ->
+            if (mascota != null) {
+                binding.imgMascota.visibility = View.VISIBLE
+                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
+                val fullUrl = if (mascota.urlSprite.startsWith("http")) mascota.urlSprite else baseUrl + mascota.urlSprite
+                Glide.with(this).load(fullUrl).into(binding.imgMascota)
+                animateMascota()
+            } else {
+                binding.imgMascota.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun animateMascota() {
+        val animX = ObjectAnimator.ofFloat(binding.imgMascota, "translationX", -10f, 10f).apply {
+            duration = 1000
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+        }
+        val animY = ObjectAnimator.ofFloat(binding.imgMascota, "translationY", -5f, 5f).apply {
+            duration = 1200
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+        }
+        animX.start()
+        animY.start()
+    }
+
     private fun updateProgress() {
         player?.let {
             val current = it.currentPosition
@@ -574,6 +630,12 @@ class DetalleFragment : Fragment() {
                 binding.txtCurrentTime.text = formatTime(current)
                 binding.txtTotalTime.text = formatTime(duration)
                 
+                // Update lyrics sync
+                val index = lyricsAdapter.setActiveLine(current)
+                if (index != -1) {
+                    binding.rvLyrics.smoothScrollToPosition(index)
+                }
+
                 if (!isTonearmDragging) {
                     val targetAngle = if (it.isPlaying) {
                         // Map progress to 8 degrees (start) to 28 degrees (end)
@@ -596,6 +658,14 @@ class DetalleFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun pausePlayback() {
+        player?.pause()
+    }
+
+    fun stopPlayback() {
+        player?.stop()
     }
 
     private fun formatTime(ms: Long): String {

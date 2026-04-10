@@ -98,6 +98,20 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <!-- Mascot View (Fixed size, animated in code) -->
+                <ImageView
+                    android:id="@+id/imgMascota"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:elevation="12dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    tools:src="@drawable/portada_generica"
+                    tools:visibility="visible" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Turntable Tonearm (Patilla) - Anchored Top Right -->
@@ -256,7 +270,49 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/exo_ic_skip_next"
                     app:tint="?android:attr/textColorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/btnLyrics"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:srcCompat="@drawable/ic_lyrics"
+                    app:tint="?android:attr/textColorPrimary" />
             </LinearLayout>
+
+            <!-- Lyrics Overlay (Hidden by default) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lyricsOverlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#DD000000"
+                android:elevation="20dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/vinylContainer"
+                app:layout_constraintEnd_toEndOf="@id/vinylContainer"
+                app:layout_constraintStart_toStartOf="@id/vinylContainer"
+                app:layout_constraintTop_toTopOf="@id/vinylContainer">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLyrics"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp" />
+
+                <ImageButton
+                    android:id="@+id/btnCloseLyrics"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/spotify_black_circle"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_close"
+                    app:tint="@color/white" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Invisible PlayerView to avoid ExoPlayer issues if needed -->
             <androidx.media3.ui.PlayerView

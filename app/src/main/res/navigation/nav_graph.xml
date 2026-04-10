@@ -136,4 +136,8 @@
             android:name="albumId"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/socialFragment"
+        android:name="com.example.appmusica.presentation.social.SocialFragment"
+        android:label="Comunidad" />
 </navigation>

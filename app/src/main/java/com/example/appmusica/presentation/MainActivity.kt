@@ -397,6 +397,28 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    }
+
+    private var sleepTimer: java.util.Timer? = null
+
+    fun startSleepTimer(minutes: Int) {
+        stopSleepTimer()
+        sleepTimer = java.util.Timer()
+        sleepTimer?.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
+                    fragment?.pausePlayback()
+                }
+            }
+        }, minutes * 60 * 1000L)
+    }
+
+    fun stopSleepTimer() {
+        sleepTimer?.cancel()
+        sleepTimer = null
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment

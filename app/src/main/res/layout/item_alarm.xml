@@ -20,7 +20,7 @@
             android:textSize="32sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_top_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtSongName"
@@ -32,7 +32,7 @@
             app:layout_constraintBottom_toBottomOf="@id/txtTime"
             app:layout_constraintEnd_toStartOf="@id/switchActive"
             app:layout_constraintStart_toEndOf="@id/txtTime"
-            app:layout_top_toTopOf="@id/txtTime" />
+            app:layout_constraintTop_toTopOf="@id/txtTime" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchActive"
@@ -50,7 +50,7 @@
             android:textSize="12sp"
             android:alpha="0.7"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_top_toBottomOf="@id/txtTime" />
+            app:layout_constraintTop_toBottomOf="@id/txtTime" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

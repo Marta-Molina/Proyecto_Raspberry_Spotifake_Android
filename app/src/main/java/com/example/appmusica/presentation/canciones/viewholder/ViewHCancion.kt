@@ -19,7 +19,9 @@ class ViewHCancion(
     private val like: (Int) -> Unit,
     private val addToList: (Int) -> Unit,
     private val onRemove: ((Int) -> Unit)? = null,
-    private val onItemClick: (Int) -> Unit
+    private val onItemClick: (Int) -> Unit,
+    private val addToQueue: (Int) -> Unit,
+    private val playNext: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = ItemCancionBinding.bind(view)
@@ -110,11 +112,32 @@ class ViewHCancion(
             binding.btnRemove.visibility = View.GONE
             binding.btnAddToList.visibility = View.VISIBLE
             binding.btnAddToList.setOnClickListener {
-                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    addToList(bindingAdapterPosition)
-                }
+                showMenu(it)
             }
             binding.btnAddToList.setClickAnimation()
         }
+    }
+
+    private fun showMenu(view: View) {
+        val popup = androidx.appcompat.widget.PopupMenu(view.context, view)
+        popup.menu.add("Añadir a lista").setOnMenuItemClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                addToList(bindingAdapterPosition)
+            }
+            true
+        }
+        popup.menu.add("Reproducir siguiente").setOnMenuItemClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                playNext(bindingAdapterPosition)
+            }
+            true
+        }
+        popup.menu.add("Añadir a la cola").setOnMenuItemClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                addToQueue(bindingAdapterPosition)
+            }
+            true
+        }
+        popup.show()
     }
 }

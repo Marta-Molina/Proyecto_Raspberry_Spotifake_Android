@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var authManager: com.example.appmusica.data.local.AuthManager
 
+    @Inject
+    lateinit var mascotaRepository: com.example.appmusica.domain.repository.MascotaRepository
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var bottomSheetBehavior: com.google.android.material.bottomsheet.BottomSheetBehavior<android.widget.FrameLayout>
@@ -113,6 +116,7 @@ class MainActivity : AppCompatActivity() {
 
         setupBottomSheet()
         setupAds()
+        setupMascot()
 
         // Control del botón atrás del sistema
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
@@ -417,6 +421,69 @@ class MainActivity : AppCompatActivity() {
     fun stopSleepTimer() {
         sleepTimer?.cancel()
         sleepTimer = null
+    }
+
+    private fun setupMascot() {
+        if (!authManager.isPremium()) {
+            binding.ivMascot.visibility = View.GONE
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val activeMascot = mascotaRepository.getActiveMascota()
+                if (activeMascot != null) {
+                    binding.ivMascot.visibility = View.VISIBLE
+                    val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
+                    val fullUrl = if (activeMascot.urlImagen.startsWith("http")) activeMascot.urlImagen else baseUrl + activeMascot.urlImagen
+                    
+                    Glide.with(this@MainActivity)
+                        .load(fullUrl)
+                        .into(binding.ivMascot)
+                    
+                    startMascotAnimation()
+                } else {
+                    binding.ivMascot.visibility = View.GONE
+                }
+            } catch (e: Exception) {
+                binding.ivMascot.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun startMascotAnimation() {
+        val mascot = binding.ivMascot
+        val random = java.util.Random()
+        
+        lifecycleScope.launch {
+            while (true) {
+                // Movimiento aleatorio suavizado
+                val nextX = random.nextInt(maxOf(1, binding.root.width - mascot.width)).toFloat()
+                val nextY = random.nextInt(maxOf(1, binding.root.height - mascot.height)).toFloat()
+                
+                mascot.animate()
+                    .x(nextX)
+                    .y(nextY)
+                    .setDuration(5000)
+                    .withEndAction {
+                        // Pequeña animación de salto o escala al llegar
+                        mascot.animate()
+                            .scaleX(1.2f)
+                            .scaleY(1.2f)
+                            .setDuration(500)
+                            .withEndAction {
+                                mascot.animate()
+                                    .scaleX(1.0f)
+                                    .scaleY(1.0f)
+                                    .setDuration(500)
+                                    .start()
+                            }.start()
+                    }
+                    .start()
+                
+                kotlinx.coroutines.delay(8000) // Esperar antes del siguiente movimiento
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

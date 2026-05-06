@@ -75,6 +75,9 @@ class CancionesViewModel @Inject constructor(
     private val _activeMascota = MutableLiveData<com.example.appmusica.domain.model.Mascota?>()
     val activeMascota: LiveData<com.example.appmusica.domain.model.Mascota?> = _activeMascota
 
+    private val _playbackQueue = MutableLiveData<List<Cancion>>(emptyList())
+    val playbackQueue: LiveData<List<Cancion>> = _playbackQueue
+
     private var fullList: List<Cancion> = emptyList()
     private var currentQuery: String? = null
     private var selectedGeneroId: Int? = null
@@ -163,8 +166,10 @@ class CancionesViewModel @Inject constructor(
 
     fun followArtista(id: Int) {
         viewModelScope.launch {
-            val success = artistaRepository.followArtista(id)
+            val success = socialRepository.followArtista(id)
             if (success) {
+                // Incrementar contador local (opcional si el repo refresca, pero da feedback inmediato)
+                artistaRepository.incrementFollowers(id)
                 // Refresh artist info
                 val updated = artistaRepository.getArtistaById(id)
                 _currentArtista.value = updated
@@ -174,8 +179,10 @@ class CancionesViewModel @Inject constructor(
 
     fun unfollowArtista(id: Int) {
         viewModelScope.launch {
-            val success = artistaRepository.unfollowArtista(id)
+            val success = socialRepository.unfollowArtista(id)
             if (success) {
+                // Decrementar contador local
+                artistaRepository.decrementFollowers(id)
                 // Refresh artist info
                 val updated = artistaRepository.getArtistaById(id)
                 _currentArtista.value = updated
@@ -227,17 +234,24 @@ class CancionesViewModel @Inject constructor(
 
     fun addLike(cancion: Cancion) {
         viewModelScope.launch {
-            val updatedCancion = cancion.copy(likes = cancion.likes + 1)
-            updateLocalSongState(updatedCancion)
-            cancionRepository.likeCancion(cancion.id)
+            val success = socialRepository.likeCancion(cancion.id)
+            if (success) {
+                val updatedCancion = cancion.copy(likes = cancion.likes + 1)
+                updateLocalSongState(updatedCancion)
+                // Opcional: llamar al repo si queremos forzar el incremento manual si el social no lo hiciera
+                // cancionRepository.likeCancion(cancion.id) 
+            }
         }
     }
 
     fun removeLike(cancion: Cancion) {
         viewModelScope.launch {
-            val updatedCancion = cancion.copy(likes = maxOf(0, cancion.likes - 1))
-            updateLocalSongState(updatedCancion)
-            cancionRepository.unlikeCancion(cancion.id)
+            val success = socialRepository.unlikeCancion(cancion.id)
+            if (success) {
+                val updatedCancion = cancion.copy(likes = maxOf(0, cancion.likes - 1))
+                updateLocalSongState(updatedCancion)
+                // cancionRepository.unlikeCancion(cancion.id)
+            }
         }
     }
 
@@ -302,6 +316,33 @@ class CancionesViewModel @Inject constructor(
     fun loadActiveMascota() {
         viewModelScope.launch {
             _activeMascota.value = mascotaRepository.getActiveMascota()
+        }
+    }
+
+    // --- Playback Queue Logic ---
+    
+    fun addToQueue(cancion: Cancion) {
+        val currentQueue = _playbackQueue.value?.toMutableList() ?: mutableListOf()
+        currentQueue.add(cancion)
+        _playbackQueue.value = currentQueue
+    }
+
+    fun playNext(cancion: Cancion) {
+        val currentQueue = _playbackQueue.value?.toMutableList() ?: mutableListOf()
+        // Insertar al principio de la cola para que sea lo siguiente en sonar
+        currentQueue.add(0, cancion)
+        _playbackQueue.value = currentQueue
+    }
+
+    fun clearQueue() {
+        _playbackQueue.value = emptyList()
+    }
+
+    fun removeFromQueue(position: Int) {
+        val currentQueue = _playbackQueue.value?.toMutableList() ?: return
+        if (position >= 0 && position < currentQueue.size) {
+            currentQueue.removeAt(position)
+            _playbackQueue.value = currentQueue
         }
     }
 }

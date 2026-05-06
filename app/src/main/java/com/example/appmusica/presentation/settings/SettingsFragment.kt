@@ -299,8 +299,7 @@ class SettingsFragment : Fragment() {
             showSleepTimerDialog()
         }
         view.findViewById<Button>(R.id.btnManageAlarms).setOnClickListener {
-            // TODO: Navigate to Alarms management
-            Toast.makeText(context, "Gestión de alarmas (Próximamente)", Toast.LENGTH_SHORT).show()
+            androidx.navigation.fragment.findNavController().navigate(R.id.alarmsFragment)
         }
     }
 

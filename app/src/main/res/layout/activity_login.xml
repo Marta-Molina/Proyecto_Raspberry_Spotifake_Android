@@ -132,6 +132,18 @@
             app:strokeColor="@color/spotify_light_grey" />
 
         <TextView
+            android:id="@+id/btnToggleLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:padding="8dp"
+            android:text="¿Ya tienes cuenta? Inicia sesión"
+            android:textColor="@color/spotify_green"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/btnRecover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

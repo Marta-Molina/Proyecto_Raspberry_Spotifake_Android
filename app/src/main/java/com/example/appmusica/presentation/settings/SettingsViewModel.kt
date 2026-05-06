@@ -17,6 +17,9 @@ class SettingsViewModel @Inject constructor(
     private val alarmaRepository: AlarmaRepository
 ) : ViewModel() {
 
+    private val _alarms = MutableLiveData<List<com.example.appmusica.domain.model.Alarma>>()
+    val alarms: LiveData<List<com.example.appmusica.domain.model.Alarma>> = _alarms
+
     private val _mascotas = MutableLiveData<List<Mascota>>()
     val mascotas: LiveData<List<Mascota>> = _mascotas
 
@@ -27,6 +30,28 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             _mascotas.value = mascotaRepository.getUserMascotas()
             _activeMascota.value = mascotaRepository.getActiveMascota()
+        }
+    }
+
+    fun loadAlarms() {
+        viewModelScope.launch {
+            _alarms.value = alarmaRepository.getAlarms()
+        }
+    }
+
+    fun updateAlarm(id: Int, alarm: com.example.appmusica.domain.model.Alarma) {
+        viewModelScope.launch {
+            if (alarmaRepository.updateAlarm(id, alarm)) {
+                loadAlarms()
+            }
+        }
+    }
+
+    fun deleteAlarm(id: Int) {
+        viewModelScope.launch {
+            if (alarmaRepository.deleteAlarm(id)) {
+                loadAlarms()
+            }
         }
     }
 

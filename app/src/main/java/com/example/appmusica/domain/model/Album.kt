@@ -5,8 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class Album(
     val id: Int,
     val nombre: String,
-    val artistasNombre: List<String>? = emptyList(),
-    val artistasIds: List<Int>? = emptyList(),
+    val artistaId: Int? = null,
 
     @SerializedName("portadaUrl")
     val portadaUrl: String?

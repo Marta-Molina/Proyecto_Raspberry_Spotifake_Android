@@ -89,6 +89,10 @@ class DetalleFragment : Fragment() {
             }
         }
 
+        viewModel.playbackQueue.observe(viewLifecycleOwner) { queue ->
+            updatePlayerQueue(queue)
+        }
+
         setupManualControls()
         setupMiniPlayerControls()
         setupTonearm()
@@ -633,7 +637,10 @@ class DetalleFragment : Fragment() {
                 // Update lyrics sync
                 val index = lyricsAdapter.setActiveLine(current)
                 if (index != -1) {
+                    binding.rvLyrics.computeVerticalScrollOffset()
                     binding.rvLyrics.smoothScrollToPosition(index)
+                    // Centrar la línea activa si es posible
+                    (binding.rvLyrics.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager)?.scrollToPositionWithOffset(index, binding.rvLyrics.height / 2)
                 }
 
                 if (!isTonearmDragging) {
@@ -672,6 +679,47 @@ class DetalleFragment : Fragment() {
         val seconds = (ms / 1000) % 60
         val minutes = (ms / (1000 * 60)) % 60
         return String.format("%d:%02d", minutes, seconds)
+    }
+
+    private fun updatePlayerQueue(queue: List<com.example.appmusica.domain.model.Cancion>) {
+        val controller = mediaController ?: return
+        if (queue.isEmpty()) return
+
+        // Esta es una implementación simple: cuando cambia la cola, la "inyectamos" en el player
+        // Pero para no romper la reproducción actual, solo añadimos lo que no esté ya
+        val currentMediaItems = mutableListOf<androidx.media3.common.MediaItem>()
+        for (i in 0 until controller.mediaItemCount) {
+            currentMediaItems.add(controller.getMediaItemAt(i))
+        }
+
+        queue.forEach { song ->
+            val uri = getFullUrl(song.urlAudio ?: "")
+            if (currentMediaItems.none { it.localConfiguration?.uri?.toString() == uri }) {
+                controller.addMediaItem(createMediaItem(song))
+            }
+        }
+    }
+
+    private fun createMediaItem(song: com.example.appmusica.domain.model.Cancion): androidx.media3.common.MediaItem {
+        val fullAudioUrl = getFullUrl(song.urlAudio ?: "")
+        val fullPortadaUrl = getFullUrl(song.urlPortada ?: "")
+
+        val metadata = MediaMetadata.Builder()
+            .setTitle(song.nombre)
+            .setArtist(song.artistas?.joinToString(", "))
+            .setAlbumTitle(song.albumes?.joinToString(", "))
+            .setArtworkUri(android.net.Uri.parse(fullPortadaUrl))
+            .build()
+
+        return androidx.media3.common.MediaItem.Builder()
+            .setUri(fullAudioUrl)
+            .setMediaMetadata(metadata)
+            .build()
+    }
+
+    private fun getFullUrl(path: String): String {
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
+        return if (path.startsWith("http")) path else baseUrl + path
     }
 
     override fun onDestroyView() {

@@ -47,22 +47,37 @@ interface ApiCancionesService {
     suspend fun deleteCancion(@Path("id") id: Int): Response<Unit>
 
     @PATCH("canciones/{id}/likes")
-    suspend fun likeCancion(@Path("id") id: Int): Response<Cancion>
+    suspend fun incrementCancionLikes(@Path("id") id: Int): Response<Cancion>
 
-    @PATCH("canciones/{id}/likes/remove")
-    suspend fun unlikeCancion(@Path("id") id: Int): Response<Cancion>
+    @PATCH("canciones/{id}/unlikes")
+    suspend fun decrementCancionLikes(@Path("id") id: Int): Response<Cancion>
+
+    @POST("social/like/{cancionId}")
+    suspend fun socialLikeCancion(@Path("cancionId") id: Int): Response<Unit>
+
+    @DELETE("social/like/{cancionId}")
+    suspend fun socialUnlikeCancion(@Path("cancionId") id: Int): Response<Unit>
 
     @PATCH("canciones/{id}/reproducciones")
     suspend fun incrementReproducciones(@Path("id") id: Int): Response<Unit>
 
     @GET("artistas/{id}")
-    suspend fun getArtistaById(@Path("id") id: Int): Response<com.example.appmusica.domain.model.Artista>
+    suspend fun getArtistaById(
+        @Path("id") id: Int,
+        @Query("userId") userId: Long? = null
+    ): Response<com.example.appmusica.domain.model.Artista>
+
+    @POST("social/follow/{artistaId}")
+    suspend fun socialFollowArtista(@Path("artistaId") id: Int): Response<Unit>
+
+    @DELETE("social/follow/{artistaId}")
+    suspend fun socialUnfollowArtista(@Path("artistaId") id: Int): Response<Unit>
 
     @PATCH("artistas/{id}/follow")
-    suspend fun followArtista(@Path("id") id: Int): Response<Unit>
+    suspend fun incrementArtistaFollowers(@Path("id") id: Int): Response<Unit>
 
     @PATCH("artistas/{id}/unfollow")
-    suspend fun unfollowArtista(@Path("id") id: Int): Response<Unit>
+    suspend fun decrementArtistaFollowers(@Path("id") id: Int): Response<Unit>
 
     // --- Playlists ---
 

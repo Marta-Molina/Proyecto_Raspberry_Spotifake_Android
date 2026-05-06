@@ -15,13 +15,15 @@ class AdapterCancion(
     private val addToList: (Int) -> Unit,
     private val onRemove: ((Int) -> Unit)? = null,
     private val onItemClick: (Int) -> Unit,
-    private val isLiked: (Int) -> Boolean = { false }
+    private val isLiked: (Int) -> Boolean = { false },
+    private val addToQueue: (Int) -> Unit,
+    private val playNext: (Int) -> Unit
 ) : RecyclerView.Adapter<ViewHCancion>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHCancion {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_cancion, parent, false)
-        return ViewHCancion(view, delete, update, like, addToList, onRemove, onItemClick)
+        return ViewHCancion(view, delete, update, like, addToList, onRemove, onItemClick, addToQueue, playNext)
     }
 
     override fun onBindViewHolder(holder: ViewHCancion, position: Int) {

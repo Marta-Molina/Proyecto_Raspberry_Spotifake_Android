@@ -25,4 +25,20 @@ class SocialRepositoryImpl @Inject constructor(
         val response = api.getFriends()
         return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
     }
+
+    override suspend fun likeCancion(cancionId: Int): Boolean {
+        return api.socialLikeCancion(cancionId).isSuccessful
+    }
+
+    override suspend fun unlikeCancion(cancionId: Int): Boolean {
+        return api.socialUnlikeCancion(cancionId).isSuccessful
+    }
+
+    override suspend fun followArtista(artistaId: Int): Boolean {
+        return api.socialFollowArtista(artistaId).isSuccessful
+    }
+
+    override suspend fun unfollowArtista(artistaId: Int): Boolean {
+        return api.socialUnfollowArtista(artistaId).isSuccessful
+    }
 }

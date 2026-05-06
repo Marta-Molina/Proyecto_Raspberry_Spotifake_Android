@@ -11,6 +11,7 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
             .apply {
+                addHeader("ngrok-skip-browser-warning", "true")
                 authManager.getToken()?.let {
                     addHeader("Authorization", "Bearer $it")
                 }

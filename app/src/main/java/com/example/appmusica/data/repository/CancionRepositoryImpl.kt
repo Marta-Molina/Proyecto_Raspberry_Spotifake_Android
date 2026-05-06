@@ -61,11 +61,15 @@ class CancionRepositoryImpl @Inject constructor(
         try {
             val mediaType = "text/plain".toMediaTypeOrNull()
             val nombre = cancion.nombre.toRequestBody(mediaType)
-            val artista = cancion.artista.toRequestBody(mediaType)
-            val album = cancion.album.toRequestBody(mediaType)
-            val genero = cancion.genero.toString().toRequestBody(mediaType)
+            val artista = cancion.artista?.toRequestBody(mediaType)
+            val album = cancion.album?.toRequestBody(mediaType)
+            val genero = cancion.genero?.toString()?.toRequestBody(mediaType)
             val likes = cancion.likes.toString().toRequestBody(mediaType)
-            val artistaId = cancion.artistaId?.toString()?.toRequestBody(mediaType)
+            
+            // Usamos el primer artistaId para compatibilidad o la lista si el servicio lo soporta (el servicio actual acepta artistaId singular para parches básicos)
+            val artistaIdStr = cancion.artistaIds.firstOrNull()?.toString()
+            val artistaId = artistaIdStr?.toRequestBody(mediaType)
+            
             val albumId = cancion.albumId?.toString()?.toRequestBody(mediaType)
 
             val response = api.updateCancion(id, nombre, artista, album, genero, likes, artistaId, albumId)
@@ -79,7 +83,7 @@ class CancionRepositoryImpl @Inject constructor(
 
     override suspend fun likeCancion(id: Int): Cancion? {
         return try {
-            val response = api.likeCancion(id)
+            val response = api.incrementCancionLikes(id)
             if (response.isSuccessful) {
                 response.body()
             } else {
@@ -94,7 +98,7 @@ class CancionRepositoryImpl @Inject constructor(
 
     override suspend fun unlikeCancion(id: Int): Cancion? {
         return try {
-            val response = api.unlikeCancion(id)
+            val response = api.decrementCancionLikes(id)
             if (response.isSuccessful) {
                 response.body()
             } else {

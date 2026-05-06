@@ -8,4 +8,9 @@ interface SocialRepository {
     suspend fun sendFriendRequest(destId: Long): Boolean
     suspend fun acceptFriendRequest(reqId: Int): Boolean
     suspend fun getFriends(): List<Long>
+    
+    suspend fun likeCancion(cancionId: Int): Boolean
+    suspend fun unlikeCancion(cancionId: Int): Boolean
+    suspend fun followArtista(artistaId: Int): Boolean
+    suspend fun unfollowArtista(artistaId: Int): Boolean
 }

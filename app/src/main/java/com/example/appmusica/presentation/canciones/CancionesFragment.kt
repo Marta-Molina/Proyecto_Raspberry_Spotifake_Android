@@ -66,7 +66,9 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
                 mostrarDialogoListas(viewModel.getCancion(pos)?.id ?: -1)
             },
             onItemClick = { pos -> navegarADetalle(pos) },
-            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) }
+            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) },
+            addToQueue = { pos -> viewModel.addToQueue(viewModel.getCancion(pos) ?: return@AdapterCancion) },
+            playNext = { pos -> viewModel.playNext(viewModel.getCancion(pos) ?: return@AdapterCancion) }
         )
 
         binding.recyclerCanciones.apply {

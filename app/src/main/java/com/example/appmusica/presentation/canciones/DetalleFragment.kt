@@ -671,22 +671,24 @@ class DetalleFragment : Fragment() {
                 }
 
                 if (!isTonearmDragging) {
-                    val targetAngle = if (it.isPlaying) {
+                    val isPlaying = it.isPlaying
+                    val targetAngle = if (isPlaying) {
                         // Map progress to 8 degrees (start) to 28 degrees (end)
                         8f + (current.toFloat() / duration.toFloat() * 20f).coerceIn(0f, 20f)
                     } else {
                         0f // Parked vertically
                     }
                     
-                    // Smoothly animate if the difference is significant, else just set to avoid jitter
                     val currentAngle = binding.imgTonearm.rotation
-                    if (Math.abs(targetAngle - currentAngle) > 2f) {
+                    // Si se acaba de pausar o el cambio es grande, animamos suavemente
+                    if (!isPlaying && currentAngle > 2f) {
                         tonearmAnimator?.cancel()
-                        tonearmAnimator = ObjectAnimator.ofFloat(binding.imgTonearm, "rotation", currentAngle, targetAngle).apply {
-                            this.duration = 500
+                        tonearmAnimator = ObjectAnimator.ofFloat(binding.imgTonearm, "rotation", currentAngle, 0f).apply {
+                            this.duration = 1000 // Slow return when pausing
                             start()
                         }
-                    } else {
+                    } else if (isPlaying) {
+                        // Durante la reproducción, seguimos el progreso
                         binding.imgTonearm.rotation = targetAngle
                     }
                 }

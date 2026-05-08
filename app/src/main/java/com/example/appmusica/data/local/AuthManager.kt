@@ -2,13 +2,14 @@ package com.example.appmusica.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthManager @Inject constructor(context: Context) {
+class AuthManager @Inject constructor(@ApplicationContext context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
     companion object {

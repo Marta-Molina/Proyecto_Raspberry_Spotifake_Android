@@ -2,6 +2,7 @@ package com.example.appmusica.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.example.appmusica.domain.model.Cancion
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -9,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class QueueManager @Inject constructor(context: Context) {
+class QueueManager @Inject constructor(@ApplicationContext context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("queue_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 

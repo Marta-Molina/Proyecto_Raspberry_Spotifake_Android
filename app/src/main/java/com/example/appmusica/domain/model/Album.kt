@@ -8,5 +8,8 @@ data class Album(
     val artistaId: Int? = null,
 
     @SerializedName("portadaUrl")
-    val portadaUrl: String?
+    val portadaUrl: String?,
+
+    @SerializedName("fechaLanzamiento")
+    val fechaLanzamiento: String? = null
 )

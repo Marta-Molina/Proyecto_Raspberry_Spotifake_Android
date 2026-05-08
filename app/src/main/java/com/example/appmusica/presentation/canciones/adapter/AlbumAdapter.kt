@@ -16,6 +16,7 @@ class AlbumAdapter(
     inner class AlbumVH(val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(album: Album) {
             binding.txtAlbumName.text = album.nombre
+            binding.txtAlbumYear.text = album.fechaLanzamiento ?: "Album"
             val url = album.portadaUrl
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullUrl = if (url?.startsWith("/") == true) "$baseUrl$url" else url

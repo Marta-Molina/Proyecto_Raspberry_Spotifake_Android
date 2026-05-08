@@ -314,10 +314,10 @@ class SettingsFragment : Fragment() {
             showSleepTimerDialog()
         }
         view.findViewById<Button>(R.id.btnManageAlarms).setOnClickListener {
-            androidx.navigation.fragment.findNavController().navigate(R.id.alarmsFragment)
+            findNavController().navigate(R.id.alarmsFragment)
         }
         view.findViewById<Button>(R.id.btnResumenAnual).setOnClickListener {
-            androidx.navigation.fragment.findNavController().navigate(R.id.resumenAnualFragment)
+            findNavController().navigate(R.id.resumenAnualFragment)
         }
     }
 

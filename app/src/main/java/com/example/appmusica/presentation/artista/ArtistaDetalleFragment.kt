@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.R
 import com.bumptech.glide.Glide
-import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentArtistaDetalleBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion

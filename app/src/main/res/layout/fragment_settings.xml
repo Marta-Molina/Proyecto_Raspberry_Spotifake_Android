@@ -247,13 +247,30 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btnLogout"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginTop="16dp"
-        android:text="Cerrar sesión"
-        android:textColor="#FF4444" />
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/btnChangeAccount"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cambiar cuenta"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <Button
+            android:id="@+id/btnLogout"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cerrar sesión"
+            android:textColor="#FF4444" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -107,6 +107,7 @@ class SettingsFragment : Fragment() {
         rvHistory = view.findViewById(R.id.rvHistory)
         val btnChangeProfile = view.findViewById<Button>(R.id.btnChangeProfile)
         val btnLogout = view.findViewById<Button>(R.id.btnLogout)
+        val btnChangeAccount = view.findViewById<Button>(R.id.btnChangeAccount)
         val btnDeleteHistory = view.findViewById<TextView>(R.id.btnDeleteHistory)
         val txtUsername = view.findViewById<TextView>(R.id.txtSettingsUsername)
         val txtAccountType = view.findViewById<TextView>(R.id.txtAccountType)
@@ -150,6 +151,15 @@ class SettingsFragment : Fragment() {
             startActivity(Intent(requireContext(), com.example.appmusica.presentation.login.LoginActivity::class.java))
         }
         btnLogout.setClickAnimation()
+
+        btnChangeAccount.setOnClickListener {
+            // El comportamiento de cambiar cuenta es similar al logout, 
+            // pero podríamos añadir un flag o simplemente ir al login
+            authViewModel.logout()
+            activity?.finish()
+            startActivity(Intent(requireContext(), com.example.appmusica.presentation.login.LoginActivity::class.java))
+        }
+        btnChangeAccount.setClickAnimation()
 
         btnDeleteHistory.setOnClickListener {
             sessionViewModel.clearHistory()

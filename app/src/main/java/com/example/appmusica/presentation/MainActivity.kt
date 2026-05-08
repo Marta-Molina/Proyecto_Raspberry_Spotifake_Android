@@ -403,8 +403,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    }
-
     private var sleepTimer: java.util.Timer? = null
 
     fun startSleepTimer(minutes: Int) {

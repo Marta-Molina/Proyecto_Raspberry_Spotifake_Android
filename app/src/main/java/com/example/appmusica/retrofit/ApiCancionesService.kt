@@ -40,7 +40,9 @@ interface ApiCancionesService {
         @Part("genero") genero: okhttp3.RequestBody? = null,
         @Part("likes") likes: okhttp3.RequestBody? = null,
         @Part("artistaId") artistaId: okhttp3.RequestBody? = null,
-        @Part("albumId") albumId: okhttp3.RequestBody? = null
+        @Part("albumId") albumId: okhttp3.RequestBody? = null,
+        @Part("artistaIds") artistaIds: okhttp3.RequestBody? = null,
+        @Part("generosIds") generosIds: okhttp3.RequestBody? = null
     ): Response<Cancion>
 
     @DELETE("canciones/{id}")
@@ -61,11 +63,51 @@ interface ApiCancionesService {
     @PATCH("canciones/{id}/reproducciones")
     suspend fun incrementReproducciones(@Path("id") id: Int): Response<Unit>
 
-    @GET("artistas/{id}")
-    suspend fun getArtistaById(
-        @Path("id") id: Int,
-        @Query("userId") userId: Long? = null
+    @GET("albums")
+    suspend fun getAlbums(
+        @Query("nombre") nombre: String? = null
+    ): Response<List<com.example.appmusica.domain.model.Album>>
+
+    @GET("albums/{id}")
+    suspend fun getAlbumById(@Path("id") id: Int): Response<com.example.appmusica.domain.model.Album>
+
+    @POST("artistas")
+    @Multipart
+    suspend fun createArtista(
+        @Part("nombre") nombre: okhttp3.RequestBody,
+        @Part foto: okhttp3.MultipartBody.Part? = null
     ): Response<com.example.appmusica.domain.model.Artista>
+
+    @PATCH("artistas/{id}")
+    @Multipart
+    suspend fun updateArtista(
+        @Path("id") id: Int,
+        @Part("nombre") nombre: okhttp3.RequestBody? = null,
+        @Part foto: okhttp3.MultipartBody.Part? = null
+    ): Response<com.example.appmusica.domain.model.Artista>
+
+    @DELETE("artistas/{id}")
+    suspend fun deleteArtista(@Path("id") id: Int): Response<Unit>
+
+    @POST("artistas/{id}/albums")
+    @Multipart
+    suspend fun createAlbum(
+        @Path("id") artistaId: Int,
+        @Part("nombre") nombre: okhttp3.RequestBody,
+        @Part portada: okhttp3.MultipartBody.Part? = null
+    ): Response<com.example.appmusica.domain.model.Album>
+
+    @PATCH("albums/{id}")
+    @Multipart
+    suspend fun updateAlbum(
+        @Path("id") id: Int,
+        @Part("nombre") nombre: okhttp3.RequestBody? = null,
+        @Part("artistaId") artistaId: okhttp3.RequestBody? = null,
+        @Part portada: okhttp3.MultipartBody.Part? = null
+    ): Response<com.example.appmusica.domain.model.Album>
+
+    @DELETE("albums/{id}")
+    suspend fun deleteAlbum(@Path("id") id: Int): Response<Unit>
 
     @POST("social/follow/{artistaId}")
     suspend fun socialFollowArtista(@Path("artistaId") id: Int): Response<Unit>
@@ -157,7 +199,7 @@ interface ApiCancionesService {
     suspend fun getHistory(): Response<List<Reproduccion>>
 
     @GET("stats/{year}")
-    suspend fun getStats(@Path("year") year: Int): Response<Map<String, Any>>
+    suspend fun getStats(@Path("year") year: Int): Response<ResumenAnual>
 
     // --- Social (Friend Requests) ---
     @POST("social/friend/request/{destinatarioId}")
@@ -201,6 +243,33 @@ interface ApiCancionesService {
     @DELETE("alarms/{id}")
     suspend fun deleteAlarm(@Path("id") id: Int): Response<Unit>
 
+    @GET("usuarios/correo/{correo}")
+    suspend fun getUsuarioByCorreo(@Path("correo") correo: String): Response<com.example.appmusica.data.remote.response.UserResponse>
+
+    @GET("admin/usuarios-listas")
+    suspend fun getUsuariosConListas(): Response<List<Map<String, Any>>>
+
     @GET("usuarios/search")
     suspend fun searchUsers(@Query("q") query: String): Response<List<com.example.appmusica.data.remote.response.UserResponse>>
+
+    // --- Files (Admin) ---
+    @GET("qr")
+    suspend fun getQRFiles(): Response<Map<String, List<String>>>
+
+    @POST("qr")
+    @Multipart
+    suspend fun uploadQR(@Part qr: okhttp3.MultipartBody.Part): Response<Map<String, String>>
+
+    @DELETE("qr/{nombre}")
+    suspend fun deleteQR(@Path("nombre") nombre: String): Response<Map<String, String>>
+
+    @GET("apk")
+    suspend fun getAPKFiles(): Response<Map<String, List<String>>>
+
+    @POST("apk")
+    @Multipart
+    suspend fun uploadAPK(@Part apk: okhttp3.MultipartBody.Part): Response<Map<String, String>>
+
+    @DELETE("apk/{nombre}")
+    suspend fun deleteAPK(@Path("nombre") nombre: String): Response<Map<String, String>>
 }

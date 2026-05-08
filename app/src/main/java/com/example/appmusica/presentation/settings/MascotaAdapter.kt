@@ -41,6 +41,10 @@ class MascotaAdapter(
             
             // Highlight if active
             binding.imgActiveMark.visibility = if (mascota.esActiva) View.VISIBLE else View.GONE
+            
+            // Show lock if not premiumDefault (assuming non-premium users can't use them)
+            // or if we have more complex logic for esComprada later
+            binding.imgLockMascota.visibility = if (!mascota.premiumDefault) View.VISIBLE else View.GONE
         }
     }
 }

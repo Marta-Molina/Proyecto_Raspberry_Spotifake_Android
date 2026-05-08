@@ -279,6 +279,15 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_lyrics"
                     app:tint="?android:attr/textColorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/btnQueue"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:srcCompat="@drawable/ic_queue"
+                    app:tint="?android:attr/textColorPrimary" />
             </LinearLayout>
 
             <!-- Lyrics Overlay (Hidden by default) -->
@@ -302,6 +311,39 @@
 
                 <ImageButton
                     android:id="@+id/btnCloseLyrics"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/spotify_black_circle"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_close"
+                    app:tint="@color/white" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Queue Overlay (Hidden by default) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/queueOverlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#DD000000"
+                android:elevation="20dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/vinylContainer"
+                app:layout_constraintEnd_toEndOf="@id/vinylContainer"
+                app:layout_constraintStart_toStartOf="@id/vinylContainer"
+                app:layout_constraintTop_toTopOf="@id/vinylContainer">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvQueue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp" />
+
+                <ImageButton
+                    android:id="@+id/btnCloseQueue"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_margin="8dp"

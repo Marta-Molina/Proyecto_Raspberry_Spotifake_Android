@@ -281,7 +281,11 @@ class SettingsFragment : Fragment() {
         
         rvMascotas = view.findViewById(R.id.rvMascotas)
         mascotaAdapter = MascotaAdapter { mascota ->
-            settingsViewModel.selectMascota(mascota)
+            if (mascota.premiumDefault || mascota.esComprada) {
+                settingsViewModel.selectMascota(mascota)
+            } else {
+                showBuyMascotaDialog(mascota)
+            }
         }
         rvMascotas.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -301,6 +305,21 @@ class SettingsFragment : Fragment() {
         view.findViewById<Button>(R.id.btnManageAlarms).setOnClickListener {
             androidx.navigation.fragment.findNavController().navigate(R.id.alarmsFragment)
         }
+        view.findViewById<Button>(R.id.btnResumenAnual).setOnClickListener {
+            androidx.navigation.fragment.findNavController().navigate(R.id.resumenAnualFragment)
+        }
+    }
+
+    private fun showBuyMascotaDialog(mascota: com.example.appmusica.domain.model.Mascota) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Desbloquear mascota")
+            .setMessage("¿Quieres desbloquear a ${mascota.nombre} por ${mascota.precio} monedas?")
+            .setPositiveButton("Desbloquear") { _, _ ->
+                settingsViewModel.buyMascota(mascota.id)
+                Toast.makeText(context, "Mascota desbloqueada!", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun showSleepTimerDialog() {

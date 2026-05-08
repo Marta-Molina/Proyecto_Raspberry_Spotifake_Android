@@ -51,6 +51,21 @@
             tools:text="Mi Lista Favorita" />
 
         <ImageView
+            android:id="@+id/btnSharePlaylist"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
+            android:src="@drawable/ic_share"
+            app:layout_constraintEnd_toStartOf="@id/btnEditPlaylist"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="@color/spotify_light_grey" />
+
+        <ImageView
             android:id="@+id/btnEditPlaylist"
             android:layout_width="36dp"
             android:layout_height="36dp"

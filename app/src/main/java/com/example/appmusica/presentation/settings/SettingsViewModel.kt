@@ -39,6 +39,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun createAlarm(alarm: com.example.appmusica.domain.model.Alarma) {
+        viewModelScope.launch {
+            val result = alarmaRepository.createAlarm(alarm)
+            if (result != null) {
+                loadAlarms()
+            }
+        }
+    }
+
     fun updateAlarm(id: Int, alarm: com.example.appmusica.domain.model.Alarma) {
         viewModelScope.launch {
             if (alarmaRepository.updateAlarm(id, alarm)) {
@@ -59,6 +68,14 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val success = mascotaRepository.setActiveMascota(mascota.id)
             if (success) {
+                loadMascotas()
+            }
+        }
+    }
+
+    fun buyMascota(mascotaId: Int) {
+        viewModelScope.launch {
+            if (mascotaRepository.buyMascota(mascotaId)) {
                 loadMascotas()
             }
         }

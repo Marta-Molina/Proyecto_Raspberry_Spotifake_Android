@@ -18,6 +18,7 @@ class AlarmsFragment : Fragment() {
     private var _binding: FragmentAlarmsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by viewModels()
+    private val cancionesViewModel: com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel by activityViewModels()
     private lateinit var adapter: AlarmsAdapter
 
     override fun onCreateView(
@@ -60,8 +61,45 @@ class AlarmsFragment : Fragment() {
     }
 
     private fun showAddAlarmDialog() {
-        // Implementación simplificada de selector de hora y canción
-        Toast.makeText(context, "Selector de alarma - En desarrollo", Toast.LENGTH_SHORT).show()
+        val songs = cancionesViewModel.canciones.value ?: emptyList()
+        if (songs.isEmpty()) {
+            Toast.makeText(context, "No hay canciones disponibles para la alarma", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val songNames = songs.map { it.nombre }.toTypedArray()
+        var selectedSongId = songs[0].id
+        var selectedTime = "08:00"
+
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_alarm, null)
+        val timePicker = dialogView.findViewById<android.widget.TimePicker>(R.id.timePicker)
+        val spinnerSong = dialogView.findViewById<android.widget.Spinner>(R.id.spinnerAlarmSong)
+
+        val spinnerAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, songNames)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerSong.adapter = spinnerAdapter
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Nueva Alarma")
+            .setView(dialogView)
+            .setPositiveButton("Crear") { _, _ ->
+                val hour = timePicker.hour
+                val minute = timePicker.minute
+                selectedTime = String.format("%02d:%02d", hour, minute)
+                selectedSongId = songs[spinnerSong.selectedItemPosition].id
+                
+                val newAlarm = Alarma(
+                    id = 0,
+                    userId = 0, // El backend lo asignará del token
+                    nombre = "Alarma",
+                    hora = selectedTime,
+                    cancionId = selectedSongId,
+                    activo = true
+                )
+                viewModel.createAlarm(newAlarm)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     override fun onDestroyView() {

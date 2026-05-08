@@ -197,6 +197,18 @@
         app:iconTint="?android:attr/textColorPrimary"
         app:strokeColor="?attr/colorSurface" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnResumenAnual"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Resumen Anual"
+        android:textAlignment="viewStart"
+        app:icon="@drawable/ic_stats"
+        app:iconTint="?android:attr/textColorPrimary"
+        app:strokeColor="?attr/colorSurface" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

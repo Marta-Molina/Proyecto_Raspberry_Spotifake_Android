@@ -33,4 +33,14 @@
         app:layout_constraintEnd_toEndOf="@id/imgMascota"
         app:tint="@color/spotify_green" />
 
+    <ImageView
+        android:id="@+id/imgLockMascota"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_lock"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/imgMascota"
+        app:layout_constraintEnd_toEndOf="@id/imgMascota"
+        app:tint="#FF8888" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

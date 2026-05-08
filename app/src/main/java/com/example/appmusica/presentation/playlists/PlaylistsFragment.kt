@@ -46,6 +46,9 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             onEdit = { pos ->
                 adapter.getPlaylist(pos)?.let { mostrarDialogoEditar(it.id, it.nombre, it.idUsuario) }
             },
+            onShare = { pos ->
+                adapter.getPlaylist(pos)?.let { compartirPlaylist(it) }
+            },
             onClick = { pos ->
                 adapter.getPlaylist(pos)?.let { navegarACanciones(it.id, it.nombre) }
             }
@@ -110,5 +113,18 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             R.id.action_playlistsFragment_to_playlistSongsFragment,
             bundle
         )
+    }
+
+    private fun compartirPlaylist(playlist: com.example.appmusica.domain.model.Playlist) {
+        val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(android.content.Intent.EXTRA_SUBJECT, "Spotifake Playlist: ${playlist.nombre}")
+            val shareUrl = "https://spotifake.app/playlist/${playlist.id}" // Simulando un enlace externo
+            putExtra(android.content.Intent.EXTRA_TEXT, "¡Escucha mi playlist '${playlist.nombre}' en Spotifake!\n$shareUrl")
+        }
+        startActivity(android.content.Intent.createChooser(shareIntent, "Compartir playlist via"))
+        
+        // TODO: Implementar sistema interno de compartir (enviar a un amigo específico en la app)
+        Toast.makeText(requireContext(), "Enlace generado para compartir", Toast.LENGTH_SHORT).show()
     }
 }

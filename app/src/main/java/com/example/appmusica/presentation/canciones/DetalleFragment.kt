@@ -44,6 +44,7 @@ class DetalleFragment : Fragment() {
     @javax.inject.Inject lateinit var authManager: com.example.appmusica.data.local.AuthManager
     private var isTonearmDragging = false
     private lateinit var lyricsAdapter: com.example.appmusica.presentation.canciones.adapter.LyricsAdapter
+    private lateinit var queueAdapter: com.example.appmusica.presentation.canciones.adapter.QueueAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,6 +98,7 @@ class DetalleFragment : Fragment() {
         setupMiniPlayerControls()
         setupTonearm()
         setupLyrics()
+        setupQueue()
         observeLyricsAndMascota()
     }
 
@@ -589,6 +591,31 @@ class DetalleFragment : Fragment() {
             binding.lyricsOverlay.animate().alpha(0f).setDuration(300).withEndAction {
                 binding.lyricsOverlay.visibility = View.GONE
             }.start()
+        }
+    }
+
+    private fun setupQueue() {
+        queueAdapter = com.example.appmusica.presentation.canciones.adapter.QueueAdapter(
+            onRemove = { pos -> viewModel.removeFromQueue(pos) }
+        )
+        binding.rvQueue.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+            adapter = queueAdapter
+        }
+
+        binding.btnQueue.setOnClickListener {
+            binding.queueOverlay.visibility = View.VISIBLE
+            binding.queueOverlay.animate().alpha(1f).duration = 300
+        }
+
+        binding.btnCloseQueue.setOnClickListener {
+            binding.queueOverlay.animate().alpha(0f).setDuration(300).withEndAction {
+                binding.queueOverlay.visibility = View.GONE
+            }.start()
+        }
+
+        viewModel.playbackQueue.observe(viewLifecycleOwner) { queue ->
+            queueAdapter.update(queue)
         }
     }
 

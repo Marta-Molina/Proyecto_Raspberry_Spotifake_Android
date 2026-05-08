@@ -19,7 +19,7 @@ class AuthManager @Inject constructor(context: Context) {
         private const val USERNAME_KEY = "username"
         private const val IS_PREMIUM_KEY = "is_premium"
         private const val SKIPS_COUNT_KEY = "skips_count"
-        const val MAX_FREE_SKIPS = 6
+        const val MAX_FREE_SKIPS = 5
     }
 
     // Reactive stream so any observer can react to profile picture changes immediately

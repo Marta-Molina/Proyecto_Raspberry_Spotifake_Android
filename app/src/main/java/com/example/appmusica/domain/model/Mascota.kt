@@ -6,5 +6,7 @@ data class Mascota(
     val precio: Double,
     val urlSprite: String,
     val premiumDefault: Boolean,
-    val tipoId: Int
+    val tipoId: Int,
+    val esComprada: Boolean = false,
+    val esActiva: Boolean = false
 )

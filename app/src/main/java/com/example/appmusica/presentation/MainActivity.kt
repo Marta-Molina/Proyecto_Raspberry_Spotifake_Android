@@ -43,6 +43,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var mascotaRepository: com.example.appmusica.domain.repository.MascotaRepository
 
+    @Inject
+    lateinit var apiService: com.example.appmusica.retrofit.ApiCancionesService
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var bottomSheetBehavior: com.google.android.material.bottomsheet.BottomSheetBehavior<android.widget.FrameLayout>
@@ -273,8 +276,7 @@ class MainActivity : AppCompatActivity() {
         // Ideally we fetch from API: /ads/random
         lifecycleScope.launch {
             try {
-                val api = NetworkModule.provideApiCancionesService(NetworkModule.provideRetrofit(NetworkModule.provideOkHttpClient(this@MainActivity)))
-                val response = api.getRandomAd() // Assuming this exists in ApiService
+                val response = apiService.getRandomAd()
                 if (response.isSuccessful && response.body() != null) {
                     val ad = response.body()!!
                     binding.adBannerInclude.tvAdTitle.text = ad.titulo

@@ -5,7 +5,10 @@ import com.example.appmusica.domain.model.Cancion
 import com.example.appmusica.domain.repository.CancionRepository
 import com.example.appmusica.retrofit.ApiCancionesService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -66,13 +69,13 @@ class CancionRepositoryImpl @Inject constructor(
             val genero = cancion.genero?.toString()?.toRequestBody(mediaType)
             val likes = cancion.likes.toString().toRequestBody(mediaType)
             
-            // Usamos el primer artistaId para compatibilidad o la lista si el servicio lo soporta (el servicio actual acepta artistaId singular para parches básicos)
-            val artistaIdStr = cancion.artistaIds.firstOrNull()?.toString()
-            val artistaId = artistaIdStr?.toRequestBody(mediaType)
+            val artistaIds = cancion.artistaIds.joinToString(",").toRequestBody(mediaType)
+            val generosIds = cancion.generosIds.joinToString(",").toRequestBody(mediaType)
             
+            val artistaId = cancion.artistaIds.firstOrNull()?.toString()?.toRequestBody(mediaType)
             val albumId = cancion.albumId?.toString()?.toRequestBody(mediaType)
 
-            val response = api.updateCancion(id, nombre, artista, album, genero, likes, artistaId, albumId)
+            val response = api.updateCancion(id, nombre, artista, album, genero, likes, artistaId, albumId, artistaIds, generosIds)
             if (!response.isSuccessful) {
                 Log.e("API_TEST", "Error updating cancion $id: ${response.code()} ${response.errorBody()?.string()}")
             }
@@ -194,6 +197,71 @@ class CancionRepositoryImpl @Inject constructor(
             response.isSuccessful
         } catch (e: Exception) {
             Log.e("API_TEST", "Exception incrementing reproductions for cancionId $id: ${e.message}", e)
+            false
+        }
+    }
+
+    override suspend fun getStats(year: Int): com.example.appmusica.domain.model.ResumenAnual? {
+        return try {
+            val response = api.getStats(year)
+            if (response.isSuccessful) response.body() else null
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Error fetching stats: ${e.message}")
+            null
+        }
+    }
+
+    override suspend fun getAlbums(nombre: String?): List<com.example.appmusica.domain.model.Album> {
+        return try {
+            val response = api.getAlbums(nombre)
+            if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getAlbumById(id: Int): com.example.appmusica.domain.model.Album? {
+        return try {
+            val response = api.getAlbumById(id)
+            if (response.isSuccessful) response.body() else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun createAlbum(artistaId: Int, nombre: String, portada: File?): com.example.appmusica.domain.model.Album? {
+        return try {
+            val nameBody = nombre.toRequestBody("text/plain".toMediaTypeOrNull())
+            val portadaPart = portada?.let {
+                val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("portada", it.name, requestFile)
+            }
+            val response = api.createAlbum(artistaId, nameBody, portadaPart)
+            if (response.isSuccessful) response.body() else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun updateAlbum(id: Int, nombre: String?, artistaId: Int?, portada: File?): com.example.appmusica.domain.model.Album? {
+        return try {
+            val nameBody = nombre?.toRequestBody("text/plain".toMediaTypeOrNull())
+            val artistBody = artistaId?.toString()?.toRequestBody("text/plain".toMediaTypeOrNull())
+            val portadaPart = portada?.let {
+                val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("portada", it.name, requestFile)
+            }
+            val response = api.updateAlbum(id, nameBody, artistBody, portadaPart)
+            if (response.isSuccessful) response.body() else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun deleteAlbum(id: Int): Boolean {
+        return try {
+            api.deleteAlbum(id).isSuccessful
+        } catch (e: Exception) {
             false
         }
     }

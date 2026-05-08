@@ -34,7 +34,8 @@ class CancionesViewModel @Inject constructor(
     private val cancionRepository: com.example.appmusica.domain.repository.CancionRepository,
     private val artistaRepository: com.example.appmusica.domain.repository.ArtistaRepository,
     private val socialRepository: com.example.appmusica.domain.repository.SocialRepository,
-    private val mascotaRepository: com.example.appmusica.domain.repository.MascotaRepository
+    private val mascotaRepository: com.example.appmusica.domain.repository.MascotaRepository,
+    private val queueManager: com.example.appmusica.data.local.QueueManager
 ) : ViewModel() {
 
     private val _canciones = MutableLiveData<List<Cancion>>()
@@ -78,6 +79,9 @@ class CancionesViewModel @Inject constructor(
     private val _playbackQueue = MutableLiveData<List<Cancion>>(emptyList())
     val playbackQueue: LiveData<List<Cancion>> = _playbackQueue
 
+    private val _stats = MutableLiveData<com.example.appmusica.domain.model.ResumenAnual?>()
+    val stats: LiveData<com.example.appmusica.domain.model.ResumenAnual?> = _stats
+
     private var fullList: List<Cancion> = emptyList()
     private var currentQuery: String? = null
     private var selectedGeneroId: Int? = null
@@ -87,6 +91,11 @@ class CancionesViewModel @Inject constructor(
         loadCanciones()
         loadArtistas()
         loadActiveMascota()
+        loadSavedQueue()
+    }
+
+    private fun loadSavedQueue() {
+        _playbackQueue.value = queueManager.getQueue()
     }
 
     private fun loadGeneros() {
@@ -313,6 +322,12 @@ class CancionesViewModel @Inject constructor(
         }
     }
 
+    fun getStats(year: Int) {
+        viewModelScope.launch {
+            _stats.value = cancionRepository.getStats(year)
+        }
+    }
+
     fun loadActiveMascota() {
         viewModelScope.launch {
             _activeMascota.value = mascotaRepository.getActiveMascota()
@@ -325,6 +340,7 @@ class CancionesViewModel @Inject constructor(
         val currentQueue = _playbackQueue.value?.toMutableList() ?: mutableListOf()
         currentQueue.add(cancion)
         _playbackQueue.value = currentQueue
+        queueManager.saveQueue(currentQueue)
     }
 
     fun playNext(cancion: Cancion) {
@@ -332,10 +348,12 @@ class CancionesViewModel @Inject constructor(
         // Insertar al principio de la cola para que sea lo siguiente en sonar
         currentQueue.add(0, cancion)
         _playbackQueue.value = currentQueue
+        queueManager.saveQueue(currentQueue)
     }
 
     fun clearQueue() {
         _playbackQueue.value = emptyList()
+        queueManager.clearQueue()
     }
 
     fun removeFromQueue(position: Int) {
@@ -343,6 +361,7 @@ class CancionesViewModel @Inject constructor(
         if (position >= 0 && position < currentQueue.size) {
             currentQueue.removeAt(position)
             _playbackQueue.value = currentQueue
+            queueManager.saveQueue(currentQueue)
         }
     }
 }

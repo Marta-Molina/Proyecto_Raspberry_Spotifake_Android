@@ -13,12 +13,20 @@ class PlaylistViewHolder(
     view: View,
     private val onDelete: (Int) -> Unit,
     private val onEdit: (Int) -> Unit,
+    private val onShare: (Int) -> Unit,
     private val onClick: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
     private val binding = ItemPlaylistBinding.bind(view)
 
     fun bind(playlist: Playlist) {
         binding.txtviewPlaylistNombre.text = playlist.nombre
+        
+        binding.btnSharePlaylist.setOnClickListener {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                onShare(bindingAdapterPosition)
+            }
+        }
+        binding.btnSharePlaylist.setClickAnimation()
         
         binding.btnDeletePlaylist.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
@@ -47,12 +55,13 @@ class PlaylistAdapter(
     private var list: MutableList<Playlist>,
     private val onDelete: (Int) -> Unit,
     private val onEdit: (Int) -> Unit,
+    private val onShare: (Int) -> Unit,
     private val onClick: (Int) -> Unit
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
-        return PlaylistViewHolder(view, onDelete, onEdit, onClick)
+        return PlaylistViewHolder(view, onDelete, onEdit, onShare, onClick)
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {

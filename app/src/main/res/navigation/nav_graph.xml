@@ -140,4 +140,8 @@
         android:id="@+id/alarmsFragment"
         android:name="com.example.appmusica.presentation.settings.AlarmsFragment"
         android:label="Alarmas" />
+    <fragment
+        android:id="@+id/resumenAnualFragment"
+        android:name="com.example.appmusica.presentation.settings.ResumenAnualFragment"
+        android:label="Resumen Anual" />
 </navigation>

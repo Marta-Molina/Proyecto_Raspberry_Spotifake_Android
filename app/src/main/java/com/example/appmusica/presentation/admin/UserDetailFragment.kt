@@ -54,7 +54,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         user?.let {
             tvName.text = it.username
             tvEmail.text = it.correo
-            tvRole.text = if (it.admin == 1) "Administrador" else "Usuario Estándar"
+            tvRole.text = if (it.admin) "Administrador" else "Usuario Estándar"
             
             val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             it.urlImagen?.let { url ->
@@ -84,6 +84,9 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
                 playlistAdapter.getPlaylist(pos)?.let { playlist ->
                     showEditPlaylistDialog(playlist.id, playlist.nombre, playlist.idUsuario)
                 }
+            },
+            onShare = { pos ->
+                // Opcional: implementar compartir
             },
             onClick = { pos ->
                 // Opcional: navegar a las canciones de la playlist

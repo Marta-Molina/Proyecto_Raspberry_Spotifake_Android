@@ -61,7 +61,9 @@ class ListadoCancionesFragment : Fragment() {
                 // Por ahora no implementamos el diálogo aquí si no es necesario
             },
             onItemClick = { pos -> openDetalle(pos) },
-            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) }
+            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) },
+            addToQueue = { pos -> adapter.getCancion(pos)?.let { viewModel.addToQueue(it) } },
+            playNext = { pos -> adapter.getCancion(pos)?.let { viewModel.playNext(it) } }
         )
 
         binding.recyclerView.layoutManager =

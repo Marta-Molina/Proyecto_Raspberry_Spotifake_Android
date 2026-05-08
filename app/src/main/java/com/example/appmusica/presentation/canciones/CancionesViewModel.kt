@@ -125,8 +125,8 @@ class CancionesViewModel @Inject constructor(
             if (!currentQuery.isNullOrBlank()) {
                 filtered = filtered.filter { cancion ->
                     cancion.nombre.contains(currentQuery!!, ignoreCase = true) ||
-                    cancion.artistas?.any { it.contains(currentQuery!!, ignoreCase = true) } == true ||
-                    cancion.albumes?.any { it.contains(currentQuery!!, ignoreCase = true) } == true
+                    cancion.artista?.contains(currentQuery!!, ignoreCase = true) == true ||
+                    cancion.album?.contains(currentQuery!!, ignoreCase = true) == true
                 }
             }
 
@@ -165,7 +165,7 @@ class CancionesViewModel @Inject constructor(
 
             // Cargar canciones "populares" del artista (ordenar por reproducciones)
             if (fullList.isEmpty()) fullList = getCancionesUseCase()
-            val artistSongs = fullList.filter { it.artistasIds?.contains(artistId) == true }
+            val artistSongs = fullList.filter { it.artistaIds.contains(artistId) }
             _popularSongs.value = artistSongs.sortedByDescending { it.reproducciones }.take(5)
             
             // Cargar álbumes del artista

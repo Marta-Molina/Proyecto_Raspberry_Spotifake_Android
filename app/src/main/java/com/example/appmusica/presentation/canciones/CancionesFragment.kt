@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.appmusica.R
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmusica.R
 import com.example.appmusica.data.local.AuthManager
@@ -78,8 +80,8 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
 
         // Recycler horizontal de artistas
         artistAdapter = com.example.appmusica.presentation.canciones.adapter.ArtistAdapter(emptyList()) { artistId ->
-            val action = CancionesFragmentDirections.actionCancionesFragmentToArtistaDetalleFragment(artistId)
-            findNavController().navigate(action)
+            val bundle = Bundle().apply { putInt("artistId", artistId) }
+            findNavController().navigate(R.id.artistaDetalleFragment, bundle)
         }
 
         binding.recyclerArtistas.apply {

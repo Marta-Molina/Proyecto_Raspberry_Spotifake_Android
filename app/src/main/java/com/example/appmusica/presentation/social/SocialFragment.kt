@@ -24,7 +24,7 @@ class SocialFragment : Fragment() {
 
     private lateinit var searchAdapter: UserSearchAdapter
     private lateinit var requestAdapter: FriendRequestAdapter
-    private lateinit var friendsAdapter: FriendSearchAdapter // Simple ID/Name list
+    // private lateinit var friendsAdapter: FriendSearchAdapter // Removed as it was unresolved
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.appmusica.R
 import com.bumptech.glide.Glide
 import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentArtistaDetalleBinding
@@ -27,7 +25,7 @@ class ArtistaDetalleFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CancionesViewModel by activityViewModels()
-    private val args: ArtistaDetalleFragmentArgs by navArgs()
+    private var artistId: Int = -1
 
     private lateinit var popularSongsAdapter: AdapterCancion
     private lateinit var albumsAdapter: AlbumAdapter
@@ -43,10 +41,12 @@ class ArtistaDetalleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        artistId = arguments?.getInt("artistId") ?: -1
+
         setupRecyclerViews()
         observeViewModel()
 
-        viewModel.loadArtistaDetalle(args.artistId)
+        viewModel.loadArtistaDetalle(artistId)
 
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -75,15 +75,21 @@ class ArtistaDetalleFragment : Fragment() {
                 // Expandir player con la canción seleccionada
                 (activity as? com.example.appmusica.presentation.MainActivity)?.expandPlayer(pos)
             },
-            isLiked = { id -> true } // Simplified or use likedSongsManager
+            isLiked = { id -> true }, // Simplified or use likedSongsManager
+            addToQueue = { pos ->
+                popularSongsAdapter.getCancion(pos)?.let { viewModel.addToQueue(it) }
+            },
+            playNext = { pos ->
+                popularSongsAdapter.getCancion(pos)?.let { viewModel.playNext(it) }
+            }
         )
         binding.recyclerPopularSongs.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerPopularSongs.adapter = popularSongsAdapter
 
         // Albums
         albumsAdapter = AlbumAdapter(mutableListOf()) { albumId ->
-            val action = ArtistaDetalleFragmentDirections.actionArtistaDetalleFragmentToAlbumSongsFragment(albumId)
-            findNavController().navigate(action)
+            val bundle = Bundle().apply { putInt("albumId", albumId) }
+            findNavController().navigate(R.id.albumSongsFragment, bundle)
         }
         binding.recyclerAlbums.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerAlbums.adapter = albumsAdapter

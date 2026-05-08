@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentAlarmsBinding
 import com.example.appmusica.domain.model.Alarma
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +46,7 @@ class AlarmsFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = AlarmsAdapter(
             onToggle = { alarm, isActive ->
-                viewModel.updateAlarm(alarm.id, alarm.copy(activa = isActive))
+                viewModel.updateAlarm(alarm.id, alarm.copy(activo = isActive))
             },
             onDelete = { alarm ->
                 viewModel.deleteAlarm(alarm.id)

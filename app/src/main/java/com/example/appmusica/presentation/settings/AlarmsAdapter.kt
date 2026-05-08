@@ -26,7 +26,7 @@ class AlarmsAdapter(
         fun bind(alarm: Alarma) {
             binding.txtTime.text = alarm.hora
             binding.txtSongName.text = "Canción ID: ${alarm.cancionId}"
-            binding.switchActive.isChecked = alarm.activa
+            binding.switchActive.isChecked = alarm.activo
             binding.txtDays.text = alarm.dias ?: "Una vez"
 
             binding.switchActive.setOnCheckedChangeListener { _, isChecked ->

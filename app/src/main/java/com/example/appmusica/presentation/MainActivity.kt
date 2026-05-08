@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.graphics.Color
@@ -200,9 +201,7 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         
         // Colores de la barra extraídos del tema
-        val typedValue = android.util.TypedValue()
-        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
-        val primaryColor = typedValue.data
+        val primaryColor = ContextCompat.getColor(this, R.color.spotify_green)
         
         bottomNav.navBackgroundColor = primaryColor
         bottomNav.fabBackgroundColor = primaryColor
@@ -435,7 +434,7 @@ class MainActivity : AppCompatActivity() {
                 if (activeMascot != null) {
                     binding.ivMascot.visibility = View.VISIBLE
                     val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
-                    val fullUrl = if (activeMascot.urlImagen.startsWith("http")) activeMascot.urlImagen else baseUrl + activeMascot.urlImagen
+                    val fullUrl = if (activeMascot.urlSprite.startsWith("http")) activeMascot.urlSprite else baseUrl + activeMascot.urlSprite
                     
                     Glide.with(this@MainActivity)
                         .load(fullUrl)

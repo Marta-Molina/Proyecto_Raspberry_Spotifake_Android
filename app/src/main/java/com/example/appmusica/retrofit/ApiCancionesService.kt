@@ -71,6 +71,9 @@ interface ApiCancionesService {
     @GET("albums/{id}")
     suspend fun getAlbumById(@Path("id") id: Int): Response<com.example.appmusica.domain.model.Album>
 
+    @GET("artistas/{id}")
+    suspend fun getArtistaById(@Path("id") id: Int): Response<com.example.appmusica.domain.model.Artista>
+
     @POST("artistas")
     @Multipart
     suspend fun createArtista(

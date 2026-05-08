@@ -44,6 +44,9 @@ class ManagePlaylistsFragment : Fragment(R.layout.fragment_manage_playlists) {
             onEdit = { pos ->
                 adapter.getPlaylist(pos)?.let { mostrarDialogoEditar(it.id, it.nombre, it.idUsuario) }
             },
+            onShare = { pos ->
+                // No sharing in admin view or implement if needed
+            },
             onClick = { pos ->
                 adapter.getPlaylist(pos)?.let { navegarACanciones(it.id, it.nombre) }
             }

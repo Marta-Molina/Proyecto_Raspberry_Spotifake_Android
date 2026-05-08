@@ -6,5 +6,6 @@ data class Alarma(
     val nombre: String,
     val hora: String,
     val cancionId: Int,
-    val activo: Boolean = true
+    val activo: Boolean = true,
+    val dias: String? = null
 )

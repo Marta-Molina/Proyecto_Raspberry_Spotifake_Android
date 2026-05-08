@@ -86,7 +86,7 @@ class ManageUsersFragment : Fragment() {
                     correo = user.correo,
                     pass = "", // La API no debería cambiar la pass si viene vacía o nula en este endpoint de admin
                     admin = true,
-                    premium = user.premium == 1
+                    premium = user.premium
                 )
                 val response = apiService.updateUsuario(user.id, updateRequest)
                 withContext(Dispatchers.Main) {

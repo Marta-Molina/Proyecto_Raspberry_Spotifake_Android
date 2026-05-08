@@ -34,7 +34,7 @@ class ArtistaRepositoryImpl @Inject constructor(
 
     override suspend fun followArtista(id: Int): Boolean {
         return try {
-            val response = api.followArtista(id)
+            val response = api.socialFollowArtista(id)
             if (!response.isSuccessful) {
                 Log.e("API_TEST", "Error following artista $id: ${response.code()}")
             }
@@ -47,7 +47,7 @@ class ArtistaRepositoryImpl @Inject constructor(
 
     override suspend fun unfollowArtista(id: Int): Boolean {
         return try {
-            val response = api.unfollowArtista(id)
+            val response = api.socialUnfollowArtista(id)
             if (!response.isSuccessful) {
                 Log.e("API_TEST", "Error unfollowing artista $id: ${response.code()}")
             }

@@ -54,7 +54,9 @@ class AlbumSongsFragment : Fragment() {
             },
             addToList = { pos -> /* can add items from album to playlists if needed */ },
             onItemClick = { pos -> navegarADetalle(pos) },
-            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) }
+            isLiked = { cancionId -> likedSongsManager.isLiked(cancionId) },
+            addToQueue = { pos -> adapter.getCancion(pos)?.let { viewModel.addToQueue(it) } },
+            playNext = { pos -> adapter.getCancion(pos)?.let { viewModel.playNext(it) } }
         )
 
         binding.recyclerAlbumSongs.apply {
@@ -71,7 +73,7 @@ class AlbumSongsFragment : Fragment() {
         viewModel.currentAlbum.observe(viewLifecycleOwner) { album ->
             album?.let {
                 binding.txtAlbumTitleLarge.text = it.nombre
-                binding.txtAlbumArtistLarge.text = it.artistasNombre?.joinToString(", ") ?: ""
+                binding.txtAlbumArtistLarge.text = viewModel.currentArtista.value?.nombre ?: ""
 
                 val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
                 val fullUrl = if (it.portadaUrl?.startsWith("http") == true) it.portadaUrl else baseUrl + it.portadaUrl

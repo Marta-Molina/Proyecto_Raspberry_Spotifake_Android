@@ -29,8 +29,8 @@ class ViewHCancion(
     fun renderize(cancion: Cancion, isLiked: Boolean = false) {
 
         binding.txtviewNombre.text = cancion.nombre
-        binding.txtviewArtista.text = cancion.artistas?.joinToString(", ") ?: ""
-        binding.txtviewAlbum.text = cancion.albumes?.joinToString(", ") ?: ""
+        binding.txtviewArtista.text = cancion.artista ?: ""
+        binding.txtviewAlbum.text = cancion.album ?: ""
         binding.txtviewLikes.text = cancion.likes.toString()
 
         // Star appearance: primary color + filled when liked, grey when not
@@ -38,7 +38,7 @@ class ViewHCancion(
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_on)
             
             val typedValue = android.util.TypedValue()
-            itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            itemView.context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
             val primaryColor = typedValue.data
             
             binding.btnLike.setColorFilter(

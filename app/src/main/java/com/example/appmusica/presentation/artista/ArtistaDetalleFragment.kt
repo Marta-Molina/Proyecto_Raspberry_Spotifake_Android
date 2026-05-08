@@ -99,17 +99,22 @@ class ArtistaDetalleFragment : Fragment() {
                 val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
                 val fullUrl = if (it.fotoUrl?.startsWith("http") == true) it.fotoUrl else baseUrl + it.fotoUrl
 
+                // Center clear image
                 Glide.with(this)
                     .load(fullUrl)
                     .placeholder(R.drawable.user)
                     .circleCrop()
                     .into(binding.imgArtistProfile)
 
+                // Blurred banner image
                 Glide.with(this)
                     .load(fullUrl)
                     .placeholder(R.drawable.placeholder)
                     .centerCrop()
+                    .transform(jp.wasabeef.glide.transformations.BlurTransformation(25, 3))
                     .into(binding.imgBanner)
+                
+                updateFollowButton(it.siguiendo)
             }
         }
 
@@ -118,23 +123,49 @@ class ArtistaDetalleFragment : Fragment() {
         }
 
         viewModel.albums.observe(viewLifecycleOwner) { albums ->
-            albumsAdapter.update(albums)
+            // Sort by date (descending) if available
+            val sortedAlbums = albums.sortedByDescending { it.fechaLanzamiento }
+            albumsAdapter.update(sortedAlbums)
+        }
+    }
+
+    private fun updateFollowButton(isFollowing: Boolean) {
+        if (isFollowing) {
+            binding.btnFollow.text = "SIGUIENDO"
+            binding.btnFollow.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+            binding.btnFollow.setStrokeColorResource(android.R.color.white)
+        } else {
+            binding.btnFollow.text = "SEGUIR"
+            binding.btnFollow.setBackgroundColor(android.graphics.Color.parseColor("#1DB954")) // Spotify Green
+            binding.btnFollow.setStrokeColorResource(android.R.color.transparent)
         }
     }
 
     private fun toggleFollow() {
         val artista = viewModel.currentArtista.value ?: return
+        val currentFollowing = artista.siguiendo
         
-        // Check current state (Simple text check for now, ideally Artista model has isFollowing)
-        if (binding.btnFollow.text == "SEGUIR") {
-            viewModel.followArtista(artista.id)
-            binding.btnFollow.text = "SIGUIENDO"
-            binding.btnFollow.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            binding.btnFollow.setStrokeColorResource(android.R.color.white)
-        } else {
+        if (currentFollowing) {
             viewModel.unfollowArtista(artista.id)
-            binding.btnFollow.text = "SEGUIR"
-            // Restore original style or just toggle text
+        } else {
+            viewModel.followArtista(artista.id)
+        }
+        
+        // Optimistic update
+        val updatedArtista = artista.copy(
+            siguiendo = !currentFollowing,
+            seguidores = if (currentFollowing) artista.seguidores - 1 else artista.seguidores + 1
+        )
+        // Note: we don't update VM here directly usually, but let's assume VM reload will happen or we update locally
+        updateFollowButton(!currentFollowing)
+        binding.txtFollowers.text = formatCount(updatedArtista.seguidores)
+    }
+
+    private fun formatCount(count: Int): String {
+        return when {
+            count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000f)
+            count >= 1_000 -> String.format("%.1fK", count / 1_000f)
+            else -> count.toString()
         }
     }
 

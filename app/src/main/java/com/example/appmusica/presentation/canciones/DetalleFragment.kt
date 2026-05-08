@@ -700,10 +700,6 @@ class DetalleFragment : Fragment() {
         player?.pause()
     }
 
-    fun stopPlayback() {
-        player?.stop()
-    }
-
     private fun formatTime(ms: Long): String {
         val seconds = (ms / 1000) % 60
         val minutes = (ms / (1000 * 60)) % 60

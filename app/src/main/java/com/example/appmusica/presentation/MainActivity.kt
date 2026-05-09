@@ -22,6 +22,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import com.example.appmusica.R
 import com.example.appmusica.di.NetworkModule
 import com.example.appmusica.domain.repository.AuthRepository
@@ -165,6 +169,7 @@ class MainActivity : AppCompatActivity() {
         setupAds()
         setupMascot()
         setupSleepScreen()
+        setupConnectivityListener()
 
         // Control del botón atrás del sistema
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
@@ -458,9 +463,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var sleepTimer: java.util.Timer? = null
+    private var sleepMinutesSet: Int = 0
 
     fun startSleepTimer(minutes: Int) {
         stopSleepTimer()
+        sleepMinutesSet = minutes
         sleepTimer = java.util.Timer()
         sleepTimer?.schedule(object : java.util.TimerTask() {
             override fun run() {
@@ -469,7 +476,8 @@ class MainActivity : AppCompatActivity() {
                     val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
                     fragment?.pausePlayback()
                     
-                    // Mostrar pantalla de sueño
+                    // Mostrar pantalla de sueño (YouTube Style)
+                    binding.tvSleepSummary.text = "Has pasado $sleepMinutesSet minutos dentro de la app."
                     binding.sleepScreenOverlay.visibility = View.VISIBLE
                 }
             }
@@ -480,11 +488,41 @@ class MainActivity : AppCompatActivity() {
         binding.btnExitSleep.setOnClickListener {
             binding.sleepScreenOverlay.visibility = View.GONE
         }
+        
+        binding.btnRemindAgain.setOnClickListener {
+            binding.sleepScreenOverlay.visibility = View.GONE
+            Toast.makeText(this, "Se volverá a recordar en 15 minutos", Toast.LENGTH_SHORT).show()
+            startSleepTimer(15) // Recordar en 15 minutos
+        }
     }
 
     fun stopSleepTimer() {
         sleepTimer?.cancel()
         sleepTimer = null
+    }
+
+    private lateinit var connectivityManager: ConnectivityManager
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) = runOnUiThread {
+            binding.offlineScreenOverlay.visibility = View.GONE
+        }
+        override fun onLost(network: Network) = runOnUiThread {
+            binding.offlineScreenOverlay.visibility = View.VISIBLE
+        }
+    }
+
+    private fun setupConnectivityListener() {
+        connectivityManager = getSystemService(ConnectivityManager::class.java)
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        
+        // Initial check
+        val activeNetwork = connectivityManager.activeNetwork
+        val caps = connectivityManager.getNetworkCapabilities(activeNetwork)
+        val isOnline = caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        binding.offlineScreenOverlay.visibility = if (isOnline) View.GONE else View.VISIBLE
     }
 
     private fun setupMascot() {

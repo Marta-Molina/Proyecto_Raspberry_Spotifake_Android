@@ -96,55 +96,133 @@
             android:layout_margin="16dp"
             android:elevation="20dp" />
 
-        <!-- Sleep Screen Overlay -->
+        <!-- Refined Sleep Screen Overlay (YouTube Style) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sleepScreenOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:elevation="100dp"
+            android:background="#E6000000"
+            android:elevation="120dp"
             android:visibility="gone"
             android:clickable="true"
             android:focusable="true">
 
-            <TextView
-                android:id="@+id/tvSleepTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="¡Es hora de dormir!"
-                android:textColor="@android:color/black"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/ivSleepIcon"
+            <ImageButton
+                android:id="@+id/btnExitSleep"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close"
+                app:tint="@color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivSleepMascot"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/user"
+                android:alpha="0.8"
+                app:layout_constraintBottom_toTopOf="@id/tvSleepTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <ImageView
-                android:id="@+id/ivSleepIcon"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+            <TextView
+                android:id="@+id/tvSleepTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="48dp"
                 android:layout_marginTop="24dp"
-                android:src="@android:drawable/ic_menu_recent_history"
-                app:layout_constraintBottom_toTopOf="@id/btnExitSleep"
+                android:gravity="center"
+                android:text="¿Hora de dormir?\nTus recordatorios para irte a dormir están activados. ¡Tómate un descanso!"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/tvSleepSummary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvSleepTitle"
-                app:tint="@color/spotify_green" />
+                app:layout_constraintTop_toBottomOf="@id/ivSleepMascot" />
 
-            <Button
-                android:id="@+id/btnExitSleep"
+            <TextView
+                android:id="@+id/tvSleepSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Despertar"
-                android:backgroundTint="@color/spotify_green"
-                android:textColor="@android:color/white"
+                android:layout_marginTop="12dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp"
+                tools:text="Has pasado 30 minutos dentro de la app."
+                app:layout_constraintBottom_toTopOf="@id/btnRemindAgain"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSleepTitle" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRemindAgain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:text="Recordármelo de nuevo"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="#FFFFFF"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivSleepIcon" />
+                app:layout_constraintTop_toBottomOf="@id/tvSleepSummary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- No Internet Overlay -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/offlineScreenOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#121212"
+            android:elevation="150dp"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ivDino"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_close"
+                app:tint="#B3FFFFFF"
+                app:layout_constraintBottom_toTopOf="@id/tvNoInternet"
+                app:layout_constraintStart_toStartOf="@id/tvNoInternet" />
+
+            <TextView
+                android:id="@+id/tvNoInternet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sin Internet"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvOfflineTips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="4dp"
+                android:text="Intenta:\n\n- Apaga tu dispositivo\n- Encuentra un lugar en la naturaleza\n- Disfruta"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@+id/tvNoInternet"
+                app:layout_constraintTop_toBottomOf="@+id/tvNoInternet" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

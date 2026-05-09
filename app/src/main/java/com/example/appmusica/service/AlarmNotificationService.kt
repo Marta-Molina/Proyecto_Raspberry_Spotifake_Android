@@ -9,6 +9,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.appmusica.R
 import com.example.appmusica.presentation.MainActivity
+import com.example.appmusica.presentation.settings.AlarmActivity
 
 class AlarmNotificationService : Service() {
 
@@ -73,7 +74,7 @@ class AlarmNotificationService : Service() {
             this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val fullScreenIntent = Intent(this, AlarmActivity::class.java).apply {
+        val fullScreenIntent = Intent(this, com.example.appmusica.presentation.settings.AlarmActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(

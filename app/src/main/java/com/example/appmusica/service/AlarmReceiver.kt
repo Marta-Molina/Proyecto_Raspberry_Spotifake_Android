@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.example.appmusica.presentation.settings.AlarmActivity
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -14,7 +15,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val songUrl = intent.getStringExtra("SONG_URL")
 
         // Lanzar Activity para pantalla completa
-        val activityIntent = Intent(context, AlarmActivity::class.java).apply {
+        val activityIntent = Intent(context, com.example.appmusica.presentation.settings.AlarmActivity::class.java).apply {
             putExtra("ALARM_ID", alarmId)
             putExtra("SONG_NAME", songName)
             putExtra("ARTIST_NAME", artistName)

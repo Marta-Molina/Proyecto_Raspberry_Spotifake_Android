@@ -2,6 +2,7 @@ package com.example.appmusica.presentation.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -85,7 +86,7 @@ class AlarmsFragment : Fragment() {
                 if (isActive) {
                     checkExactAlarmPermission {
                         val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
-                        alarmScheduler.schedule(updatedAlarm, song?.urlAudio, song?.nombre, song?.portada)
+                        alarmScheduler.schedule(updatedAlarm, song?.urlAudio, song?.nombre, song?.urlPortada)
                     }
                 } else {
                     alarmScheduler.cancel(alarm.id)
@@ -120,7 +121,7 @@ class AlarmsFragment : Fragment() {
             val nextAlarm = alarms.find { it.activo }
             if (nextAlarm != null) {
                 val song = cancionesViewModel.canciones.value?.find { it.id == nextAlarm.cancionId }
-                alarmScheduler.schedule(nextAlarm, song?.urlAudio, song?.nombre, song?.portada)
+                alarmScheduler.schedule(nextAlarm, song?.urlAudio, song?.nombre, song?.urlPortada)
             } else {
                 alarmScheduler.cancel(-1) // Escondemos notificación
             }

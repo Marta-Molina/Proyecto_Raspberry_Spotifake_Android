@@ -10,6 +10,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 
 import androidx.media3.session.MediaNotification
 import androidx.media3.session.CommandButton
+import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.common.Player
 import androidx.core.app.NotificationCompat
 import android.app.Notification
@@ -18,6 +19,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -71,11 +73,11 @@ class PlaybackService : MediaSessionService() {
         }
 
         override fun getNotification(
-            mediaSession: MediaSession,
-            customLayout: ImmutableList<CommandButton>,
-            actionFactory: MediaNotification.ActionFactory,
-            onNotificationChangedCallback: MediaNotification.Provider.Callback
-        ): MediaNotification {
+            mediaSession: androidx.media3.session.MediaSession,
+            customLayout: com.google.common.collect.ImmutableList<androidx.media3.session.CommandButton>,
+            actionFactory: androidx.media3.session.MediaNotification.ActionFactory,
+            onNotificationChangedCallback: androidx.media3.session.MediaNotification.Provider.Callback
+        ): androidx.media3.session.MediaNotification {
             val player = mediaSession.player
             val metadata = player.mediaMetadata
             
@@ -89,15 +91,14 @@ class PlaybackService : MediaSessionService() {
                 .setOnlyAlertOnce(true)
 
             // Acciones básicas
-            builder.addAction(actionFactory.createCustomCommandButton(mediaSession, CommandButton.Builder().setDisplayName("Prev").setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_previous).build(), null))
+            builder.addAction(actionFactory.createMediaAction(mediaSession, androidx.media3.ui.R.drawable.exo_ic_skip_previous, "Prev", Player.COMMAND_SKIP_TO_PREVIOUS))
             
             val playPauseIcon = if (player.isPlaying) androidx.media3.ui.R.drawable.exo_ic_pause_circle_filled else androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
-            builder.addAction(actionFactory.createCustomCommandButton(mediaSession, CommandButton.Builder().setDisplayName("Play/Pause").setIconResId(playPauseIcon).build(), null))
+            builder.addAction(actionFactory.createMediaAction(mediaSession, playPauseIcon, "Play/Pause", Player.COMMAND_PLAY_PAUSE))
             
-            builder.addAction(actionFactory.createCustomCommandButton(mediaSession, CommandButton.Builder().setDisplayName("Next").setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next).build(), null))
+            builder.addAction(actionFactory.createMediaAction(mediaSession, androidx.media3.ui.R.drawable.exo_ic_skip_next, "Next", Player.COMMAND_SKIP_TO_NEXT))
 
-            builder.setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession.sessionCompatToken as android.support.v4.media.session.MediaSessionCompat.Token)
+            builder.setStyle(androidx.media3.session.MediaStyleNotificationHelper.MediaStyle(mediaSession)
                 .setShowActionsInCompactView(0, 1, 2))
 
             // Cargar Arte en segundo plano
@@ -119,12 +120,12 @@ class PlaybackService : MediaSessionService() {
                     })
             }
 
-            return MediaNotification(1001, builder.build())
+            return androidx.media3.session.MediaNotification(1001, builder.build())
         }
 
         override fun handleCustomCommand(
-            mediaSession: MediaSession,
-            actionFactory: MediaNotification.ActionFactory,
+            mediaSession: androidx.media3.session.MediaSession,
+            actionFactory: androidx.media3.session.MediaNotification.ActionFactory,
             customCommand: String,
             extras: android.os.Bundle
         ): Boolean = false

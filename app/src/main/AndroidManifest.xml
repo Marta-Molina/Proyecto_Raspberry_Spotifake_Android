@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:ignore="ExactAlarm" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
         android:allowBackup="true"
@@ -28,9 +29,16 @@
         <activity
             android:name="com.example.appmusica.presentation.canciones.add.AddCancionActivity"
             android:exported="false" />
+        <activity android:name=".presentation.MainActivity"
+            android:exported="true" />
+
         <activity
-            android:name=".presentation.MainActivity">
-        </activity>
+            android:name=".presentation.settings.AlarmActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.AppMusica" />
         <activity android:name=".presentation.login.LoginActivity"
             android:exported="true">
             <intent-filter>

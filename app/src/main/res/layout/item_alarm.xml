@@ -28,16 +28,50 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Canción: Pesadilla"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/txtTime"
-            app:layout_constraintEnd_toStartOf="@id/switchActive"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/btnEdit"
             app:layout_constraintStart_toEndOf="@id/txtTime"
             app:layout_constraintTop_toTopOf="@id/txtTime" />
+
+        <TextView
+            android:id="@+id/txtArtistName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Artista"
+            android:alpha="0.7"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/txtSongName"
+            app:layout_constraintTop_toBottomOf="@id/txtSongName"
+            app:layout_constraintEnd_toStartOf="@id/btnEdit" />
+
+        <ImageButton
+            android:id="@+id/btnEdit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/edit_ic_baseline_edit_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#FFFFFF" />
+
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/delete_ic_baseline_delete_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/switchActive"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#D32F2F" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchActive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

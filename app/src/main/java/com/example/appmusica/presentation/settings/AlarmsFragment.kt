@@ -85,15 +85,28 @@ class AlarmsFragment : Fragment() {
                 if (isActive) {
                     checkExactAlarmPermission {
                         val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
-                        alarmScheduler.schedule(updatedAlarm, song?.urlAudio)
+                        alarmScheduler.schedule(updatedAlarm, song?.urlAudio, song?.nombre, song?.portada)
                     }
                 } else {
                     alarmScheduler.cancel(alarm.id)
                 }
             },
+            onEdit = { alarm ->
+                showAddAlarmDialog(alarm)
+            },
             onDelete = { alarm ->
-                viewModel.deleteAlarm(alarm.id)
-                alarmScheduler.cancel(alarm.id)
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar Alarma")
+                    .setMessage("¿Estás seguro de que quieres eliminar esta alarma?")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        viewModel.deleteAlarm(alarm.id)
+                        alarmScheduler.cancel(alarm.id)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            },
+            getSong = { cancionId ->
+                cancionesViewModel.canciones.value?.find { it.id == cancionId }
             }
         )
         binding.rvAlarms.layoutManager = LinearLayoutManager(requireContext())
@@ -103,17 +116,18 @@ class AlarmsFragment : Fragment() {
     private fun observeAlarms() {
         viewModel.alarms.observe(viewLifecycleOwner) { alarms ->
             adapter.submitList(alarms)
-            // Opcionalmente: Verificar que todos los activos estén programados
-            alarms.forEach { alarm ->
-                if (alarm.activo) {
-                    val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
-                    alarmScheduler.schedule(alarm, song?.urlAudio)
-                }
+            // Verificar que el primero activo esté en la notificación scheduled
+            val nextAlarm = alarms.find { it.activo }
+            if (nextAlarm != null) {
+                val song = cancionesViewModel.canciones.value?.find { it.id == nextAlarm.cancionId }
+                alarmScheduler.schedule(nextAlarm, song?.urlAudio, song?.nombre, song?.portada)
+            } else {
+                alarmScheduler.cancel(-1) // Escondemos notificación
             }
         }
     }
 
-    private fun showAddAlarmDialog() {
+    private fun showAddAlarmDialog(existingAlarm: Alarma? = null) {
         val songs = cancionesViewModel.canciones.value ?: emptyList()
         if (songs.isEmpty()) {
             Toast.makeText(context, "No hay canciones disponibles para la alarma", Toast.LENGTH_SHORT).show()
@@ -133,26 +147,31 @@ class AlarmsFragment : Fragment() {
         spinnerSong.adapter = spinnerAdapter
 
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Nueva Alarma")
+            .setTitle(if (existingAlarm == null) "Nueva Alarma" else "Editar Alarma")
             .setView(dialogView)
-            .setPositiveButton("Crear") { _, _ ->
-                val hour = timePicker.hour
-                val minute = timePicker.minute
+            .setPositiveButton(if (existingAlarm == null) "Crear" else "Guardar") { _, _ ->
+                val hour = if (Build.VERSION.SDK_INT >= 23) timePicker.hour else timePicker.currentHour
+                val minute = if (Build.VERSION.SDK_INT >= 23) timePicker.minute else timePicker.currentMinute
                 selectedTime = String.format("%02d:%02d", hour, minute)
                 selectedSongId = songs[spinnerSong.selectedItemPosition].id
                 
-                android.util.Log.d("AlarmsFragment", "Creating alarm: $selectedTime for song $selectedSongId")
-                
-                val newAlarm = Alarma(
-                    id = 0,
-                    userId = 0L, 
-                    nombre = "Alarma",
-                    hora = selectedTime,
-                    cancionId = selectedSongId,
-                    activo = true
-                )
-                viewModel.createAlarm(newAlarm)
-                Toast.makeText(context, "Creando alarma...", Toast.LENGTH_SHORT).show()
+                if (existingAlarm == null) {
+                    val newAlarm = Alarma(
+                        id = 0,
+                        userId = 0L, 
+                        nombre = "Alarma",
+                        hora = selectedTime,
+                        cancionId = selectedSongId,
+                        activo = true
+                    )
+                    viewModel.createAlarm(newAlarm)
+                } else {
+                    val updatedAlarm = existingAlarm.copy(
+                        hora = selectedTime,
+                        cancionId = selectedSongId
+                    )
+                    viewModel.updateAlarm(existingAlarm.id, updatedAlarm)
+                }
             }
             .setNegativeButton("Cancelar", null)
             .show()

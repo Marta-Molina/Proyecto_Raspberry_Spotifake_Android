@@ -13,20 +13,17 @@ class AlarmScheduler(private val context: Context) {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun schedule(alarm: Alarma, songUrl: String?) {
+    fun schedule(alarm: Alarma, songUrl: String?, artistName: String? = null, imageUrl: String? = null) {
         if (!alarm.activo) {
             cancel(alarm.id)
-            return
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            // No podemos programar alarmas exactas, intentamos normal o avisamos
             return
         }
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("ALARM_ID", alarm.id)
             putExtra("SONG_NAME", alarm.nombre)
+            putExtra("ARTIST_NAME", artistName)
+            putExtra("IMAGE_URL", imageUrl)
             putExtra("SONG_URL", songUrl)
         }
 
@@ -46,12 +43,41 @@ class AlarmScheduler(private val context: Context) {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
             
-            // Si la hora ya pasó hoy, programarla para mañana
             if (timeInMillis <= System.currentTimeMillis()) {
                 add(Calendar.DAY_OF_YEAR, 1)
             }
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            return
+        }
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            pendingIntent
+        )
+        
+        updateUpcomingAlarmNotification(alarm.hora)
+    }
+
+    fun snooze(alarmId: Int) {
+        val calendar = Calendar.getInstance().apply {
+            add(Calendar.MINUTE, 5)
+        }
+        
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("ALARM_ID", alarmId)
+            putExtra("IS_SNOOZE", true)
+        }
+        
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            alarmId + 10000, // Offset for snooze
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
@@ -70,5 +96,30 @@ class AlarmScheduler(private val context: Context) {
         if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent)
         }
+        hideUpcomingAlarmNotification()
+    }
+
+    private fun updateUpcomingAlarmNotification(time: String) {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val CHANNEL_ID = "scheduled_alarm_channel"
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = android.app.NotificationChannel(CHANNEL_ID, "Alarmas Programadas", android.app.NotificationManager.IMPORTANCE_LOW)
+            notificationManager.createNotificationChannel(channel)
+        }
+        
+        val notification = androidx.core.app.NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(com.example.appmusica.R.drawable.ic_alarm)
+            .setContentTitle("Alarma programada")
+            .setContentText("Próxima alarma a las $time")
+            .setOngoing(true)
+            .build()
+            
+        notificationManager.notify(999, notification)
+    }
+
+    private fun hideUpcomingAlarmNotification() {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        notificationManager.cancel(999)
     }
 }

@@ -46,7 +46,13 @@ class AlarmNotificationService : Service() {
         val dataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
             .setDefaultRequestProperties(mapOf("ngrok-skip-browser-warning" to "true"))
             
+        val audioAttributes = androidx.media3.common.AudioAttributes.Builder()
+            .setUsage(androidx.media3.common.C.USAGE_ALARM)
+            .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC)
+            .build()
+            
         player = ExoPlayer.Builder(this)
+            .setAudioAttributes(audioAttributes, true)
             .setMediaSourceFactory(androidx.media3.exoplayer.source.DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory))
             .build().apply {
             val fullUrl = if (url.startsWith("http")) url else {
@@ -67,7 +73,9 @@ class AlarmNotificationService : Service() {
             this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val fullScreenIntent = Intent(this, MainActivity::class.java)
+        val fullScreenIntent = Intent(this, AlarmActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
         val fullScreenPendingIntent = PendingIntent.getActivity(
             this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

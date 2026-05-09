@@ -133,7 +133,7 @@ class AlarmActivity : AppCompatActivity() {
     private fun snoozeAlarm() {
         val songName = binding.tvSongName.text.toString()
         val artistName = binding.tvArtistName.text.toString()
-        val songUrl = intent.getStringExtra("SONG_URL")
+        val songUrl = intent.getStringExtra("SONG_URL") // Recuperar de nuevo para asegurar
         val imageUrl = intent.getStringExtra("IMAGE_URL")
 
         val scheduler = AlarmScheduler(this)

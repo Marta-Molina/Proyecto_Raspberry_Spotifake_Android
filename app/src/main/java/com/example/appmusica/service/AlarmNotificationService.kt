@@ -59,6 +59,10 @@ class AlarmNotificationService : Service() {
             return START_NOT_STICKY
         }
 
+        // Cancelar notificación de "Próxima alarma" (ID 999) al dispararse
+        val notificationManager = getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        notificationManager.cancel(999)
+
         playSong(songUrl)
         return START_STICKY
     }
@@ -110,9 +114,11 @@ class AlarmNotificationService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val fullScreenIntent = Intent(this, com.example.appmusica.presentation.settings.AlarmActivity::class.java).apply {
+            putExtra("ALARM_ID", intent?.getIntExtra("ALARM_ID", -1)) // Necesario para snooze
             putExtra("SONG_NAME", songName)
             putExtra("ARTIST_NAME", artistName)
             putExtra("IMAGE_URL", imageUrl)
+            putExtra("SONG_URL", intent?.getStringExtra("SONG_URL")) // CRITICAL: Pass SONG_URL for snooze
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent,

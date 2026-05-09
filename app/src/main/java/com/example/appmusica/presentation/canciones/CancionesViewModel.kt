@@ -159,14 +159,17 @@ class CancionesViewModel @Inject constructor(
 
     fun loadArtistaDetalle(artistId: Int) {
         viewModelScope.launch {
-            // Cargar el artista directamente del repo para tener datos frescos (seguidores, likes)
-            val artista = artistaRepository.getArtistaById(artistId)
-            _currentArtista.value = artista
-
-            // Cargar canciones "populares" del artista (ordenar por reproducciones)
+            // Cargar canciones del artista
             if (fullList.isEmpty()) fullList = getCancionesUseCase()
             val artistSongs = fullList.filter { it.artistaIds.contains(artistId) }
             _popularSongs.value = artistSongs.sortedByDescending { it.reproducciones }.take(5)
+
+            // Calcular likes totales a partir de las canciones para asegurar que la suma sea correcta
+            val totalLikes = artistSongs.sumOf { it.likes }
+
+            // Cargar el artista directamente del repo
+            val artista = artistaRepository.getArtistaById(artistId)
+            _currentArtista.value = artista?.copy(likesTotales = totalLikes)
             
             // Cargar álbumes del artista
             _albums.value = getAlbumsForArtistUseCase(artistId)

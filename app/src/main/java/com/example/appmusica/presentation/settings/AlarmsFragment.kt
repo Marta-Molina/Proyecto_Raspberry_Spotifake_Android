@@ -22,6 +22,12 @@ class AlarmsFragment : Fragment() {
     private val viewModel: SettingsViewModel by viewModels()
     private val cancionesViewModel: com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel by activityViewModels()
     private lateinit var adapter: AlarmsAdapter
+    private lateinit var alarmScheduler: com.example.appmusica.util.AlarmScheduler
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        alarmScheduler = com.example.appmusica.util.AlarmScheduler(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,19 +43,55 @@ class AlarmsFragment : Fragment() {
         observeAlarms()
         
         binding.btnAddAlarm.setOnClickListener {
-            showAddAlarmDialog()
+            checkExactAlarmPermission {
+                showAddAlarmDialog()
+            }
         }
 
         viewModel.loadAlarms()
     }
 
+    private fun checkExactAlarmPermission(onGranted: () -> Unit) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val alarmManager = requireContext().getSystemService(android.content.Context.ALARM_SERVICE) as android.app.AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Permiso necesario")
+                    .setMessage("Para que las alarmas funcionen correctamente, Spotifake necesita permiso para programar alarmas exactas.")
+                    .setPositiveButton("Configurar") { _, _ ->
+                        val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                            data = android.net.Uri.fromParts("package", requireContext().packageName, null)
+                        }
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            } else {
+                onGranted()
+            }
+        } else {
+            onGranted()
+        }
+    }
+
     private fun setupRecyclerView() {
         adapter = AlarmsAdapter(
             onToggle = { alarm, isActive ->
-                viewModel.updateAlarm(alarm.id, alarm.copy(activo = isActive))
+                val updatedAlarm = alarm.copy(activo = isActive)
+                viewModel.updateAlarm(alarm.id, updatedAlarm)
+                
+                if (isActive) {
+                    checkExactAlarmPermission {
+                        val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
+                        alarmScheduler.schedule(updatedAlarm, song?.urlAudio)
+                    }
+                } else {
+                    alarmScheduler.cancel(alarm.id)
+                }
             },
             onDelete = { alarm ->
                 viewModel.deleteAlarm(alarm.id)
+                alarmScheduler.cancel(alarm.id)
             }
         )
         binding.rvAlarms.layoutManager = LinearLayoutManager(requireContext())
@@ -59,6 +101,13 @@ class AlarmsFragment : Fragment() {
     private fun observeAlarms() {
         viewModel.alarms.observe(viewLifecycleOwner) { alarms ->
             adapter.submitList(alarms)
+            // Opcionalmente: Verificar que todos los activos estén programados
+            alarms.forEach { alarm ->
+                if (alarm.activo) {
+                    val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
+                    alarmScheduler.schedule(alarm, song?.urlAudio)
+                }
+            }
         }
     }
 

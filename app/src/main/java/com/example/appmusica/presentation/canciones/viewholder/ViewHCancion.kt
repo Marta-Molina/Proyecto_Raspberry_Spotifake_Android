@@ -36,18 +36,16 @@ class ViewHCancion(
         // Star appearance: primary color + filled when liked, grey when not
         if (isLiked) {
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_on)
-            
-            val typedValue = android.util.TypedValue()
-            itemView.context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
-            val primaryColor = typedValue.data
-            
             binding.btnLike.setColorFilter(
-                primaryColor,
+                android.graphics.Color.parseColor("#1DB954"),
                 android.graphics.PorterDuff.Mode.SRC_IN
             )
         } else {
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_off)
-            binding.btnLike.clearColorFilter()
+            binding.btnLike.setColorFilter(
+                android.graphics.Color.GRAY,
+                android.graphics.PorterDuff.Mode.SRC_IN
+            )
         }
 
         // ✅ Cargar imagen solo si no es null
@@ -94,6 +92,10 @@ class ViewHCancion(
         // Botón Like
         binding.btnLike.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                // Apply animation
+                val anim = android.view.animation.AnimationUtils.loadAnimation(itemView.context, R.anim.scale_pop)
+                it.startAnimation(anim)
+                
                 like(bindingAdapterPosition)
             }
         }

@@ -93,7 +93,12 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun logout() {
-        authManager.clear()
+        val userId = authManager.getUserId()
+        val token = authManager.getToken() ?: ""
+        scope.launch {
+            recordSession(userId, token, "Cerrar sesión")
+            authManager.clear()
+        }
     }
 
     override fun isLoggedIn(): Boolean {

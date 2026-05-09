@@ -65,9 +65,18 @@ class AlarmNotificationService : Service() {
                 val fullUrl = if (songUrl.startsWith("http")) songUrl else {
                     com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/") + "/" + songUrl.removePrefix("/")
                 }
-                val mediaItem = MediaItem.fromUri(fullUrl)
-                player?.setMediaItem(mediaItem)
+                
+                // Using ngrok headers to skip warning page
+                val dataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
+                    .setDefaultRequestProperties(mapOf("ngrok-skip-browser-warning" to "true"))
+                
+                val mediaSource = androidx.media3.exoplayer.source.DefaultMediaSourceFactory(this)
+                    .setDataSourceFactory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(fullUrl))
+
+                player?.setMediaSource(mediaSource)
                 player?.prepare()
+                player?.volume = 1.0f
                 player?.play()
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -22,8 +22,18 @@ class SessionAdapter : ListAdapter<UserSession, SessionAdapter.SessionViewHolder
     class SessionViewHolder(private val binding: ItemSessionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(session: UserSession) {
             binding.txtAction.text = session.action
-            binding.txtDateTime.text = "${session.date} ${session.time}"
-            // NO mostrar el token en la UI por razones de seguridad. El token sigue almacenado en Room.
+            
+            // Format date from YYYY-MM-DD to DD/MM/YYYY
+            val formattedDate = try {
+                val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                val outputFormat = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                val date = inputFormat.parse(session.date)
+                if (date != null) outputFormat.format(date) else session.date
+            } catch (e: Exception) {
+                session.date
+            }
+
+            binding.txtDateTime.text = "$formattedDate ${session.time}"
         }
     }
 

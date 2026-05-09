@@ -8,12 +8,10 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 
-import androidx.media3.session.DefaultMediaNotificationProvider
-import androidx.media3.common.util.BitmapLoader
-import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.SettableFuture
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -23,7 +21,11 @@ import com.example.appmusica.R
 import com.example.appmusica.data.local.AuthManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import android.net.Uri
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
+import androidx.media3.common.util.BitmapLoader
+import androidx.media3.session.DefaultMediaNotificationProvider
+import androidx.media3.session.MediaNotification
 
 @AndroidEntryPoint
 class PlaybackService : MediaSessionService() {
@@ -46,11 +48,12 @@ class PlaybackService : MediaSessionService() {
             .setMediaSourceFactory(DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory))
             .build()
             
-        mediaSession = MediaSession.Builder(this, player).build()
+        mediaSession = MediaSession.Builder(this, player)
+            .setBitmapLoader(GlideBitmapLoader(this, authManager))
+            .build()
 
         setMediaNotificationProvider(
             DefaultMediaNotificationProvider.Builder(this)
-                .setBitmapLoader(GlideBitmapLoader(this, authManager))
                 .build().apply {
                     setSmallIcon(R.drawable.ic_notification_music_vector)
                 }
@@ -61,6 +64,9 @@ class PlaybackService : MediaSessionService() {
         private val context: Context,
         private val authManager: AuthManager
     ) : BitmapLoader {
+
+        override fun supportsMimeType(mimeType: String): Boolean = true
+
         override fun decodeBitmap(data: ByteArray): ListenableFuture<Bitmap> {
             val future = SettableFuture.create<Bitmap>()
             Glide.with(context)

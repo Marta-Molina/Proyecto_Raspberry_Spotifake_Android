@@ -27,6 +27,10 @@ class AlarmNotificationService : Service() {
         val alarmId = intent?.getIntExtra("ALARM_ID", -1) ?: -1
 
         if (intent?.action == "STOP_ALARM") {
+            player?.stop()
+            player?.release()
+            player = null
+            stopForeground(true)
             stopSelf()
             return START_NOT_STICKY
         }
@@ -38,7 +42,7 @@ class AlarmNotificationService : Service() {
             playAlarmMusic(songUrl)
         }
 
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun playAlarmMusic(url: String) {

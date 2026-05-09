@@ -117,13 +117,25 @@ class AlarmsFragment : Fragment() {
     private fun observeAlarms() {
         viewModel.alarms.observe(viewLifecycleOwner) { alarms ->
             adapter.submitList(alarms)
-            // Verificar que el primero activo esté en la notificación scheduled
-            val nextAlarm = alarms.find { it.activo }
+            
+            // Encontrar la próxima alarma activa ordenando por hora
+            val sortedActiveAlarms = alarms.filter { it.activo }.sortedBy { it.hora }
+            
+            val nextAlarm = sortedActiveAlarms.firstOrNull { 
+                val alarmTime = it.hora.split(":")
+                val calendar = java.util.Calendar.getInstance().apply {
+                    set(java.util.Calendar.HOUR_OF_DAY, alarmTime[0].toInt())
+                    set(java.util.Calendar.MINUTE, alarmTime[1].toInt())
+                    set(java.util.Calendar.SECOND, 0)
+                }
+                calendar.timeInMillis > System.currentTimeMillis()
+            } ?: sortedActiveAlarms.firstOrNull() // Si todas pasaron hoy, la primera es la de mañana
+
             if (nextAlarm != null) {
                 val song = cancionesViewModel.canciones.value?.find { it.id == nextAlarm.cancionId }
                 alarmScheduler.schedule(nextAlarm, song?.urlAudio, song?.nombre, song?.urlPortada)
             } else {
-                alarmScheduler.cancel(-1) // Escondemos notificación
+                alarmScheduler.cancel(-1)
             }
         }
     }

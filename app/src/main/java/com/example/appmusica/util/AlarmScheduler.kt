@@ -61,19 +61,23 @@ class AlarmScheduler(private val context: Context) {
         updateUpcomingAlarmNotification(alarm.hora)
     }
 
-    fun snooze(alarmId: Int) {
+    fun snooze(alarmId: Int, songName: String?, songUrl: String?, artistName: String?, imageUrl: String?) {
         val calendar = Calendar.getInstance().apply {
             add(Calendar.MINUTE, 5)
         }
         
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("ALARM_ID", alarmId)
+            putExtra("SONG_NAME", songName)
+            putExtra("SONG_URL", songUrl)
+            putExtra("ARTIST_NAME", artistName)
+            putExtra("IMAGE_URL", imageUrl)
             putExtra("IS_SNOOZE", true)
         }
         
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            alarmId + 10000, // Offset for snooze
+            alarmId + 10000, 
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

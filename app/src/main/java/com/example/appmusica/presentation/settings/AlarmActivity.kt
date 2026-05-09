@@ -43,12 +43,12 @@ class AlarmActivity : AppCompatActivity() {
 
         if (!imageUrl.isNullOrEmpty()) {
             val fullImageUrl = if (imageUrl.startsWith("http")) imageUrl else {
-                com.example.appmusica.di.NetworkModule.BASE_STATIC_URL + imageUrl
+                com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/") + "/" + imageUrl.removePrefix("/")
             }
             val glideUrl = com.bumptech.glide.load.model.GlideUrl(fullImageUrl, com.bumptech.glide.load.model.LazyHeaders.Builder()
                 .addHeader("ngrok-skip-browser-warning", "true")
                 .build())
-            Glide.with(this).load(glideUrl).circleCrop().into(binding.ivSongImage)
+            Glide.with(this).load(glideUrl).placeholder(com.example.appmusica.R.drawable.portada_generica).circleCrop().into(binding.ivSongImage)
         }
 
         setupSlider()
@@ -100,8 +100,13 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     private fun snoozeAlarm() {
+        val songName = binding.tvSongName.text.toString()
+        val artistName = binding.tvArtistName.text.toString()
+        val songUrl = intent.getStringExtra("SONG_URL")
+        val imageUrl = intent.getStringExtra("IMAGE_URL")
+
         val scheduler = AlarmScheduler(this)
-        scheduler.snooze(alarmId)
+        scheduler.snooze(alarmId, songName, songUrl, artistName, imageUrl)
         stopAlarm()
     }
 

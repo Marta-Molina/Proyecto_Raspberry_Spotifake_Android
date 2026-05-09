@@ -41,6 +41,12 @@ class AlarmActivity : AppCompatActivity() {
         binding.tvArtistName.text = artistName
         binding.tvAlarmTime.text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
+        binding.sliderContainer.post {
+            sliderWidth = binding.sliderContainer.width
+            // Recenter thumb
+            binding.sliderThumb.x = (sliderWidth / 2f) - (binding.sliderThumb.width / 2f)
+        }
+
         if (!imageUrl.isNullOrEmpty()) {
             val fullImageUrl = if (imageUrl.startsWith("http")) imageUrl else {
                 com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/") + "/" + imageUrl.removePrefix("/")
@@ -52,14 +58,40 @@ class AlarmActivity : AppCompatActivity() {
         }
 
         setupSlider()
+        registerStopReceiver()
+    }
+
+    private val stopReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "ACTION_STOP_ALARM_ACTIVITY") {
+                finish()
+            }
+        }
+    }
+
+    private fun registerStopReceiver() {
+        val filter = android.content.IntentFilter("ACTION_STOP_ALARM_ACTIVITY")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(stopReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(stopReceiver, filter)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(stopReceiver)
+        } catch (e: Exception) {}
     }
 
     private fun setupSlider() {
         binding.sliderThumb.setOnTouchListener { v, event ->
+            if (sliderWidth <= 0) return@setOnTouchListener false
+            
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     initialX = v.x
-                    sliderWidth = binding.sliderContainer.width
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -74,14 +106,13 @@ class AlarmActivity : AppCompatActivity() {
                 }
                 MotionEvent.ACTION_UP -> {
                     val finalPosition = v.x + v.width / 2f
-                    val center = sliderWidth / 2f
                     
                     when {
-                        finalPosition > sliderWidth * 0.8f -> stopAlarm()
-                        finalPosition < sliderWidth * 0.2f -> snoozeAlarm()
+                        finalPosition > sliderWidth * 0.85f -> stopAlarm()
+                        finalPosition < sliderWidth * 0.15f -> snoozeAlarm()
                         else -> {
                             // Reset thumb to center
-                            v.animate().x(center - v.width / 2f).setDuration(200).start()
+                            v.animate().x((sliderWidth / 2f) - (v.width / 2f)).setDuration(200).start()
                         }
                     }
                     true

@@ -14,21 +14,14 @@ class AlarmReceiver : BroadcastReceiver() {
         val imageUrl = intent.getStringExtra("IMAGE_URL")
         val songUrl = intent.getStringExtra("SONG_URL")
 
-        // Lanzar Activity para pantalla completa
-        val activityIntent = Intent(context, com.example.appmusica.presentation.settings.AlarmActivity::class.java).apply {
-            putExtra("ALARM_ID", alarmId)
-            putExtra("SONG_NAME", songName)
-            putExtra("ARTIST_NAME", artistName)
-            putExtra("IMAGE_URL", imageUrl)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        context.startActivity(activityIntent)
-
         // Lanzar servicio para el audio y notificación persistente
+        // La notificación del servicio se encargará de lanzar la AlarmActivity mediante fullScreenIntent
         val serviceIntent = Intent(context, AlarmNotificationService::class.java).apply {
             putExtra("ALARM_ID", alarmId)
             putExtra("SONG_NAME", songName)
             putExtra("SONG_URL", songUrl)
+            putExtra("ARTIST_NAME", artistName)
+            putExtra("IMAGE_URL", imageUrl)
             action = "START_ALARM"
         }
 

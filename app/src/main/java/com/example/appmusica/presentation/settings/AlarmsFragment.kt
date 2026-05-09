@@ -1,5 +1,7 @@
 package com.example.appmusica.presentation.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,7 +62,7 @@ class AlarmsFragment : Fragment() {
                     .setMessage("Para que las alarmas funcionen correctamente, Spotifake necesita permiso para programar alarmas exactas.")
                     .setPositiveButton("Configurar") { _, _ ->
                         val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                            data = android.net.Uri.fromParts("package", requireContext().packageName, null)
+                            data = Uri.fromParts("package", requireContext().packageName, null)
                         }
                         startActivity(intent)
                     }

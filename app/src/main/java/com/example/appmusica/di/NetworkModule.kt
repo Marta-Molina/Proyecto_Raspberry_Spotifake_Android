@@ -13,8 +13,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    const val BASE_API_URL = "https://graduation-charms-ethernet-anne.trycloudflare.com/api/"
-    const val BASE_STATIC_URL = "https://graduation-charms-ethernet-anne.trycloudflare.com/"
+    const val BASE_API_URL = "https://ruser215.freedynamicdns.org/api/"
+    const val BASE_STATIC_URL = "https://ruser215.freedynamicdns.org/"
 
     @Provides
     @Singleton

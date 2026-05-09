@@ -42,8 +42,10 @@ class AlarmNotificationService : Service() {
         val artistName = intent?.getStringExtra("ARTIST_NAME") ?: "Spotifake"
         val imageUrl = intent?.getStringExtra("IMAGE_URL")
 
+        val alarmId = intent?.getIntExtra("ALARM_ID", -1) ?: -1
+
         // Call startForeground ASAP (Android 12+ requirement)
-        val initialNotification = createNotification(songName, artistName, imageUrl)
+        val initialNotification = createNotification(songName, artistName, imageUrl, alarmId, songUrl)
         startForeground(NOTIFICATION_ID, initialNotification)
 
         if (intent?.action == "STOP_ALARM") {
@@ -94,7 +96,13 @@ class AlarmNotificationService : Service() {
         }
     }
 
-    private fun createNotification(songName: String, artistName: String, imageUrl: String?): Notification {
+    private fun createNotification(
+        songName: String, 
+        artistName: String, 
+        imageUrl: String?, 
+        alarmId: Int, 
+        songUrl: String?
+    ): Notification {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -114,11 +122,11 @@ class AlarmNotificationService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val fullScreenIntent = Intent(this, com.example.appmusica.presentation.settings.AlarmActivity::class.java).apply {
-            putExtra("ALARM_ID", intent?.getIntExtra("ALARM_ID", -1)) // Necesario para snooze
+            putExtra("ALARM_ID", alarmId) // Necesario para snooze
             putExtra("SONG_NAME", songName)
             putExtra("ARTIST_NAME", artistName)
             putExtra("IMAGE_URL", imageUrl)
-            putExtra("SONG_URL", intent?.getStringExtra("SONG_URL")) // CRITICAL: Pass SONG_URL for snooze
+            putExtra("SONG_URL", songUrl) // CRITICAL: Pass SONG_URL for snooze
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent,

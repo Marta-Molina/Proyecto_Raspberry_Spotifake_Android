@@ -72,7 +72,7 @@
                     android:layout_height="140dp"
                     app:cardCornerRadius="70dp"
                     app:cardElevation="12dp"
-                    app:strokeWidth="4dp"
+                    app:strokeWidth="2dp"
                     app:strokeColor="@color/white"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -103,7 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         tools:text="1.2M" />
 
@@ -111,7 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#CCCCCC"
-                        android:textSize="10sp"
+                        android:textSize="9sp"
                         android:text="FOLLOWERS" />
                 </LinearLayout>
 
@@ -131,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         tools:text="850K" />
 
@@ -139,7 +139,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#CCCCCC"
-                        android:textSize="10sp"
+                        android:textSize="9sp"
                         android:text="LIKES" />
                 </LinearLayout>
 

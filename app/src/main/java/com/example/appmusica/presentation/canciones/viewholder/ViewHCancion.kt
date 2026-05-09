@@ -10,6 +10,7 @@ import com.example.appmusica.R
 import com.example.appmusica.databinding.ItemCancionBinding
 import com.example.appmusica.di.NetworkModule
 import com.example.appmusica.domain.model.Cancion
+import com.example.appmusica.util.FormatUtils
 import com.example.appmusica.util.setClickAnimation
 
 class ViewHCancion(
@@ -31,7 +32,7 @@ class ViewHCancion(
         binding.txtviewNombre.text = cancion.nombre
         binding.txtviewArtista.text = cancion.artista ?: ""
         binding.txtviewAlbum.text = cancion.album ?: ""
-        binding.txtviewLikes.text = cancion.likes.toString()
+        binding.txtviewLikes.text = FormatUtils.formatCount(cancion.likes)
 
         // Star appearance: primary color + filled when liked, grey when not
         if (isLiked) {

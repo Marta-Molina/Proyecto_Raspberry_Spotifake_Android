@@ -16,6 +16,7 @@ import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
 import com.example.appmusica.presentation.canciones.adapter.AdapterCancion
 import com.example.appmusica.presentation.canciones.adapter.AlbumAdapter
 import com.example.appmusica.di.NetworkModule
+import com.example.appmusica.util.FormatUtils
 import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -100,8 +101,8 @@ class ArtistaDetalleFragment : Fragment() {
         viewModel.currentArtista.observe(viewLifecycleOwner) { artista ->
             artista?.let {
                 binding.txtArtistNameCaps.text = it.nombre.uppercase()
-                binding.txtFollowers.text = "${it.seguidores} Seguidores"
-                binding.txtTotalLikes.text = "${it.likesTotales} Likes"
+                binding.txtFollowers.text = FormatUtils.formatCount(it.seguidores)
+                binding.txtTotalLikes.text = FormatUtils.formatCount(it.likesTotales)
 
                 val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
                 val fullUrl = if (it.fotoUrl?.startsWith("http") == true) it.fotoUrl else baseUrl + it.fotoUrl
@@ -158,14 +159,6 @@ class ArtistaDetalleFragment : Fragment() {
             viewModel.followArtista(artista.id)
         }
         // ViewModel handles optimistic update through LiveData now
-    }
-
-    private fun formatCount(count: Int): String {
-        return when {
-            count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000f)
-            count >= 1_000 -> String.format("%.1fK", count / 1_000f)
-            else -> count.toString()
-        }
     }
 
     override fun onDestroyView() {

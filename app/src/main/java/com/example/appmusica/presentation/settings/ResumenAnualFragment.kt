@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.appmusica.databinding.FragmentResumenAnualBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
+import com.example.appmusica.util.FormatUtils
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -37,7 +38,7 @@ class ResumenAnualFragment : Fragment() {
         viewModel.stats.observe(viewLifecycleOwner) { resumen ->
             if (resumen != null) {
                 binding.txtTotalTime.text = "${resumen.totalTimeSeconds / 60} minutos escuchados"
-                binding.txtTotalReproducciones.text = "${resumen.totalReproductions} canciones reproducidas"
+                binding.txtTotalReproducciones.text = "${FormatUtils.formatCount(resumen.totalReproductions)} canciones reproducidas"
                 
                 // Aquí se podrían cargar los detalles de las canciones y artistas top usando sus IDs
                 // Por ahora mostramos los IDs o un mensaje simple

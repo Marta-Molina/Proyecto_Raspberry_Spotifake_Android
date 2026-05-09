@@ -28,6 +28,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentDetalleBinding
 import com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel
+import com.example.appmusica.util.FormatUtils
 import com.example.appmusica.util.setClickAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -152,7 +153,7 @@ class DetalleFragment : Fragment() {
 
         // Like button and counts
         updateLikeIcon(cancion.id)
-        binding.txtLikesCount.text = "${cancion.likes} likes"
+        binding.txtLikesCount.text = "${FormatUtils.formatCount(cancion.likes)} likes"
         
         binding.btnLike.setOnClickListener {
             val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)

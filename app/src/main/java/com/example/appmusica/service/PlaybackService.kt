@@ -23,9 +23,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
+import com.google.common.collect.ImmutableList
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaNotification
+import androidx.media3.session.CommandButton
 
 @AndroidEntryPoint
 class PlaybackService : MediaSessionService() {
@@ -53,11 +55,60 @@ class PlaybackService : MediaSessionService() {
             .build()
 
         setMediaNotificationProvider(
-            DefaultMediaNotificationProvider.Builder(this)
-                .build().apply {
-                    setSmallIcon(R.drawable.ic_notification_music_vector)
-                }
+            CustomNotificationProvider(this)
         )
+    }
+
+    private inner class CustomNotificationProvider(context: Context) : DefaultMediaNotificationProvider(context) {
+        
+        init {
+            setSmallIcon(R.drawable.ic_notification_music_vector)
+        }
+
+        override fun getMediaButtons(
+            mediaSession: MediaSession,
+            customLayout: ImmutableList<CommandButton>,
+            actionFactory: MediaNotification.ActionFactory,
+            onNotificationChangedCallback: MediaNotification.Provider.Callback
+        ): ImmutableList<CommandButton> {
+            val buttons = ImmutableList.builder<CommandButton>()
+            
+            // Previous
+            buttons.add(CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_SKIP_TO_PREVIOUS)
+                .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_previous)
+                .setDisplayName("Anterior")
+                .build())
+                
+            // Play/Pause
+            val playPauseIcon = if (mediaSession.player.isPlaying) 
+                androidx.media3.ui.R.drawable.exo_ic_pause_circle_filled 
+            else 
+                androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
+                
+            buttons.add(CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+                .setIconResId(playPauseIcon)
+                .setDisplayName("Play/Pause")
+                .build())
+                
+            // Next
+            buttons.add(CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_SKIP_TO_NEXT)
+                .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next)
+                .setDisplayName("Siguiente")
+                .build())
+                
+            return buttons.build()
+        }
+
+        override fun getCompactViewIndices(
+            mediaSession: MediaSession,
+            customLayout: ImmutableList<CommandButton>,
+            actionFactory: MediaNotification.ActionFactory
+        ): IntArray {
+            return intArrayOf(0, 1, 2)
+        }
     }
 
     private class GlideBitmapLoader(

@@ -8,12 +8,26 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 
-import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaNotification
+import androidx.media3.session.CommandButton
+import androidx.media3.common.Player
+import androidx.core.app.NotificationCompat
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.data.local.AuthManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.google.common.collect.ImmutableList
 
 @AndroidEntryPoint
 class PlaybackService : MediaSessionService() {
@@ -38,14 +52,82 @@ class PlaybackService : MediaSessionService() {
             
         mediaSession = MediaSession.Builder(this, player).build()
 
-        // Configurar el icono pequeño de la notificación para la barra de estado
-        setMediaNotificationProvider(
-            DefaultMediaNotificationProvider.Builder(this)
-                .setNotificationId(1001)
-                .build().apply {
-                    setSmallIcon(R.drawable.ic_notification_music_vector)
-                }
-        )
+        setMediaNotificationProvider(CustomNotificationProvider(this, authManager))
+    }
+
+    private inner class CustomNotificationProvider(
+        private val context: Context,
+        private val authManager: AuthManager
+    ) : MediaNotification.Provider {
+
+        private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        private val channelId = "playback_channel"
+
+        init {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(channelId, "Reproducción", NotificationManager.IMPORTANCE_LOW)
+                notificationManager.createNotificationChannel(channel)
+            }
+        }
+
+        override fun getNotification(
+            mediaSession: MediaSession,
+            customLayout: ImmutableList<CommandButton>,
+            actionFactory: MediaNotification.ActionFactory,
+            onNotificationChangedCallback: MediaNotification.Provider.Callback
+        ): MediaNotification {
+            val player = mediaSession.player
+            val metadata = player.mediaMetadata
+            
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notification_music_vector)
+                .setContentTitle(metadata.title ?: "Spotifake")
+                .setContentText(metadata.artist ?: "Desconocido")
+                .setOngoing(player.isPlaying)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOnlyAlertOnce(true)
+
+            // Acciones básicas
+            builder.addAction(actionFactory.createCustomCommandButton(mediaSession, CommandButton.Builder().setDisplayName("Prev").setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_previous).build(), null))
+            
+            val playPauseIcon = if (player.isPlaying) androidx.media3.ui.R.drawable.exo_ic_pause_circle_filled else androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
+            builder.addAction(actionFactory.createCustomCommandButton(mediaSession, CommandButton.Builder().setDisplayName("Play/Pause").setIconResId(playPauseIcon).build(), null))
+            
+            builder.addAction(actionFactory.createCustomCommandButton(mediaSession, CommandButton.Builder().setDisplayName("Next").setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next).build(), null))
+
+            builder.setStyle(androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.sessionCompatToken as android.support.v4.media.session.MediaSessionCompat.Token)
+                .setShowActionsInCompactView(0, 1, 2))
+
+            // Cargar Arte en segundo plano
+            metadata.artworkUri?.let { uri ->
+                val glideUrl = GlideUrl(uri.toString(), LazyHeaders.Builder()
+                    .addHeader("ngrok-skip-browser-warning", "true")
+                    .addHeader("Authorization", "Bearer ${authManager.getToken() ?: ""}")
+                    .build())
+
+                Glide.with(context)
+                    .asBitmap()
+                    .load(glideUrl)
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            builder.setLargeIcon(resource)
+                            onNotificationChangedCallback.onNotificationChanged(MediaNotification(1001, builder.build()))
+                        }
+                        override fun onLoadCleared(placeholder: Drawable?) {}
+                    })
+            }
+
+            return MediaNotification(1001, builder.build())
+        }
+
+        override fun handleCustomCommand(
+            mediaSession: MediaSession,
+            actionFactory: MediaNotification.ActionFactory,
+            customCommand: String,
+            extras: android.os.Bundle
+        ): Boolean = false
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession

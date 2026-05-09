@@ -90,15 +90,18 @@ class AlarmsFragment : Fragment() {
                 selectedTime = String.format("%02d:%02d", hour, minute)
                 selectedSongId = songs[spinnerSong.selectedItemPosition].id
                 
+                android.util.Log.d("AlarmsFragment", "Creating alarm: $selectedTime for song $selectedSongId")
+                
                 val newAlarm = Alarma(
                     id = 0,
-                    userId = 0, // El backend lo asignará del token
+                    userId = 0L, 
                     nombre = "Alarma",
                     hora = selectedTime,
                     cancionId = selectedSongId,
                     activo = true
                 )
                 viewModel.createAlarm(newAlarm)
+                Toast.makeText(context, "Creando alarma...", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancelar", null)
             .show()

@@ -43,7 +43,10 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val result = alarmaRepository.createAlarm(alarm)
             if (result != null) {
+                android.util.Log.d("SettingsViewModel", "Alarm created successfully: ${result.id}")
                 loadAlarms()
+            } else {
+                android.util.Log.e("SettingsViewModel", "Failed to create alarm")
             }
         }
     }

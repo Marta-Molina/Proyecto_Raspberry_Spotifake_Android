@@ -11,8 +11,14 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaNotification
 import com.example.appmusica.R
+import com.example.appmusica.data.local.AuthManager
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PlaybackService : MediaSessionService() {
+
+    @Inject lateinit var authManager: AuthManager
 
     private var mediaSession: MediaSession? = null
 
@@ -21,6 +27,10 @@ class PlaybackService : MediaSessionService() {
         super.onCreate()
         
         val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setDefaultRequestProperties(mapOf(
+                "ngrok-skip-browser-warning" to "true",
+                "Authorization" to "Bearer ${authManager.getToken() ?: ""}"
+            ))
             
         val player = ExoPlayer.Builder(this)
             .setMediaSourceFactory(DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory))

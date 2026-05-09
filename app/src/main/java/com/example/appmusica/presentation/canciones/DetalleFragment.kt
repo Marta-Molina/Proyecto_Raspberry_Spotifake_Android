@@ -328,6 +328,8 @@ class DetalleFragment : Fragment() {
         val targetUri = mediaItems[initialPosition].localConfiguration?.uri?.toString()
 
         if (currentPlayingUri == targetUri) {
+            controller.seekTo(initialPosition, 0)
+            controller.play()
             return
         }
 

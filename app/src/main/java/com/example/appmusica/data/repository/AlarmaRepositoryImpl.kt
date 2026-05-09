@@ -15,7 +15,13 @@ class AlarmaRepositoryImpl @Inject constructor(
 
     override suspend fun createAlarm(alarm: Alarma): Alarma? {
         val response = api.createAlarm(alarm)
-        return if (response.isSuccessful) response.body() else null
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            val errorBody = response.errorBody()?.string()
+            android.util.Log.e("AlarmaRepository", "Failed to create alarm: ${response.code()} - $errorBody")
+            null
+        }
     }
 
     override suspend fun updateAlarm(id: Int, alarm: Alarma): Boolean {

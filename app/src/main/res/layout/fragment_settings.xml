@@ -1,276 +1,279 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- fragment_settings.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Configuración"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Perfil"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
-
-        <ImageView
-            android:id="@+id/ivUserDetailPhoto"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/user" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_toEndOf="@id/ivUserDetailPhoto"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtSettingsUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnChangeProfile"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="0dp"
-                android:text="Cambiar foto de perfil"
-                android:textColor="@color/spotify_green" />
-        </LinearLayout>
-    </RelativeLayout>
-    
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Temas"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <!-- Standard: Light/Dark Switch -->
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchLightTheme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Tema Claro"
-        android:textColor="?android:attr/textColorPrimary" />
-    
-    <!-- Premium: Theme Carousel -->
     <LinearLayout
-        android:id="@+id/premiumThemesLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
         android:orientation="vertical"
-        android:visibility="gone">
-        
+        android:padding="24dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Estilos Premium"
-            android:textColor="@color/premium_gold"
-            android:textSize="14sp"
-            android:textStyle="italic" />
-            
-        <HorizontalScrollView
+            android:text="Configuración"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
-            
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                
-                <View android:id="@+id/themeDark" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/spotify_black" />
-                <View android:id="@+id/themeGold" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_gold" />
-                <View android:id="@+id/themePink" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_pink" />
-                <View android:id="@+id/themeBlue" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_blue" />
-                <View android:id="@+id/themeEmerald" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_emerald" />
-            </LinearLayout>
-        </HorizontalScrollView>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Cuenta"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txtAccountType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="..."
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="16sp" />
-
-    <!-- Premium: Mascota Selection -->
-    <LinearLayout
-        android:id="@+id/mascotaSelectionLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="24dp"
-        android:visibility="gone">
-        
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Elige tu Mascota"
-            android:textColor="@color/premium_gold"
+            android:layout_marginTop="32dp"
+            android:text="Perfil"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
-            
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvMascotas"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:id="@+id/ivUserDetailPhoto"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/user" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/ivUserDetailPhoto"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtSettingsUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnChangeProfile"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:text="Cambiar foto de perfil"
+                    android:textColor="@color/spotify_green" />
+            </LinearLayout>
+        </RelativeLayout>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Temas"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Standard: Light/Dark Switch -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchLightTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Utilidades"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSleepTimer"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Temporizador de apagado"
-        android:textAlignment="viewStart"
-        app:icon="@drawable/ic_timer"
-        app:iconTint="?android:attr/textColorPrimary"
-        app:strokeColor="?attr/colorSurface" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnManageAlarms"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Gestionar Alarmas"
-        android:textAlignment="viewStart"
-        app:icon="@drawable/ic_alarm"
-        app:iconTint="?android:attr/textColorPrimary"
-        app:strokeColor="?attr/colorSurface" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnResumenAnual"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Resumen Anual"
-        android:textAlignment="viewStart"
-        app:icon="@drawable/ic_stats"
-        app:iconTint="?android:attr/textColorPrimary"
-        app:strokeColor="?attr/colorSurface" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="24dp"
-        android:background="?attr/colorSurface" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp">
+            android:text="Tema Claro"
+            android:textColor="?android:attr/textColorPrimary" />
+        
+        <!-- Premium: Theme Carousel -->
+        <LinearLayout
+            android:id="@+id/premiumThemesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Estilos Premium"
+                android:textColor="@color/premium_gold"
+                android:textSize="14sp"
+                android:textStyle="italic" />
+                
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    
+                    <View android:id="@+id/themeDark" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/spotify_black" />
+                    <View android:id="@+id/themeGold" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_gold" />
+                    <View android:id="@+id/themePink" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_pink" />
+                    <View android:id="@+id/themeBlue" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_blue" />
+                    <View android:id="@+id/themeEmerald" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_emerald" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Historial de Sesiones"
+            android:layout_marginTop="32dp"
+            android:text="Cuenta"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/btnDeleteHistory"
+            android:id="@+id/txtAccountType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="..."
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="16sp" />
+
+        <!-- Premium: Mascota Selection -->
+        <LinearLayout
+            android:id="@+id/mascotaSelectionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp"
+            android:visibility="gone">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Elige tu Mascota"
+                android:textColor="@color/premium_gold"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+                
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMascotas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </LinearLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="Borrar"
-            android:textColor="@color/spotify_green"
-            android:textSize="14sp"
-            android:clickable="true"
-            android:focusable="true"/>
-    </RelativeLayout>
+            android:layout_marginTop="32dp"
+            android:text="Utilidades"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvHistory"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        android:weightSum="2">
-
-        <Button
-            android:id="@+id/btnChangeAccount"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="0dp"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSleepTimer"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Cambiar cuenta"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:layout_marginTop="8dp"
+            android:text="Temporizador de apagado"
+            android:textAlignment="viewStart"
+            app:icon="@drawable/ic_timer"
+            app:iconTint="?android:attr/textColorPrimary"
+            app:strokeColor="?attr/colorSurface" />
 
-        <Button
-            android:id="@+id/btnLogout"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="0dp"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnManageAlarms"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Cerrar sesión"
-            android:textColor="#FF4444" />
+            android:layout_marginTop="8dp"
+            android:text="Gestionar Alarmas"
+            android:textAlignment="viewStart"
+            app:icon="@drawable/ic_alarm"
+            app:iconTint="?android:attr/textColorPrimary"
+            app:strokeColor="?attr/colorSurface" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResumenAnual"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Resumen Anual"
+            android:textAlignment="viewStart"
+            app:icon="@drawable/ic_stats"
+            app:iconTint="?android:attr/textColorPrimary"
+            app:strokeColor="?attr/colorSurface" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="?attr/colorSurface" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Historial de Sesiones"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnDeleteHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Borrar"
+                android:textColor="@color/spotify_green"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnChangeAccount"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cambiar cuenta"
+                android:textColor="?android:attr/textColorPrimary" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cerrar sesión"
+                android:textColor="#FF4444" />
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

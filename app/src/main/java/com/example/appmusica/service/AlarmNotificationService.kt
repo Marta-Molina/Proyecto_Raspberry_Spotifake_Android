@@ -12,7 +12,11 @@ import com.example.appmusica.R
 import com.example.appmusica.presentation.MainActivity
 import com.example.appmusica.presentation.settings.AlarmActivity
 
+@dagger.hilt.android.AndroidEntryPoint
 class AlarmNotificationService : Service() {
+
+    @javax.inject.Inject
+    lateinit var authManager: com.example.appmusica.data.local.AuthManager
 
     private var player: ExoPlayer? = null
     private val CHANNEL_ID = "alarm_service_channel"
@@ -62,13 +66,15 @@ class AlarmNotificationService : Service() {
     private fun playSong(songUrl: String?) {
         if (!songUrl.isNullOrEmpty()) {
             try {
-                val fullUrl = if (songUrl.startsWith("http")) songUrl else {
-                    com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/") + "/" + songUrl.removePrefix("/")
-                }
+                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
+                val fullUrl = if (songUrl.startsWith("http")) songUrl else baseUrl + songUrl
                 
-                // Using ngrok headers to skip warning page
+                // Using ngrok headers to skip warning page AND Authorization for the API
                 val dataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
-                    .setDefaultRequestProperties(mapOf("ngrok-skip-browser-warning" to "true"))
+                    .setDefaultRequestProperties(mapOf(
+                        "ngrok-skip-browser-warning" to "true",
+                        "Authorization" to "Bearer ${authManager.getToken() ?: ""}"
+                    ))
                 
                 val mediaSource = androidx.media3.exoplayer.source.DefaultMediaSourceFactory(this)
                     .setDataSourceFactory(dataSourceFactory)

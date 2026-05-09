@@ -157,15 +157,7 @@ class ArtistaDetalleFragment : Fragment() {
         } else {
             viewModel.followArtista(artista.id)
         }
-        
-        // Optimistic update
-        val updatedArtista = artista.copy(
-            siguiendo = !currentFollowing,
-            seguidores = if (currentFollowing) artista.seguidores - 1 else artista.seguidores + 1
-        )
-        // Note: we don't update VM here directly usually, but let's assume VM reload will happen or we update locally
-        updateFollowButton(!currentFollowing)
-        binding.txtFollowers.text = formatCount(updatedArtista.seguidores)
+        // ViewModel handles optimistic update through LiveData now
     }
 
     private fun formatCount(count: Int): String {

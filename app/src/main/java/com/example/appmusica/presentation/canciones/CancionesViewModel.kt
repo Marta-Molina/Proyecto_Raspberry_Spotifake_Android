@@ -174,27 +174,49 @@ class CancionesViewModel @Inject constructor(
     }
 
     fun followArtista(id: Int) {
+        val current = _currentArtista.value ?: return
+        // Optimistic update
+        _currentArtista.value = current.copy(
+            siguiendo = true,
+            seguidores = current.seguidores + 1
+        )
+        
         viewModelScope.launch {
             val success = socialRepository.followArtista(id)
             if (success) {
-                // Incrementar contador local (opcional si el repo refresca, pero da feedback inmediato)
                 artistaRepository.incrementFollowers(id)
-                // Refresh artist info
+                // Refresh to confirm final state from server
                 val updated = artistaRepository.getArtistaById(id)
-                _currentArtista.value = updated
+                if (updated != null) {
+                    _currentArtista.value = updated
+                }
+            } else {
+                // Rollback on failure
+                _currentArtista.value = current
             }
         }
     }
 
     fun unfollowArtista(id: Int) {
+        val current = _currentArtista.value ?: return
+        // Optimistic update
+        _currentArtista.value = current.copy(
+            siguiendo = false,
+            seguidores = maxOf(0, current.seguidores - 1)
+        )
+        
         viewModelScope.launch {
             val success = socialRepository.unfollowArtista(id)
             if (success) {
-                // Decrementar contador local
                 artistaRepository.decrementFollowers(id)
-                // Refresh artist info
+                // Refresh to confirm final state from server
                 val updated = artistaRepository.getArtistaById(id)
-                _currentArtista.value = updated
+                if (updated != null) {
+                    _currentArtista.value = updated
+                }
+            } else {
+                // Rollback on failure
+                _currentArtista.value = current
             }
         }
     }
@@ -243,23 +265,26 @@ class CancionesViewModel @Inject constructor(
 
     fun addLike(cancion: Cancion) {
         viewModelScope.launch {
+            // Incrementar contador global en la tabla de canciones
+            cancionRepository.likeCancion(cancion.id)
+            // Registrar el like social del usuario
             val success = socialRepository.likeCancion(cancion.id)
             if (success) {
                 val updatedCancion = cancion.copy(likes = cancion.likes + 1)
                 updateLocalSongState(updatedCancion)
-                // Opcional: llamar al repo si queremos forzar el incremento manual si el social no lo hiciera
-                // cancionRepository.likeCancion(cancion.id) 
             }
         }
     }
 
     fun removeLike(cancion: Cancion) {
         viewModelScope.launch {
+            // Decrementar contador global
+            cancionRepository.unlikeCancion(cancion.id)
+            // Quitar el like social
             val success = socialRepository.unlikeCancion(cancion.id)
             if (success) {
                 val updatedCancion = cancion.copy(likes = maxOf(0, cancion.likes - 1))
                 updateLocalSongState(updatedCancion)
-                // cancionRepository.unlikeCancion(cancion.id)
             }
         }
     }

@@ -137,6 +137,11 @@
             app:argType="integer" />
     </fragment>
     <fragment
+        android:id="@+id/socialFragment"
+        android:name="com.example.appmusica.presentation.social.SocialFragment"
+        android:label="Comunidad" />
+
+    <fragment
         android:id="@+id/alarmsFragment"
         android:name="com.example.appmusica.presentation.settings.AlarmsFragment"
         android:label="Alarmas" />

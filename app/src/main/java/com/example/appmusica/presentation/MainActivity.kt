@@ -92,6 +92,49 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navigationView.setupWithNavController(navController)
 
+        // Custom navigation listener for Side Drawer to handle "Canciones" and "Comunidad" correctly
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.cancionesFragment -> {
+                    navController.navigate(R.id.cancionesFragment)
+                    syncBottomNavSelection(R.id.cancionesFragment)
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.playlistsFragment -> {
+                    navController.navigate(R.id.playlistsFragment)
+                    syncBottomNavSelection(R.id.playlistsFragment)
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.settingsFragment -> {
+                    navController.navigate(R.id.settingsFragment)
+                    syncBottomNavSelection(R.id.settingsFragment)
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.socialFragment -> {
+                    navController.navigate(R.id.socialFragment)
+                    // Sync social if added to bottom nav later
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.adminFragment -> {
+                    navController.navigate(R.id.adminFragment)
+                    syncBottomNavSelection(R.id.adminFragment)
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.menu_logout -> {
+                    authRepository.logout()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
+
         // Setup CurvedBottomNavigation
         setupCurvedBottomNavigation(navController)
         
@@ -121,6 +164,7 @@ class MainActivity : AppCompatActivity() {
         setupBottomSheet()
         setupAds()
         setupMascot()
+        setupSleepScreen()
 
         // Control del botón atrás del sistema
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
@@ -229,6 +273,11 @@ class MainActivity : AppCompatActivity() {
                 R.id.playlistsFragment
             ),
             np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
+                R.drawable.ic_nav_social,
+                R.drawable.ic_nav_social,
+                R.id.socialFragment
+            ),
+            np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
                 R.drawable.ic_nav_settings,
                 R.drawable.avd_nav_settings,
                 R.id.settingsFragment
@@ -249,8 +298,9 @@ class MainActivity : AppCompatActivity() {
         val currentIndex = when(navController.currentDestination?.id) {
             R.id.cancionesFragment -> 0
             R.id.playlistsFragment -> 1
-            R.id.settingsFragment -> 2
-            R.id.adminFragment -> if (authManager.isAdmin()) 3 else 0
+            R.id.socialFragment -> 2
+            R.id.settingsFragment -> 3
+            R.id.adminFragment -> if (authManager.isAdmin()) 4 else 0
             else -> 0
         }
 
@@ -270,6 +320,11 @@ class MainActivity : AppCompatActivity() {
         
         adView.visibility = View.VISIBLE
         adView.setOnClickListener { showPremiumInfo() }
+        
+        // Listener para cerrar el anuncio
+        binding.adBannerInclude.btnMinimizeAd.setOnClickListener {
+            adView.visibility = View.GONE
+        }
         
         // Load a "random" ad or just show the default one
         // Ideally we fetch from API: /ads/random
@@ -410,11 +465,21 @@ class MainActivity : AppCompatActivity() {
         sleepTimer?.schedule(object : java.util.TimerTask() {
             override fun run() {
                 runOnUiThread {
+                    // Parar la música
                     val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
                     fragment?.pausePlayback()
+                    
+                    // Mostrar pantalla de sueño
+                    binding.sleepScreenOverlay.visibility = View.VISIBLE
                 }
             }
         }, minutes * 60 * 1000L)
+    }
+
+    private fun setupSleepScreen() {
+        binding.btnExitSleep.setOnClickListener {
+            binding.sleepScreenOverlay.visibility = View.GONE
+        }
     }
 
     fun stopSleepTimer() {

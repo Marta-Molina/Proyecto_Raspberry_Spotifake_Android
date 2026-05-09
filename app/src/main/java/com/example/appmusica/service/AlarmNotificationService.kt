@@ -63,7 +63,7 @@ class AlarmNotificationService : Service() {
         if (!songUrl.isNullOrEmpty()) {
             try {
                 val fullUrl = if (songUrl.startsWith("http")) songUrl else {
-                    com.example.appmusica.di.NetworkModule.BASE_URL.removeSuffix("/") + songUrl
+                    com.example.appmusica.di.NetworkModule.BASE_STATIC_URL.removeSuffix("/") + "/" + songUrl.removePrefix("/")
                 }
                 val mediaItem = MediaItem.fromUri(fullUrl)
                 player?.setMediaItem(mediaItem)

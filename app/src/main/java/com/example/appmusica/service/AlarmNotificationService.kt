@@ -26,7 +26,7 @@ class AlarmNotificationService : Service() {
             .build()
             
         player = ExoPlayer.Builder(this)
-            .setAudioAttributes(audioAttributes, true)
+            .setAudioAttributes(audioAttributes, false)
             .build().apply {
                 repeatMode = ExoPlayer.REPEAT_MODE_ONE
             }

@@ -62,17 +62,18 @@ class PlaybackService : MediaSessionService() {
         )
     }
 
+    @OptIn(UnstableApi::class)
     private inner class CustomNotificationProvider(context: Context) : DefaultMediaNotificationProvider(context) {
         
         init {
             setSmallIcon(R.drawable.ic_notification_music_vector)
         }
 
-        override fun addNotificationActions(
-            mediaSession: MediaSession,
+        override fun getMediaButtons(
+            session: MediaSession,
+            playerCommands: Player.Commands,
             customLayout: ImmutableList<CommandButton>,
-            actionFactory: MediaNotification.ActionFactory,
-            onNotificationChangedCallback: MediaNotification.Provider.Callback
+            showWhenCollapsed: Boolean
         ): ImmutableList<CommandButton> {
             val buttons = ImmutableList.builder<CommandButton>()
             
@@ -84,7 +85,7 @@ class PlaybackService : MediaSessionService() {
                 .build())
                 
             // Play/Pause
-            val playPauseIcon = if (mediaSession.player.isPlaying) 
+            val playPauseIcon = if (session.player.isPlaying) 
                 androidx.media3.ui.R.drawable.exo_ic_pause_circle_filled 
             else 
                 androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
@@ -106,9 +107,9 @@ class PlaybackService : MediaSessionService() {
         }
 
         override fun getCompactViewActionIndices(
-            mediaSession: MediaSession,
-            customLayout: ImmutableList<CommandButton>,
-            actionFactory: MediaNotification.ActionFactory
+            session: MediaSession,
+            playerCommands: Player.Commands,
+            customLayout: ImmutableList<CommandButton>
         ): IntArray {
             return intArrayOf(0, 1, 2)
         }

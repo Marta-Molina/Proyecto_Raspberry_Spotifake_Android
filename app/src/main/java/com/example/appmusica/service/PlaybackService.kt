@@ -71,15 +71,15 @@ class PlaybackService : MediaSessionService() {
 
         override fun getMediaButtons(
             session: MediaSession,
+            playerCommands: Player.Commands,
             customLayout: ImmutableList<CommandButton>,
-            actionFactory: MediaNotification.ActionFactory,
-            onNotificationChangedCallback: MediaNotification.Provider.Callback
+            showWhenCollapsed: Boolean
         ): ImmutableList<CommandButton> {
             val buttons = ImmutableList.builder<CommandButton>()
             
             // Previous
             buttons.add(CommandButton.Builder()
-                .setPlayerCommand(Player.COMMAND_SKIP_TO_PREVIOUS)
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_previous)
                 .setDisplayName("Anterior")
                 .build())
@@ -98,20 +98,12 @@ class PlaybackService : MediaSessionService() {
                 
             // Next
             buttons.add(CommandButton.Builder()
-                .setPlayerCommand(Player.COMMAND_SKIP_TO_NEXT)
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next)
                 .setDisplayName("Siguiente")
                 .build())
                 
             return buttons.build()
-        }
-
-        override fun getCompactViewIndices(
-            session: MediaSession,
-            customLayout: ImmutableList<CommandButton>,
-            actionFactory: MediaNotification.ActionFactory
-        ): IntArray {
-            return intArrayOf(0, 1, 2)
         }
     }
 

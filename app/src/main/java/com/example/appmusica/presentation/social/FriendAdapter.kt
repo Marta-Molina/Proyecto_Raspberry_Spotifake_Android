@@ -5,41 +5,41 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.appmusica.R
-import com.example.appmusica.databinding.ItemUserSearchBinding
+import com.example.appmusica.databinding.ItemFriendBinding
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
 
-class UserSearchAdapter(private val onAddClick: (UserResponse) -> Unit) : RecyclerView.Adapter<UserSearchAdapter.ViewHolder>() {
-    private var users: List<UserResponse> = emptyList()
+class FriendAdapter(private val onClick: (UserResponse) -> Unit) : RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
+    private var friends: List<UserResponse> = emptyList()
 
     fun update(newList: List<UserResponse>) {
-        users = newList
+        friends = newList
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemUserSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemFriendBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(users[position])
-    override fun getItemCount() = users.size
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(friends[position])
+    override fun getItemCount() = friends.size
 
-    inner class ViewHolder(private val binding: ItemUserSearchBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemFriendBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: UserResponse) {
             binding.txtUsername.text = user.username
             
             val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullUrl = if (user.urlImagen?.startsWith("http") == true) user.urlImagen else baseUrl + (user.urlImagen ?: "")
             
-            Glide.with(binding.ivUserThumb.context)
+            Glide.with(binding.ivFriendThumb.context)
                 .load(fullUrl)
                 .placeholder(R.drawable.user)
                 .error(R.drawable.user)
                 .circleCrop()
-                .into(binding.ivUserThumb)
+                .into(binding.ivFriendThumb)
 
-            binding.btnAddFriend.setOnClickListener { onAddClick(user) }
+            itemView.setOnClickListener { onClick(user) }
         }
     }
 }

@@ -24,7 +24,7 @@ class SocialFragment : Fragment() {
 
     private lateinit var searchAdapter: UserSearchAdapter
     private lateinit var requestAdapter: FriendRequestAdapter
-    // private lateinit var friendsAdapter: FriendSearchAdapter // Removed as it was unresolved
+    private lateinit var friendsAdapter: FriendAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,24 +68,32 @@ class SocialFragment : Fragment() {
 
         requestAdapter = FriendRequestAdapter(
             onAccept = { req -> viewModel.acceptFriend(req.id) },
-            onReject = { req -> /* TODO: logic for reject */ }
+            onReject = { req -> viewModel.rejectFriend(req.id) }
         )
         binding.rvRequests.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = requestAdapter
         }
 
-        // Using a simple list for friends for now
-        binding.rvFriends.layoutManager = LinearLayoutManager(requireContext())
+        friendsAdapter = FriendAdapter { user ->
+            // TODO: Navigate to user profile if needed
+            Toast.makeText(requireContext(), "Perfil de ${user.username}", Toast.LENGTH_SHORT).show()
+        }
+        binding.rvFriends.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = friendsAdapter
+        }
     }
 
     private fun observeViewModel() {
         viewModel.friends.observe(viewLifecycleOwner) { friends ->
-            // Update friends text or minimal list
+            friendsAdapter.update(friends)
+            binding.txtNoFriends.visibility = if (friends.isEmpty()) View.VISIBLE else View.GONE
         }
 
         viewModel.pendingRequests.observe(viewLifecycleOwner) { requests ->
             requestAdapter.update(requests)
+            binding.txtNoRequests.visibility = if (requests.isEmpty()) View.VISIBLE else View.GONE
         }
 
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->

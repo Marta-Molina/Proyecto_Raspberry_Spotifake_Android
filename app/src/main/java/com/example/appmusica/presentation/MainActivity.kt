@@ -279,7 +279,7 @@ class MainActivity : AppCompatActivity() {
             ),
             np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
                 R.drawable.ic_nav_social,
-                R.drawable.ic_nav_social,
+                R.drawable.avd_nav_social,
                 R.id.socialFragment
             ),
             np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(

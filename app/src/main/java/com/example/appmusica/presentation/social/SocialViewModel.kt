@@ -18,21 +18,32 @@ class SocialViewModel @Inject constructor(
     private val api: ApiCancionesService
 ) : ViewModel() {
 
-    private val _friends = MutableLiveData<List<Long>>()
-    val friends: LiveData<List<Long>> = _friends
+    private val _friends = MutableLiveData<List<UserResponse>>()
+    val friends: LiveData<List<UserResponse>> = _friends
 
     private val _searchResults = MutableLiveData<List<UserResponse>>()
     val searchResults: LiveData<List<UserResponse>> = _searchResults
 
-    private val _pendingRequests = MutableLiveData<List<SolicitudAmistad>>()
-    val pendingRequests: LiveData<List<SolicitudAmistad>> = _pendingRequests
+    private val _pendingRequests = MutableLiveData<List<Pair<SolicitudAmistad, UserResponse?>>>()
+    val pendingRequests: LiveData<List<Pair<SolicitudAmistad, UserResponse?>>> = _pendingRequests
 
     fun loadSocialData() {
         viewModelScope.launch {
             try {
-                _friends.value = socialRepository.getFriends()
-                // Assuming an endpoint for pending requests exists or using a mock for now
-                // _pendingRequests.value = api.getPendingRequests().body() 
+                // Load Friends
+                val friendIds = socialRepository.getFriends()
+                val friendsWithDetails = friendIds.mapNotNull { id ->
+                    socialRepository.getUsuarioById(id)
+                }
+                _friends.value = friendsWithDetails
+                
+                // Load Pending Requests with Requester Details
+                val requests = socialRepository.getPendingRequests()
+                val requestsWithDetails = requests.map { req ->
+                    val user = socialRepository.getUsuarioById(req.remitenteId)
+                    req to user
+                }
+                _pendingRequests.value = requestsWithDetails
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -70,6 +81,18 @@ class SocialViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 if (socialRepository.acceptFriendRequest(reqId)) {
+                    loadSocialData()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun rejectFriend(reqId: Int) {
+        viewModelScope.launch {
+            try {
+                if (socialRepository.rejectFriendRequest(reqId)) {
                     loadSocialData()
                 }
             } catch (e: Exception) {

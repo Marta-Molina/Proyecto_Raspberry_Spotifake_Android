@@ -8,6 +8,8 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.common.Player
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.MediaItem
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -76,7 +78,7 @@ class PlaybackService : MediaSessionService() {
             
             // Previous
             buttons.add(androidx.media3.session.CommandButton.Builder()
-                .setPlayerCommand(Player.COMMAND_SKIP_TO_PREVIOUS)
+                .setPlayerCommand(androidx.media3.common.Player.COMMAND_SKIP_TO_PREVIOUS)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_previous)
                 .setDisplayName("Anterior")
                 .build())
@@ -88,14 +90,14 @@ class PlaybackService : MediaSessionService() {
                 androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
                 
             buttons.add(androidx.media3.session.CommandButton.Builder()
-                .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+                .setPlayerCommand(androidx.media3.common.Player.COMMAND_PLAY_PAUSE)
                 .setIconResId(playPauseIcon)
                 .setDisplayName("Play/Pause")
                 .build())
                 
             // Next
             buttons.add(androidx.media3.session.CommandButton.Builder()
-                .setPlayerCommand(Player.COMMAND_SKIP_TO_NEXT)
+                .setPlayerCommand(androidx.media3.common.Player.COMMAND_SKIP_TO_NEXT)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next)
                 .setDisplayName("Siguiente")
                 .build())

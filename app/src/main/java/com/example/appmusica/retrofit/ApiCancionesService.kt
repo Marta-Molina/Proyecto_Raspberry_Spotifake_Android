@@ -211,6 +211,15 @@ interface ApiCancionesService {
     @POST("social/friend/accept/{requestId}")
     suspend fun acceptFriendRequest(@Path("requestId") requestId: Int): Response<Unit>
 
+    @GET("social/friend/requests")
+    suspend fun getPendingRequests(): Response<List<SolicitudAmistad>>
+
+    @DELETE("social/friend/request/{requestId}")
+    suspend fun rejectFriendRequest(@Path("requestId") requestId: Int): Response<Unit>
+
+    @GET("usuarios/{id}")
+    suspend fun getUsuarioById(@Path("id") id: Long): Response<com.example.appmusica.data.remote.response.UserResponse>
+
     @GET("social/friends")
     suspend fun getFriends(): Response<List<Long>>
 

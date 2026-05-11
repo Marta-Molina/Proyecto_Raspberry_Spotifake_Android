@@ -11,6 +11,11 @@
         android:icon="@drawable/ic_nav_playlist" />
 
     <item
+        android:id="@+id/socialFragment"
+        android:title="Comunidad"
+        android:icon="@drawable/ic_nav_social" />
+
+    <item
         android:id="@+id/settingsFragment"
         android:title="Settings"
         android:icon="@drawable/ic_nav_settings" />

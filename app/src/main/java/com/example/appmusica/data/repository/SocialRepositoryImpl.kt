@@ -26,6 +26,20 @@ class SocialRepositoryImpl @Inject constructor(
         return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
     }
 
+    override suspend fun getPendingRequests(): List<SolicitudAmistad> {
+        val response = api.getPendingRequests()
+        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+    }
+
+    override suspend fun rejectFriendRequest(reqId: Int): Boolean {
+        return api.rejectFriendRequest(reqId).isSuccessful
+    }
+
+    override suspend fun getUsuarioById(id: Long): com.example.appmusica.data.remote.response.UserResponse? {
+        val response = api.getUsuarioById(id)
+        return if (response.isSuccessful) response.body() else null
+    }
+
     override suspend fun likeCancion(cancionId: Int): Boolean {
         return api.socialLikeCancion(cancionId).isSuccessful
     }

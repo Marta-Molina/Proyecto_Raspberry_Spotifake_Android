@@ -5,14 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmusica.databinding.ItemFriendRequestBinding
 import com.example.appmusica.domain.model.SolicitudAmistad
+import com.example.appmusica.data.remote.response.UserResponse
 
 class FriendRequestAdapter(
     private val onAccept: (SolicitudAmistad) -> Unit,
     private val onReject: (SolicitudAmistad) -> Unit
 ) : RecyclerView.Adapter<FriendRequestAdapter.ViewHolder>() {
-    private var requests: List<SolicitudAmistad> = emptyList()
+    private var requests: List<Pair<SolicitudAmistad, UserResponse?>> = emptyList()
 
-    fun update(newList: List<SolicitudAmistad>) {
+    fun update(newList: List<Pair<SolicitudAmistad, UserResponse?>>) {
         requests = newList
         notifyDataSetChanged()
     }
@@ -26,8 +27,11 @@ class FriendRequestAdapter(
     override fun getItemCount() = requests.size
 
     inner class ViewHolder(private val binding: ItemFriendRequestBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(request: SolicitudAmistad) {
-            binding.txtRequesterName.text = "Usuario ${request.remitenteId}" // We'd ideally fetch the name
+        fun bind(item: Pair<SolicitudAmistad, UserResponse?>) {
+            val request = item.first
+            val user = item.second
+            
+            binding.txtRequesterName.text = user?.username ?: "Usuario ${request.remitenteId}"
             binding.btnAccept.setOnClickListener { onAccept(request) }
             binding.btnReject.setOnClickListener { onReject(request) }
         }

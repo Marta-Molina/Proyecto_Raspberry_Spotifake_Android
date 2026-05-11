@@ -1,6 +1,7 @@
 package com.example.appmusica.data.repository
 
 import com.example.appmusica.domain.model.Letra
+import com.example.appmusica.domain.model.SolicitudAmistad
 import com.example.appmusica.domain.repository.SocialRepository
 import com.example.appmusica.retrofit.ApiCancionesService
 import javax.inject.Inject

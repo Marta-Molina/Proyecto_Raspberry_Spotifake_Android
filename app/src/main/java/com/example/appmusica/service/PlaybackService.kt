@@ -68,17 +68,17 @@ class PlaybackService : MediaSessionService() {
             setSmallIcon(R.drawable.ic_notification_music_vector)
         }
 
-        override fun getMediaButtons(
-            mediaSession: androidx.media3.session.MediaSession,
-            customLayout: com.google.common.collect.ImmutableList<androidx.media3.session.CommandButton>,
-            actionFactory: androidx.media3.session.MediaNotification.ActionFactory,
-            onNotificationChangedCallback: androidx.media3.session.MediaNotification.Provider.Callback
-        ): com.google.common.collect.ImmutableList<androidx.media3.session.CommandButton> {
-            val buttons = com.google.common.collect.ImmutableList.builder<androidx.media3.session.CommandButton>()
+        override fun addNotificationActions(
+            mediaSession: MediaSession,
+            customLayout: ImmutableList<CommandButton>,
+            actionFactory: MediaNotification.ActionFactory,
+            onNotificationChangedCallback: MediaNotification.Provider.Callback
+        ): ImmutableList<CommandButton> {
+            val buttons = ImmutableList.builder<CommandButton>()
             
             // Previous
-            buttons.add(androidx.media3.session.CommandButton.Builder()
-                .setPlayerCommand(androidx.media3.common.Player.COMMAND_SKIP_TO_PREVIOUS)
+            buttons.add(CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_previous)
                 .setDisplayName("Anterior")
                 .build())
@@ -89,15 +89,15 @@ class PlaybackService : MediaSessionService() {
             else 
                 androidx.media3.ui.R.drawable.exo_ic_play_circle_filled
                 
-            buttons.add(androidx.media3.session.CommandButton.Builder()
-                .setPlayerCommand(androidx.media3.common.Player.COMMAND_PLAY_PAUSE)
+            buttons.add(CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
                 .setIconResId(playPauseIcon)
                 .setDisplayName("Play/Pause")
                 .build())
                 
             // Next
-            buttons.add(androidx.media3.session.CommandButton.Builder()
-                .setPlayerCommand(androidx.media3.common.Player.COMMAND_SKIP_TO_NEXT)
+            buttons.add(CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next)
                 .setDisplayName("Siguiente")
                 .build())
@@ -105,10 +105,10 @@ class PlaybackService : MediaSessionService() {
             return buttons.build()
         }
 
-        override fun getCompactViewIndices(
-            mediaSession: androidx.media3.session.MediaSession,
-            customLayout: com.google.common.collect.ImmutableList<androidx.media3.session.CommandButton>,
-            actionFactory: androidx.media3.session.MediaNotification.ActionFactory
+        override fun getCompactViewActionIndices(
+            mediaSession: MediaSession,
+            customLayout: ImmutableList<CommandButton>,
+            actionFactory: MediaNotification.ActionFactory
         ): IntArray {
             return intArrayOf(0, 1, 2)
         }

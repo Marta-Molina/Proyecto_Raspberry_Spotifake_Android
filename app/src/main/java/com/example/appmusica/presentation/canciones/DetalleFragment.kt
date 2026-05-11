@@ -281,8 +281,22 @@ class DetalleFragment : Fragment() {
         }
 
         binding.btnMiniPlayPause.setOnClickListener { togglePlayPause() }
-        binding.btnMiniPrev.setOnClickListener { player?.seekToPrevious() }
-        binding.btnMiniNext.setOnClickListener { player?.seekToNext() }
+        binding.btnMiniPrev.setOnClickListener { 
+            if (!authManager.canSkip()) {
+                android.widget.Toast.makeText(requireContext(), "Límite de saltos alcanzado. ¡Hazte Premium!", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            authManager.incrementSkip()
+            player?.seekToPrevious() 
+        }
+        binding.btnMiniNext.setOnClickListener { 
+            if (!authManager.canSkip()) {
+                android.widget.Toast.makeText(requireContext(), "Límite de saltos alcanzado. ¡Hazte Premium!", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            authManager.incrementSkip()
+            player?.seekToNext() 
+        }
     }
 
     private fun togglePlayPause() {

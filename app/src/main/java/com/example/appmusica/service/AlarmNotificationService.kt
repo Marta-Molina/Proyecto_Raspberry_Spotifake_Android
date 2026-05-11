@@ -132,6 +132,12 @@ class AlarmNotificationService : Service() {
         val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val contentIntent = Intent(this, com.example.appmusica.presentation.MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val contentPendingIntent = PendingIntent.getActivity(this, 1, contentIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("¡Alarma Spotifake!")
             .setContentText("Sonando: $songName")
@@ -140,6 +146,7 @@ class AlarmNotificationService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setOngoing(true)
             .setAutoCancel(false)
+            .setContentIntent(contentPendingIntent)
             .addAction(com.example.appmusica.R.drawable.ic_close, "Detener", stopPendingIntent)
             .setFullScreenIntent(fullScreenPendingIntent, true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

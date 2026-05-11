@@ -74,6 +74,17 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // Session persistence: 30 minutes timeout
+        val lastActive = authManager.getLastActiveTime()
+        val thirtyMinutesMillis = 30 * 60 * 1000L
+        if (lastActive > 0 && System.currentTimeMillis() - lastActive > thirtyMinutesMillis) {
+            authRepository.logout()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+        authManager.updateLastActiveTime()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -192,6 +203,11 @@ class MainActivity : AppCompatActivity() {
                 checkAndNavigateBack(navController)
             }
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        authManager.updateLastActiveTime()
     }
 
     private fun checkAndNavigateBack(navController: androidx.navigation.NavController) {
@@ -549,6 +565,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun onLost(network: Network) = runOnUiThread {
             isFirstConnectivityCheck = false
+            
+            // Stop playback on internet loss
+            val stopFadeIntent = Intent(this@MainActivity, PlaybackService::class.java).apply {
+                action = "ACTION_STOP_FADE"
+            }
+            startService(stopFadeIntent)
             
             // 1. Show Progress Bar for 2 seconds
             binding.pbConnectivity.visibility = View.VISIBLE

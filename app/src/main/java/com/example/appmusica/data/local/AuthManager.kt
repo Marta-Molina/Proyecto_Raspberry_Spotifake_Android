@@ -86,6 +86,14 @@ class AuthManager @Inject constructor(@ApplicationContext context: Context) {
         prefs.edit().putInt(SKIPS_COUNT_KEY, current + 1).apply()
     }
 
+    fun updateLastActiveTime() {
+        prefs.edit().putLong("last_active_time", System.currentTimeMillis()).apply()
+    }
+
+    fun getLastActiveTime(): Long {
+        return prefs.getLong("last_active_time", 0L)
+    }
+
     fun clear() {
         prefs.edit().clear().apply()
     }

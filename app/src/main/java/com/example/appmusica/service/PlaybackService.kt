@@ -11,10 +11,14 @@ import androidx.media3.common.Player
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MediaItem
 
+import android.app.PendingIntent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.content.Context
+import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -53,7 +57,17 @@ class PlaybackService : MediaSessionService() {
             .setMediaSourceFactory(DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory))
             .build()
             
+        val intent = Intent(this, com.example.appmusica.presentation.MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent, 
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         mediaSession = MediaSession.Builder(this, player)
+            .setSessionActivity(pendingIntent)
+            .setCallback(CustomMediaSessionCallback())
             .setBitmapLoader(GlideBitmapLoader(this, authManager))
             .build()
 
@@ -155,6 +169,57 @@ class PlaybackService : MediaSessionService() {
                     }
                 })
             return future
+        }
+    }
+
+    private fun stopWithFade() {
+        val player = mediaSession?.player ?: return
+        val handler = Handler(Looper.getMainLooper())
+        var volume = 1f
+        handler.post(object : Runnable {
+            override fun run() {
+                volume -= 0.1f
+                if (volume > 0) {
+                    player.volume = volume
+                    handler.postDelayed(this, 100)
+                } else {
+                    player.pause()
+                    player.volume = 1f 
+                }
+            }
+        })
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == "ACTION_STOP_FADE") {
+            stopWithFade()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    @OptIn(UnstableApi::class)
+    private inner class CustomMediaSessionCallback : MediaSession.Callback {
+        override fun onConnect(session: MediaSession, controller: MediaSession.ControllerInfo): MediaSession.ConnectionResult {
+            val connectionResult = super.onConnect(session, controller)
+            val playerCommands = connectionResult.availablePlayerCommands.buildUpon()
+                .add(Player.COMMAND_SEEK_TO_NEXT)
+                .add(Player.COMMAND_SEEK_TO_PREVIOUS)
+                .build()
+            return MediaSession.ConnectionResult.accept(connectionResult.availableSessionCommands, playerCommands)
+        }
+
+        override fun onPlayerCommandRequest(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo,
+            playerCommand: Int
+        ): Int {
+            if (playerCommand == Player.COMMAND_SEEK_TO_NEXT || playerCommand == Player.COMMAND_SEEK_TO_PREVIOUS) {
+                if (!authManager.canSkip()) {
+                    return androidx.media3.session.SessionResult.RESULT_ERROR_PERMISSION_DENIED
+                }
+                authManager.incrementSkip()
+            }
+            return super.onPlayerCommandRequest(session, controller, playerCommand)
         }
     }
 

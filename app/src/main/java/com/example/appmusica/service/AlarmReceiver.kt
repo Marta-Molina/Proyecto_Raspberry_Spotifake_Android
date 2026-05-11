@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.example.appmusica.presentation.settings.AlarmActivity
+import com.example.appmusica.util.AlarmScheduler
+import com.example.appmusica.domain.model.Alarma
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -18,6 +20,24 @@ class AlarmReceiver : BroadcastReceiver() {
         val artistName = intent.getStringExtra("ARTIST_NAME") ?: "Spotifake"
         val imageUrl = intent.getStringExtra("IMAGE_URL")
         val songUrl = intent.getStringExtra("SONG_URL")
+        val dias = intent.getStringExtra("ALARM_DIAS")
+        val hora = intent.getStringExtra("ALARM_HORA") ?: "00:00"
+        val cancionId = intent.getIntExtra("CANCION_ID", -1)
+
+        // Reschedule next if repeating
+        if (!dias.isNullOrEmpty()) {
+            val scheduler = AlarmScheduler(context)
+            val alarm = Alarma(
+                id = alarmId,
+                userId = 0L,
+                nombre = songName,
+                hora = hora,
+                cancionId = cancionId,
+                activo = true,
+                dias = dias
+            )
+            scheduler.schedule(alarm, songUrl, artistName, imageUrl)
+        }
 
         // Cancelar notificación de "Próxima alarma" (ID 999) al dispararse
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

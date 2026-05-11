@@ -31,6 +31,19 @@ class AlarmsAdapter(
             binding.txtTime.text = alarm.hora
             binding.txtSongName.text = song?.nombre ?: "Canción desconocida"
             binding.txtArtistName.text = song?.artista ?: "Artista desconocido"
+            
+            // Format days
+            val dayNames = listOf("L", "M", "X", "J", "V", "S", "D")
+            val selectedDays = alarm.dias?.split(",")?.filter { it.isNotEmpty() }?.mapNotNull { it.toIntOrNull() } ?: emptyList()
+            
+            if (selectedDays.isEmpty()) {
+                binding.txtDays.text = "Una vez"
+            } else {
+                val displayText = dayNames.mapIndexed { index, name ->
+                    if (selectedDays.contains(index + 1)) name else "-"
+                }.joinToString(" ")
+                binding.txtDays.text = displayText
+            }
             binding.switchActive.setOnCheckedChangeListener(null) // Prevent loop
             binding.switchActive.isChecked = alarm.activo
             

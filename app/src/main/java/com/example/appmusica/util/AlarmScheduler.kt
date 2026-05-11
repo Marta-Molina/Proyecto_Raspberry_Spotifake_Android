@@ -25,6 +25,9 @@ class AlarmScheduler(private val context: Context) {
             putExtra("ARTIST_NAME", artistName)
             putExtra("IMAGE_URL", imageUrl)
             putExtra("SONG_URL", songUrl)
+            putExtra("ALARM_DIAS", alarm.dias)
+            putExtra("ALARM_HORA", alarm.hora)
+            putExtra("CANCION_ID", alarm.cancionId)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -42,9 +45,52 @@ class AlarmScheduler(private val context: Context) {
             set(Calendar.MINUTE, timeParts[1].toInt())
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
+        }
+
+        val selectedDays = alarm.dias?.split(",")?.filter { it.isNotEmpty() }?.mapNotNull { it.toIntOrNull() } ?: emptyList()
+
+        if (selectedDays.isEmpty()) {
+            // One-time alarm
+            if (calendar.timeInMillis <= System.currentTimeMillis()) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+        } else {
+            // Repeating alarm - find next day
+            val currentDayOfWeek = when(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                Calendar.MONDAY -> 1
+                Calendar.TUESDAY -> 2
+                Calendar.WEDNESDAY -> 3
+                Calendar.THURSDAY -> 4
+                Calendar.FRIDAY -> 5
+                Calendar.SATURDAY -> 6
+                Calendar.SUNDAY -> 7
+                else -> 1
+            }
+
+            var daysToAdd = -1
+            for (i in 0..7) {
+                val dayToCheck = ((currentDayOfWeek + i - 1) % 7) + 1
+                if (selectedDays.contains(dayToCheck)) {
+                    if (i == 0) {
+                        // It's today. Check if time passed.
+                        if (calendar.timeInMillis > System.currentTimeMillis()) {
+                            daysToAdd = 0
+                            break
+                        }
+                    } else {
+                        daysToAdd = i
+                        break
+                    }
+                }
+            }
             
-            if (timeInMillis <= System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_YEAR, 1)
+            if (daysToAdd != -1) {
+                calendar.add(Calendar.DAY_OF_YEAR, daysToAdd)
+            } else {
+                // Fallback (should not happen)
+                if (calendar.timeInMillis <= System.currentTimeMillis()) {
+                    calendar.add(Calendar.DAY_OF_YEAR, 1)
+                }
             }
         }
 

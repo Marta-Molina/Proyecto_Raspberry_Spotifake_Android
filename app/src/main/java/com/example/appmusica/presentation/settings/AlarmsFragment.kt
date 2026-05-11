@@ -154,6 +154,53 @@ class AlarmsFragment : Fragment() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_alarm, null)
         val timePicker = dialogView.findViewById<android.widget.TimePicker>(R.id.timePicker)
         val spinnerSong = dialogView.findViewById<android.widget.Spinner>(R.id.spinnerAlarmSong)
+        
+        timePicker.setIs24HourView(true)
+
+        val cbMon = dialogView.findViewById<android.widget.CheckBox>(R.id.cbMon)
+        val cbTue = dialogView.findViewById<android.widget.CheckBox>(R.id.cbTue)
+        val cbWed = dialogView.findViewById<android.widget.CheckBox>(R.id.cbWed)
+        val cbThu = dialogView.findViewById<android.widget.CheckBox>(R.id.cbThu)
+        val cbFri = dialogView.findViewById<android.widget.CheckBox>(R.id.cbFri)
+        val cbSat = dialogView.findViewById<android.widget.CheckBox>(R.id.cbSat)
+        val cbSun = dialogView.findViewById<android.widget.CheckBox>(R.id.cbSun)
+        val checkboxes = listOf(cbMon, cbTue, cbWed, cbThu, cbFri, cbSat, cbSun)
+
+        // Pre-fill existing data
+        if (existingAlarm != null) {
+            val parts = existingAlarm.hora.split(":")
+            if (parts.size == 2) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    timePicker.hour = parts[0].toInt()
+                    timePicker.minute = parts[1].toInt()
+                } else {
+                    timePicker.currentHour = parts[0].toInt()
+                    timePicker.currentMinute = parts[1].toInt()
+                }
+            }
+            
+            existingAlarm.dias?.split(",")?.forEach { day ->
+                val dayInt = day.toIntOrNull()
+                if (dayInt != null && dayInt in 1..7) {
+                    checkboxes[dayInt - 1].isChecked = true
+                    checkboxes[dayInt - 1].setBackgroundColor(android.graphics.Color.parseColor("#1DB954"))
+                }
+            }
+            
+            val songIndex = songs.indexOfFirst { it.id == existingAlarm.cancionId }
+            if (songIndex >= 0) spinnerSong.setSelection(songIndex)
+        }
+
+        // Add visual feedback to checkboxes
+        checkboxes.forEachIndexed { index, cb ->
+            cb.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    cb.setBackgroundColor(android.graphics.Color.parseColor("#1DB954"))
+                } else {
+                    cb.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                }
+            }
+        }
 
         val spinnerAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, songNames)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -168,6 +215,10 @@ class AlarmsFragment : Fragment() {
                 selectedTime = String.format("%02d:%02d", hour, minute)
                 selectedSongId = songs[spinnerSong.selectedItemPosition].id
                 
+                val selectedDays = checkboxes.mapIndexedNotNull { index, cb ->
+                    if (cb.isChecked) (index + 1).toString() else null
+                }.joinToString(",")
+
                 if (existingAlarm == null) {
                     val newAlarm = Alarma(
                         id = 0,
@@ -175,13 +226,15 @@ class AlarmsFragment : Fragment() {
                         nombre = "Alarma",
                         hora = selectedTime,
                         cancionId = selectedSongId,
-                        activo = true
+                        activo = true,
+                        dias = selectedDays
                     )
                     viewModel.createAlarm(newAlarm)
                 } else {
                     val updatedAlarm = existingAlarm.copy(
                         hora = selectedTime,
-                        cancionId = selectedSongId
+                        cancionId = selectedSongId,
+                        dias = selectedDays
                     )
                     viewModel.updateAlarm(existingAlarm.id, updatedAlarm)
                 }

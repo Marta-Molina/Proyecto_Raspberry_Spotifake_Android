@@ -502,12 +502,69 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var connectivityManager: ConnectivityManager
+    private var isFirstConnectivityCheck = true
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) = runOnUiThread {
-            binding.offlineScreenOverlay.visibility = View.GONE
+            if (isFirstConnectivityCheck) {
+                isFirstConnectivityCheck = false
+                binding.offlineScreenOverlay.visibility = View.GONE
+                return@runOnUiThread
+            }
+            
+            // Hide loading if active
+            binding.pbConnectivity.visibility = View.GONE
+            
+            if (binding.offlineScreenOverlay.visibility == View.VISIBLE) {
+                // Animate Out
+                binding.offlineScreenOverlay.animate()
+                    .translationY(binding.root.height.toFloat())
+                    .setDuration(500)
+                    .withEndAction { 
+                        binding.offlineScreenOverlay.visibility = View.GONE 
+                    }
+                    .start()
+
+                // Show Success Banner
+                binding.tvOnlineBanner.apply {
+                    visibility = View.VISIBLE
+                    alpha = 0f
+                    translationY = -100f
+                    animate()
+                        .alpha(1f)
+                        .translationY(0f)
+                        .setDuration(400)
+                        .start()
+                    
+                    postDelayed({
+                        animate()
+                            .alpha(0f)
+                            .translationY(-100f)
+                            .setDuration(400)
+                            .withEndAction { visibility = View.GONE }
+                            .start()
+                    }, 3000)
+                }
+            }
         }
+
         override fun onLost(network: Network) = runOnUiThread {
-            binding.offlineScreenOverlay.visibility = View.VISIBLE
+            isFirstConnectivityCheck = false
+            
+            // 1. Show Progress Bar for 2 seconds
+            binding.pbConnectivity.visibility = View.VISIBLE
+            
+            binding.pbConnectivity.postDelayed({
+                // Check if still offline (callback might have been cancelled)
+                binding.pbConnectivity.visibility = View.GONE
+                
+                // 2. Animate In Offline Overlay
+                binding.offlineScreenOverlay.visibility = View.VISIBLE
+                binding.offlineScreenOverlay.translationY = binding.root.height.toFloat()
+                binding.offlineScreenOverlay.animate()
+                    .translationY(0f)
+                    .setDuration(600)
+                    .start()
+            }, 2000)
         }
     }
 
@@ -522,7 +579,13 @@ class MainActivity : AppCompatActivity() {
         val activeNetwork = connectivityManager.activeNetwork
         val caps = connectivityManager.getNetworkCapabilities(activeNetwork)
         val isOnline = caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-        binding.offlineScreenOverlay.visibility = if (isOnline) View.GONE else View.VISIBLE
+        
+        if (isOnline) {
+            binding.offlineScreenOverlay.visibility = View.GONE
+        } else {
+            binding.offlineScreenOverlay.visibility = View.VISIBLE
+            binding.offlineScreenOverlay.translationY = 0f
+        }
     }
 
     private fun setupMascot() {

@@ -179,11 +179,39 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- Success Online Banner -->
+        <TextView
+            android:id="@+id/tvOnlineBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#4CAF50"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="¡Has recuperado la conexión!"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:elevation="200dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Connectivity Loading Progress -->
+        <ProgressBar
+            android:id="@+id/pbConnectivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:elevation="180dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <!-- No Internet Overlay -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/offlineScreenOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#FF000000"
             android:elevation="150dp"
             android:visibility="gone"
             android:clickable="true"
@@ -194,13 +222,13 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@drawable/no_internet"
-                android:alpha="0.9" />
+                android:alpha="1.0" />
 
             <ImageView
                 android:id="@+id/ivDino"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="16dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="24dp"
                 android:src="@drawable/dinosaurio_no_internet"
                 app:layout_constraintBottom_toTopOf="@id/tvNoInternet"
                 app:layout_constraintStart_toStartOf="@id/tvNoInternet" />
@@ -211,19 +239,20 @@
                 android:layout_height="wrap_content"
                 android:text="Sin Internet"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="36sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.35" />
 
             <TextView
                 android:id="@+id/tvOfflineTips"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:lineSpacingExtra="4dp"
                 android:text="Intenta:\n\n- Apaga tu dispositivo\n- Encuentra un lugar en la naturaleza\n- Disfruta"
                 android:textColor="#B3FFFFFF"

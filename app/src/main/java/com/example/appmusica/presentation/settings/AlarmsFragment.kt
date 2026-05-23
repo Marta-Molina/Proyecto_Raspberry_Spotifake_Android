@@ -44,7 +44,7 @@ class AlarmsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         observeAlarms()
-        
+
         binding.btnAddAlarm.setOnClickListener {
             checkExactAlarmPermission {
                 showAddAlarmDialog()
@@ -82,7 +82,7 @@ class AlarmsFragment : Fragment() {
             onToggle = { alarm, isActive ->
                 val updatedAlarm = alarm.copy(activo = isActive)
                 viewModel.updateAlarm(alarm.id, updatedAlarm)
-                
+
                 if (isActive) {
                     checkExactAlarmPermission {
                         val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
@@ -117,11 +117,16 @@ class AlarmsFragment : Fragment() {
     private fun observeAlarms() {
         viewModel.alarms.observe(viewLifecycleOwner) { alarms ->
             adapter.submitList(alarms)
-            
-            // Encontrar la próxima alarma activa ordenando por hora
+
+            // Schedule ALL active alarms individually
+            alarms.filter { it.activo }.forEach { alarm ->
+                val song = cancionesViewModel.canciones.value?.find { it.id == alarm.cancionId }
+                alarmScheduler.schedule(alarm, song?.urlAudio, song?.nombre, song?.urlPortada)
+            }
+
+            // For the notification, show the next upcoming one
             val sortedActiveAlarms = alarms.filter { it.activo }.sortedBy { it.hora }
-            
-            val nextAlarm = sortedActiveAlarms.firstOrNull { 
+            val nextAlarm = sortedActiveAlarms.firstOrNull {
                 val alarmTime = it.hora.split(":")
                 val calendar = java.util.Calendar.getInstance().apply {
                     set(java.util.Calendar.HOUR_OF_DAY, alarmTime[0].toInt())
@@ -129,13 +134,10 @@ class AlarmsFragment : Fragment() {
                     set(java.util.Calendar.SECOND, 0)
                 }
                 calendar.timeInMillis > System.currentTimeMillis()
-            } ?: sortedActiveAlarms.firstOrNull() // Si todas pasaron hoy, la primera es la de mañana
+            } ?: sortedActiveAlarms.firstOrNull()
 
-            if (nextAlarm != null) {
-                val song = cancionesViewModel.canciones.value?.find { it.id == nextAlarm.cancionId }
-                alarmScheduler.schedule(nextAlarm, song?.urlAudio, song?.nombre, song?.urlPortada)
-            } else {
-                alarmScheduler.cancel(-1)
+            if (nextAlarm == null) {
+                alarmScheduler.cancel(-1) // Hides notification
             }
         }
     }
@@ -154,7 +156,7 @@ class AlarmsFragment : Fragment() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_alarm, null)
         val timePicker = dialogView.findViewById<android.widget.TimePicker>(R.id.timePicker)
         val spinnerSong = dialogView.findViewById<android.widget.Spinner>(R.id.spinnerAlarmSong)
-        
+
         timePicker.setIs24HourView(true)
 
         val cbMon = dialogView.findViewById<android.widget.CheckBox>(R.id.cbMon)
@@ -178,7 +180,7 @@ class AlarmsFragment : Fragment() {
                     timePicker.currentMinute = parts[1].toInt()
                 }
             }
-            
+
             existingAlarm.dias?.split(",")?.forEach { day ->
                 val dayInt = day.toIntOrNull()
                 if (dayInt != null && dayInt in 1..7) {
@@ -186,7 +188,7 @@ class AlarmsFragment : Fragment() {
                     checkboxes[dayInt - 1].setBackgroundColor(android.graphics.Color.parseColor("#1DB954"))
                 }
             }
-            
+
             val songIndex = songs.indexOfFirst { it.id == existingAlarm.cancionId }
             if (songIndex >= 0) spinnerSong.setSelection(songIndex)
         }
@@ -214,7 +216,7 @@ class AlarmsFragment : Fragment() {
                 val minute = if (Build.VERSION.SDK_INT >= 23) timePicker.minute else timePicker.currentMinute
                 selectedTime = String.format("%02d:%02d", hour, minute)
                 selectedSongId = songs[spinnerSong.selectedItemPosition].id
-                
+
                 val selectedDays = checkboxes.mapIndexedNotNull { index, cb ->
                     if (cb.isChecked) (index + 1).toString() else null
                 }.joinToString(",")
@@ -222,7 +224,7 @@ class AlarmsFragment : Fragment() {
                 if (existingAlarm == null) {
                     val newAlarm = Alarma(
                         id = 0,
-                        userId = 0L, 
+                        userId = 0L,
                         nombre = "Alarma",
                         hora = selectedTime,
                         cancionId = selectedSongId,

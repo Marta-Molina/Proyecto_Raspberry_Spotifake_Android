@@ -303,6 +303,20 @@
                 app:layout_constraintStart_toStartOf="@id/vinylContainer"
                 app:layout_constraintTop_toTopOf="@id/vinylContainer">
 
+                <TextView
+                    android:id="@+id/tvLyricsStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Letras en proceso..."
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="italic"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvLyrics"
                     android:layout_width="match_parent"

@@ -105,7 +105,7 @@ class DetalleFragment : Fragment() {
 
     fun updatePlaylistPosition(position: Int) {
         if (position == -1) return // Just expand, don't change song
-        
+
         viewModel.selectCancion(position)
         val controller = mediaController ?: return
         val cancionList = viewModel.canciones.value ?: return
@@ -154,14 +154,14 @@ class DetalleFragment : Fragment() {
         // Like button and counts
         updateLikeIcon(cancion.id)
         binding.txtLikesCount.text = "${FormatUtils.formatCount(cancion.likes)} likes"
-        
+
         binding.btnLike.setOnClickListener {
             val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
             val nowLiked = likedSongsManager.toggleLike(cancion.id)
-            
+
             // Sync with backend and update global state via ViewModel
             viewModel.toggleLike(cancion, isCurrentlyLiked)
-            
+
             if (nowLiked) {
                 showLikeConfetti()
             }
@@ -242,7 +242,7 @@ class DetalleFragment : Fragment() {
                 return@setOnClickListener
             }
             authManager.incrementSkip()
-            player?.seekToPrevious() 
+            player?.seekToPrevious()
         }
         binding.btnPrev.setClickAnimation()
         binding.btnNext.setOnClickListener {
@@ -251,7 +251,7 @@ class DetalleFragment : Fragment() {
                 return@setOnClickListener
             }
             authManager.incrementSkip()
-            player?.seekToNext() 
+            player?.seekToNext()
         }
         binding.btnNext.setClickAnimation()
 
@@ -277,25 +277,25 @@ class DetalleFragment : Fragment() {
             // Expand on click
             val activity = activity as? MainActivity
             // Using a large position just to trigger expansion without reloading
-            activity?.expandPlayer(-1) 
+            activity?.expandPlayer(-1)
         }
 
         binding.btnMiniPlayPause.setOnClickListener { togglePlayPause() }
-        binding.btnMiniPrev.setOnClickListener { 
+        binding.btnMiniPrev.setOnClickListener {
             if (!authManager.canSkip()) {
                 android.widget.Toast.makeText(requireContext(), "Límite de saltos alcanzado. ¡Hazte Premium!", android.widget.Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             authManager.incrementSkip()
-            player?.seekToPrevious() 
+            player?.seekToPrevious()
         }
-        binding.btnMiniNext.setOnClickListener { 
+        binding.btnMiniNext.setOnClickListener {
             if (!authManager.canSkip()) {
                 android.widget.Toast.makeText(requireContext(), "Límite de saltos alcanzado. ¡Hazte Premium!", android.widget.Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             authManager.incrementSkip()
-            player?.seekToNext() 
+            player?.seekToNext()
         }
     }
 
@@ -339,13 +339,12 @@ class DetalleFragment : Fragment() {
         }
 
         // Check if we already have this list loaded to avoid restarting
-        val currentPlayingUri = controller.currentMediaItem?.localConfiguration?.uri?.toString()
+        val currentMediaItem = controller.currentMediaItem
+        val currentPlayingUri = currentMediaItem?.localConfiguration?.uri?.toString()
         val targetUri = mediaItems[initialPosition].localConfiguration?.uri?.toString()
 
         if (currentPlayingUri == targetUri) {
-            controller.setMediaItems(mediaItems, initialPosition, 0)
-            controller.prepare()
-            controller.play()
+            // Already playing the correct song! Just return.
             return
         }
 
@@ -417,7 +416,7 @@ class DetalleFragment : Fragment() {
             if (controller.isPlaying) {
                 binding.root.post(updateProgressRunnable)
             }
-            
+
             trySetupPlayerWithCurrentList()
         }, requireContext().mainExecutor)
 
@@ -434,7 +433,7 @@ class DetalleFragment : Fragment() {
 
     private fun updateVinylAnimation(isPlaying: Boolean) {
         if (_binding == null) return
-        
+
         if (isPlaying) {
             if (vinylAnimator == null) {
                 vinylAnimator = android.animation.ObjectAnimator.ofFloat(binding.vinylContainer, "rotation", 0f, 360f).apply {
@@ -463,17 +462,17 @@ class DetalleFragment : Fragment() {
                     val parent = v.parent as View
                     val pivotX = v.left + v.pivotX
                     val pivotY = v.top + v.pivotY
-                    
+
                     val dx = event.rawX - (parent.left + pivotX)
                     val dy = event.rawY - (parent.top + pivotY)
-                    
+
                     var angle = Math.toDegrees(Math.atan2(dy.toDouble(), dx.toDouble())).toFloat()
                     angle -= 90f // Base is at top, pointing down is 90 degrees in atan2 math. We want down to be 0 degrees rotation.
-                    
+
                     // Allow dragging between 0 (parked) and 40 (end of record)
                     val clampedAngle = angle.coerceIn(0f, 40f)
                     v.rotation = clampedAngle
-                    
+
                     if (clampedAngle > 10f) {
                         player?.let { p ->
                             // Map 8f..28f to 0..1 progress
@@ -495,7 +494,7 @@ class DetalleFragment : Fragment() {
                             if (!p.isPlaying) p.play()
                         }
                     }
-                    
+
                     // If pausing, immediately animate back to 0
                     if (angle <= 10f) {
                         ObjectAnimator.ofFloat(v, "rotation", v.rotation, 0f).apply {
@@ -512,7 +511,7 @@ class DetalleFragment : Fragment() {
 
     fun onBottomSheetStateChanged(newState: Int) {
         if (_binding == null) return
-        
+
         val isExpanded = newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
         val isDragging = newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING
         val isSettling = newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_SETTLING
@@ -532,11 +531,11 @@ class DetalleFragment : Fragment() {
 
     fun onBottomSheetSlide(slideOffset: Float) {
         if (_binding == null) return
-        
+
         // slideOffset: 0 (collapsed) -> 1 (expanded)
         binding.miniPlayerLayout.alpha = (1 - slideOffset * 2).coerceIn(0f, 1f)
         binding.fullPlayerLayout.alpha = (slideOffset * 2 - 1).coerceIn(0f, 1f)
-        
+
         if (slideOffset > 0.5f) {
             binding.miniPlayerLayout.visibility = View.INVISIBLE
             binding.fullPlayerLayout.visibility = View.VISIBLE
@@ -554,7 +553,7 @@ class DetalleFragment : Fragment() {
             R.drawable.ic_repeat
         }
         binding.btnRepeat.setImageResource(iconRes)
-        
+
         val color = if (repeatMode == Player.REPEAT_MODE_ONE) {
             resources.getColor(R.color.spotify_green, null)
         } else {
@@ -603,6 +602,15 @@ class DetalleFragment : Fragment() {
         binding.btnLyrics.setOnClickListener {
             binding.lyricsOverlay.visibility = View.VISIBLE
             binding.lyricsOverlay.animate().alpha(1f).duration = 300
+
+            // Check if lyrics are available, otherwise show "in process" message
+            if (lyricsAdapter.itemCount == 0) {
+                binding.tvLyricsStatus.visibility = View.VISIBLE
+                binding.rvLyrics.visibility = View.GONE
+            } else {
+                binding.tvLyricsStatus.visibility = View.GONE
+                binding.rvLyrics.visibility = View.VISIBLE
+            }
         }
 
         binding.btnCloseLyrics.setOnClickListener {
@@ -639,7 +647,18 @@ class DetalleFragment : Fragment() {
 
     private fun observeLyricsAndMascota() {
         viewModel.lyrics.observe(viewLifecycleOwner) { letra ->
-            letra?.lineas?.let { lyricsAdapter.updateLyrics(it) }
+            if (letra != null && letra.lineas.isNotEmpty()) {
+                lyricsAdapter.updateLyrics(letra.lineas)
+                if (binding.lyricsOverlay.visibility == View.VISIBLE) {
+                    binding.tvLyricsStatus.visibility = View.GONE
+                    binding.rvLyrics.visibility = View.VISIBLE
+                }
+            } else {
+                if (binding.lyricsOverlay.visibility == View.VISIBLE) {
+                    binding.tvLyricsStatus.visibility = View.VISIBLE
+                    binding.rvLyrics.visibility = View.GONE
+                }
+            }
         }
 
         viewModel.activeMascota.observe(viewLifecycleOwner) { mascota ->
@@ -678,7 +697,7 @@ class DetalleFragment : Fragment() {
                 binding.sliderProgress.value = (current.toFloat() / duration.toFloat() * 100).coerceIn(0f, 100f)
                 binding.txtCurrentTime.text = formatTime(current)
                 binding.txtTotalTime.text = formatTime(duration)
-                
+
                 // Update lyrics sync
                 val index = lyricsAdapter.setActiveLine(current)
                 if (index != -1) {
@@ -696,7 +715,7 @@ class DetalleFragment : Fragment() {
                     } else {
                         0f // Parked vertically
                     }
-                    
+
                     val currentAngle = binding.imgTonearm.rotation
                     // Si se acaba de pausar o el cambio es grande, animamos suavemente
                     if (!isPlaying && currentAngle > 2f) {

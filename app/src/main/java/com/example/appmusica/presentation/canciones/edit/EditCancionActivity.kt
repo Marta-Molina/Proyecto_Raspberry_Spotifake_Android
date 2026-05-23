@@ -41,6 +41,15 @@ class EditCancionActivity : AppCompatActivity() {
         binding.editTextLikes.setText(cancion.likes.toString())
         binding.editTextImagen.setText(cancion.urlPortada)
 
+        // Fetch current lyrics to display in the editor
+        viewModel.lyrics.observe(this) { letra ->
+            letra?.lineas?.let { lines ->
+                val lyricsText = lines.joinToString("\n") { "[${it.timestamp}] ${it.texto}" }
+                binding.editTextLyrics.setText(lyricsText)
+            }
+        }
+        viewModel.loadLyrics(cancion.id)
+
         binding.btnUpdateCancion.setOnClickListener {
             val nombre = binding.editTextNombre.text.toString()
             val artista = binding.editTextArtista.text.toString()

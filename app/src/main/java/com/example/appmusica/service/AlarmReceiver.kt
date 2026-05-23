@@ -12,10 +12,10 @@ import com.example.appmusica.domain.model.Alarma
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val alarmId = intent.getIntExtra("ALARM_ID", -1)
-        
+
         // Validación: Solo proceder si hay un ID de alarma válido y la acción es disparar alarma
         if (alarmId == -1) return
-        
+
         val songName = intent.getStringExtra("SONG_NAME") ?: "Alarma"
         val artistName = intent.getStringExtra("ARTIST_NAME") ?: "Spotifake"
         val imageUrl = intent.getStringExtra("IMAGE_URL")
@@ -39,9 +39,9 @@ class AlarmReceiver : BroadcastReceiver() {
             scheduler.schedule(alarm, songUrl, artistName, imageUrl)
         }
 
-        // Cancelar notificación de "Próxima alarma" (ID 999) al dispararse
+        // Cancelar notificación de "Próxima alarma"
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(999)
+        notificationManager.cancel(alarmId + 2000)
 
         // Lanzar servicio para el audio y notificación persistente
         // La notificación del servicio se encargará de lanzar la AlarmActivity mediante fullScreenIntent

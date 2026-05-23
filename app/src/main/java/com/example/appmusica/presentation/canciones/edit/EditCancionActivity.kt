@@ -63,15 +63,13 @@ class EditCancionActivity : AppCompatActivity() {
                 album.isNotEmpty() &&
                 imagen.isNotEmpty()
             ) {
-                val cancionActualizada = Cancion(
-                    id = cancion.id,
+                val cancionActualizada = cancion.copy(
                     nombre = nombre,
                     artista = artista,
                     album = album,
                     genero = genero,
                     likes = likes,
-                    urlPortada = imagen,
-                    urlAudio = cancion.urlAudio
+                    urlPortada = imagen
                 )
 
                 viewModel.updateCancion(cancion.id, cancionActualizada)

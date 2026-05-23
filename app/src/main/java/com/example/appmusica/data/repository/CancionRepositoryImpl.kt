@@ -68,10 +68,10 @@ class CancionRepositoryImpl @Inject constructor(
             val album = cancion.album?.toRequestBody(mediaType)
             val genero = cancion.genero?.toString()?.toRequestBody(mediaType)
             val likes = cancion.likes.toString().toRequestBody(mediaType)
-            
+
             val artistaIds = cancion.artistaIds.joinToString(",").toRequestBody(mediaType)
             val generosIds = cancion.generosIds.joinToString(",").toRequestBody(mediaType)
-            
+
             val artistaId = cancion.artistaIds.firstOrNull()?.toString()?.toRequestBody(mediaType)
             val albumId = cancion.albumId?.toString()?.toRequestBody(mediaType)
 

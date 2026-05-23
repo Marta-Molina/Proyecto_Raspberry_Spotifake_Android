@@ -292,12 +292,15 @@ class SettingsFragment : Fragment() {
 
         rvMascotas = view.findViewById(R.id.rvMascotas)
         val btnToggleMascotas = view.findViewById<View>(R.id.btnToggleMascotas)
+        val ivMascotaArrow = view.findViewById<ImageView>(R.id.ivMascotaArrow)
 
         btnToggleMascotas.setOnClickListener {
             if (rvMascotas.visibility == View.VISIBLE) {
                 rvMascotas.visibility = View.GONE
+                ivMascotaArrow.rotation = 0f
             } else {
                 rvMascotas.visibility = View.VISIBLE
+                ivMascotaArrow.rotation = 180f
             }
         }
 

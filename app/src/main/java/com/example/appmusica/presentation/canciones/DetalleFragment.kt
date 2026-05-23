@@ -65,8 +65,17 @@ class DetalleFragment : Fragment() {
 
     private var lastCancionId: Int? = null
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        lastCancionId?.let { outState.putInt("last_cancion_id", it) }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (savedInstanceState != null) {
+            lastCancionId = savedInstanceState.getInt("last_cancion_id", -1).takeIf { it != -1 }
+        }
 
         val position = arguments?.getInt("position") ?: -1
 
@@ -613,10 +622,12 @@ class DetalleFragment : Fragment() {
 
         binding.btnLyrics.setOnClickListener {
             binding.lyricsOverlay.visibility = View.VISIBLE
+            binding.lyricsOverlay.alpha = 0f
             binding.lyricsOverlay.animate().alpha(1f).duration = 300
 
             // Check if lyrics are available, otherwise show "in process" message
             if (lyricsAdapter.itemCount == 0) {
+                binding.tvLyricsStatus.text = "Letras en proceso...\n¡Vuelve pronto!"
                 binding.tvLyricsStatus.visibility = View.VISIBLE
                 binding.rvLyrics.visibility = View.GONE
             } else {

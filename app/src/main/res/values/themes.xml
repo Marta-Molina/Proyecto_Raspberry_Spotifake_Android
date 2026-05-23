@@ -28,17 +28,38 @@
 
     <style name="Theme.AppMusica.Premium.Gold" parent="Theme.AppMusica">
         <item name="colorPrimary">@color/premium_gold</item>
+        <item name="android:windowBackground">#1A1A00</item>
+        <item name="colorSurface">#2A2A00</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.LargeComponent</item>
     </style>
 
     <style name="Theme.AppMusica.Premium.Pink" parent="Theme.AppMusica">
         <item name="colorPrimary">@color/premium_pink</item>
+        <item name="android:windowBackground">#1A0010</item>
+        <item name="colorSurface">#2A001A</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="Theme.AppMusica.Premium.Blue" parent="Theme.AppMusica">
         <item name="colorPrimary">@color/premium_blue</item>
+        <item name="android:windowBackground">#000D1A</item>
+        <item name="colorSurface">#001A33</item>
+        <item name="android:textColorSecondary">@color/premium_blue</item>
     </style>
 
     <style name="Theme.AppMusica.Premium.Emerald" parent="Theme.AppMusica">
         <item name="colorPrimary">@color/premium_emerald</item>
+        <item name="android:windowBackground">#001A0D</item>
+        <item name="colorSurface">#00331A</item>
+        <item name="buttonStyle">@style/Widget.MaterialComponents.Button.UnelevatedButton</item>
+    </style>
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerSize">24dp</item>
     </style>
 </resources>

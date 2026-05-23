@@ -60,6 +60,16 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { _ -> }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (::binding.isInitialized) {
+            outState.putInt("player_visibility", binding.playerContainer.visibility)
+        }
+        if (::bottomSheetBehavior.isInitialized) {
+            outState.putInt("player_state", bottomSheetBehavior.state)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val themeManager = com.example.appmusica.util.ThemeManager(this)
         setTheme(themeManager.getThemeResId())
@@ -92,6 +102,24 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
+
+        // Setup bottom sheet first
+        setupBottomSheet()
+
+        // Restore player state
+        if (savedInstanceState != null) {
+            val visibility = savedInstanceState.getInt("player_visibility", View.GONE)
+            binding.playerContainer.visibility = visibility
+            if (visibility == View.VISIBLE) {
+                val state = savedInstanceState.getInt("player_state", com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN)
+                binding.playerContainer.post {
+                    bottomSheetBehavior.state = state
+                    // Ensure the fragment is restored if it was there
+                    val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
+                    fragment?.onBottomSheetStateChanged(state)
+                }
+            }
+        }
 
         // Obtener NavController de forma segura
         val navHostFragment = supportFragmentManager

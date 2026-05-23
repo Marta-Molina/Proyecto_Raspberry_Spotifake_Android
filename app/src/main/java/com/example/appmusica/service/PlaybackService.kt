@@ -112,7 +112,7 @@ class PlaybackService : MediaSessionService() {
                 
             // Next
             buttons.add(CommandButton.Builder()
-                .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT)
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
                 .setIconResId(androidx.media3.ui.R.drawable.exo_ic_skip_next)
                 .setDisplayName("Siguiente")
                 .build())
@@ -203,7 +203,9 @@ class PlaybackService : MediaSessionService() {
             val connectionResult = super.onConnect(session, controller)
             val playerCommands = connectionResult.availablePlayerCommands.buildUpon()
                 .add(Player.COMMAND_SEEK_TO_NEXT)
+                .add(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
                 .add(Player.COMMAND_SEEK_TO_PREVIOUS)
+                .add(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
                 .build()
             return MediaSession.ConnectionResult.accept(connectionResult.availableSessionCommands, playerCommands)
         }
@@ -213,7 +215,11 @@ class PlaybackService : MediaSessionService() {
             controller: MediaSession.ControllerInfo,
             playerCommand: Int
         ): Int {
-            if (playerCommand == Player.COMMAND_SEEK_TO_NEXT || playerCommand == Player.COMMAND_SEEK_TO_PREVIOUS) {
+            if (playerCommand == Player.COMMAND_SEEK_TO_NEXT || 
+                playerCommand == Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM ||
+                playerCommand == Player.COMMAND_SEEK_TO_PREVIOUS ||
+                playerCommand == Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM) {
+                
                 if (!authManager.canSkip()) {
                     return androidx.media3.session.SessionResult.RESULT_ERROR_PERMISSION_DENIED
                 }

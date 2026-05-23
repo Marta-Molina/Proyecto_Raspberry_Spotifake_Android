@@ -114,11 +114,11 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <View android:id="@+id/themeDark" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/spotify_black" />
+                    <View android:id="@+id/themeDark" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/spotify_green" />
                     <View android:id="@+id/themeGold" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_gold" />
                     <View android:id="@+id/themePink" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_pink" />
                     <View android:id="@+id/themeBlue" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_blue" />
-                    <View android:id="@+id/themeEmerald" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_emerald" />
+                    <View android:id="@+id/themePurple" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_purple" />
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>

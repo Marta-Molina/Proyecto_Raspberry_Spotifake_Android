@@ -44,12 +44,15 @@ class PlaylistSongsFragment : Fragment(R.layout.fragment_playlist_songs) {
                 intent.putExtra("pos", pos)
                 startActivity(intent)
             },
-            like = { pos -> 
+            like = { pos ->
                 val cancion = adapter.getCancion(pos)
                 if (cancion != null) {
                     val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
-                    likedSongsManager.toggleLike(cancion.id)
+                    val nowLiked = likedSongsManager.toggleLike(cancion.id)
                     cancionesViewModel.toggleLike(cancion, isCurrentlyLiked)
+                    if (nowLiked) {
+                        (activity as? com.example.appmusica.presentation.MainActivity)?.showConfetti()
+                    }
                     adapter.notifyItemChanged(pos)
                 }
             },

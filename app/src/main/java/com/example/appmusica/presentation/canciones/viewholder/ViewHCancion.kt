@@ -37,8 +37,10 @@ class ViewHCancion(
         // Star appearance: primary color + filled when liked, grey when not
         if (isLiked) {
             binding.btnLike.setImageResource(android.R.drawable.btn_star_big_on)
+            val typedValue = android.util.TypedValue()
+            itemView.context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
             binding.btnLike.setColorFilter(
-                android.graphics.Color.parseColor("#1DB954"),
+                typedValue.data,
                 android.graphics.PorterDuff.Mode.SRC_IN
             )
         } else {
@@ -96,7 +98,7 @@ class ViewHCancion(
                 // Apply animation
                 val anim = android.view.animation.AnimationUtils.loadAnimation(itemView.context, R.anim.scale_pop)
                 it.startAnimation(anim)
-                
+
                 like(bindingAdapterPosition)
             }
         }

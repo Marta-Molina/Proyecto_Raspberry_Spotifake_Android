@@ -68,6 +68,12 @@ class MainActivity : AppCompatActivity() {
         if (::bottomSheetBehavior.isInitialized) {
             outState.putInt("player_state", bottomSheetBehavior.state)
         }
+
+        // Save selected song ID to survive recreation (like theme change)
+        val viewModel = androidx.lifecycle.ViewModelProvider(this).get(com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel::class.java)
+        viewModel.selectedCancion.value?.let {
+            outState.putInt("selected_cancion_id", it.id)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +104,15 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Restore selected song ID if we're recreating (e.g. theme change)
+        val viewModel = androidx.lifecycle.ViewModelProvider(this).get(com.example.appmusica.presentation.canciones.viewmodel.CancionesViewModel::class.java)
+        savedInstanceState?.let {
+            val restoredId = it.getInt("selected_cancion_id", -1)
+            if (restoredId != -1) {
+                viewModel.setSelectedById(restoredId)
+            }
+        }
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -539,6 +554,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }, minutes * 60 * 1000L)
+    }
+
+    fun showConfetti() {
+        binding.globalKonfettiView.start(com.example.appmusica.util.ConfettiManager(this).getPartyForCurrentTheme())
     }
 
     private fun setupSleepScreen() {

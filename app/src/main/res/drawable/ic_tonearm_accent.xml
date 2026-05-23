@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="200dp"
+    android:viewportWidth="60"
+    android:viewportHeight="200">
+    <!-- Center dot on base (Pivot point 30,30) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,30 A5,5 0 1,1 30,29.9 Z" />
+    <!-- Headshell -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,150 L34,150 L22,180 L14,175 Z" />
+</vector>

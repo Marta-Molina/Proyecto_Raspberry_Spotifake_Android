@@ -323,6 +323,18 @@ class CancionesViewModel @Inject constructor(
         }
     }
 
+    fun setSelectedById(id: Int) {
+        viewModelScope.launch {
+            if (fullList.isEmpty()) {
+                fullList = getCancionesUseCase()
+            }
+            val cancion = fullList.find { it.id == id }
+            if (cancion != null) {
+                _selectedCancion.value = cancion
+            }
+        }
+    }
+
     fun selectCancion(position: Int) {
         viewModelScope.launch {
             val list = _canciones.value

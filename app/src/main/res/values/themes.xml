@@ -30,29 +30,48 @@
         <item name="colorPrimary">@color/premium_gold</item>
         <item name="android:windowBackground">#1A1A00</item>
         <item name="colorSurface">#2A2A00</item>
-        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.MediumComponent</item>
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
+    <style name="Theme.AppMusica.Premium.Gold.Light" parent="Theme.AppMusica.Light">
+        <item name="colorPrimary">#B8860B</item>
+        <item name="android:windowBackground">#FFFDF0</item>
+        <item name="colorSurface">#FFFAE6</item>
     </style>
 
     <style name="Theme.AppMusica.Premium.Pink" parent="Theme.AppMusica">
         <item name="colorPrimary">@color/premium_pink</item>
         <item name="android:windowBackground">#1A0010</item>
         <item name="colorSurface">#2A001A</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Theme.AppMusica.Premium.Pink.Light" parent="Theme.AppMusica.Light">
+        <item name="colorPrimary">#D81B60</item>
+        <item name="android:windowBackground">#FFF0F5</item>
+        <item name="colorSurface">#FFE4E1</item>
     </style>
 
     <style name="Theme.AppMusica.Premium.Blue" parent="Theme.AppMusica">
         <item name="colorPrimary">@color/premium_blue</item>
         <item name="android:windowBackground">#000D1A</item>
         <item name="colorSurface">#001A33</item>
-        <item name="android:textColorSecondary">@color/premium_blue</item>
     </style>
 
-    <style name="Theme.AppMusica.Premium.Emerald" parent="Theme.AppMusica">
-        <item name="colorPrimary">@color/premium_emerald</item>
-        <item name="android:windowBackground">#001A0D</item>
-        <item name="colorSurface">#00331A</item>
-        <item name="buttonStyle">@style/Widget.MaterialComponents.Button.UnelevatedButton</item>
+    <style name="Theme.AppMusica.Premium.Blue.Light" parent="Theme.AppMusica.Light">
+        <item name="colorPrimary">#0056b3</item>
+        <item name="android:windowBackground">#F0F8FF</item>
+        <item name="colorSurface">#E6F2FF</item>
+    </style>
+
+    <style name="Theme.AppMusica.Premium.Purple" parent="Theme.AppMusica">
+        <item name="colorPrimary">@color/premium_purple</item>
+        <item name="android:windowBackground">#12001A</item>
+        <item name="colorSurface">#200033</item>
+    </style>
+
+    <style name="Theme.AppMusica.Premium.Purple.Light" parent="Theme.AppMusica.Light">
+        <item name="colorPrimary">#6A1B9A</item>
+        <item name="android:windowBackground">#F3E5F5</item>
+        <item name="colorSurface">#EDE7F6</item>
     </style>
 
     <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">

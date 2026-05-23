@@ -173,7 +173,7 @@ class DetalleFragment : Fragment() {
             viewModel.toggleLike(cancion, isCurrentlyLiked)
 
             if (nowLiked) {
-                showLikeConfetti()
+                (activity as? MainActivity)?.showConfetti()
             }
             updateLikeIcon(cancion.id)
             binding.btnLike.setClickAnimation()
@@ -212,11 +212,6 @@ class DetalleFragment : Fragment() {
 
         val color = if (isLiked) primaryColor else android.graphics.Color.WHITE
         binding.btnLike.setColorFilter(color)
-    }
-
-    private fun showLikeConfetti() {
-        val konfettiView = (activity as? MainActivity)?.findViewById<nl.dionsegijn.konfetti.xml.KonfettiView>(R.id.konfettiView)
-        konfettiView?.start(com.example.appmusica.util.ConfettiManager(requireContext()).getPartyForCurrentTheme())
     }
 
     private fun setupManualControls() {
@@ -465,7 +460,7 @@ class DetalleFragment : Fragment() {
 
     @android.annotation.SuppressLint("ClickableViewAccessibility")
     private fun setupTonearm() {
-        binding.imgTonearm.setOnTouchListener { v, event ->
+        binding.tonearmContainer.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     isTonearmDragging = true
@@ -767,17 +762,17 @@ class DetalleFragment : Fragment() {
                         0f // Parked vertically
                     }
 
-                    val currentAngle = binding.imgTonearm.rotation
+                    val currentAngle = binding.tonearmContainer.rotation
                     // Si se acaba de pausar o el cambio es grande, animamos suavemente
                     if (!isPlaying && currentAngle > 2f) {
                         tonearmAnimator?.cancel()
-                        tonearmAnimator = ObjectAnimator.ofFloat(binding.imgTonearm, "rotation", currentAngle, 0f).apply {
+                        tonearmAnimator = ObjectAnimator.ofFloat(binding.tonearmContainer, "rotation", currentAngle, 0f).apply {
                             this.duration = 1000 // Slow return when pausing
                             start()
                         }
                     } else if (isPlaying) {
                         // Durante la reproducción, seguimos el progreso
-                        binding.imgTonearm.rotation = targetAngle
+                        binding.tonearmContainer.rotation = targetAngle
                     }
                 }
             }

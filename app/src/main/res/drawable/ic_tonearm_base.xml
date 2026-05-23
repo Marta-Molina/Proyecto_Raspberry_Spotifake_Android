@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="200dp"
+    android:viewportWidth="60"
+    android:viewportHeight="200">
+    <!-- Base / Hinge -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M30,30 A20,20 0 1,1 30,29.9 Z" />
+    <!-- Counterweight -->
+    <path
+        android:fillColor="#424242"
+        android:pathData="M20,5 L40,5 L40,20 L20,20 Z" />
+    <!-- Main Arm -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M27,50 L33,50 L31,150 L29,150 Z" />
+    <!-- Stylus tip -->
+    <path
+        android:fillColor="#424242"
+        android:pathData="M16,177 L10,185 L12,186 L18,179 Z" />
+</vector>

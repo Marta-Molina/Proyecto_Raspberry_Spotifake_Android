@@ -193,36 +193,39 @@ class SettingsFragment : Fragment() {
         val premiumLayout = view.findViewById<LinearLayout>(R.id.premiumThemesLayout)
 
         // Initial state
-        switchLight.isChecked = themeManager.getTheme() == ThemeManager.THEME_LIGHT
+        switchLight.isChecked = !themeManager.isDarkMode()
 
         if (isPremium) {
             premiumLayout.visibility = View.VISIBLE
             // Setup clicks for colored views
-            view.findViewById<View>(R.id.themeDark).setOnClickListener { changeTheme(ThemeManager.THEME_DARK) }
-            view.findViewById<View>(R.id.themeGold).setOnClickListener { changeTheme(ThemeManager.THEME_GOLD) }
-            view.findViewById<View>(R.id.themePink).setOnClickListener { changeTheme(ThemeManager.THEME_PINK) }
-            view.findViewById<View>(R.id.themeBlue).setOnClickListener { changeTheme(ThemeManager.THEME_BLUE) }
-            view.findViewById<View>(R.id.themeEmerald).setOnClickListener { changeTheme(ThemeManager.THEME_EMERALD) }
+            view.findViewById<View>(R.id.themeDark).setOnClickListener { changePalette(ThemeManager.PALETTE_SPOTIFY) }
+            view.findViewById<View>(R.id.themeGold).setOnClickListener { changePalette(ThemeManager.PALETTE_GOLD) }
+            view.findViewById<View>(R.id.themePink).setOnClickListener { changePalette(ThemeManager.PALETTE_PINK) }
+            view.findViewById<View>(R.id.themeBlue).setOnClickListener { changePalette(ThemeManager.PALETTE_BLUE) }
+            view.findViewById<View>(R.id.themePurple).setOnClickListener { changePalette(ThemeManager.PALETTE_PURPLE) }
 
-            // Add click animations to these views too
+            // Add click animations
             view.findViewById<View>(R.id.themeDark).setClickAnimation()
             view.findViewById<View>(R.id.themeGold).setClickAnimation()
             view.findViewById<View>(R.id.themePink).setClickAnimation()
             view.findViewById<View>(R.id.themeBlue).setClickAnimation()
-            view.findViewById<View>(R.id.themeEmerald).setClickAnimation()
+            view.findViewById<View>(R.id.themePurple).setClickAnimation()
         }
 
         switchLight.setOnCheckedChangeListener { _, isChecked ->
-            val newTheme = if (isChecked) ThemeManager.THEME_LIGHT else ThemeManager.THEME_DARK
-            changeTheme(newTheme)
+            val themeManager = ThemeManager(requireContext())
+            if (themeManager.isDarkMode() == isChecked) {
+                themeManager.setDarkMode(!isChecked)
+                activity?.recreate()
+            }
         }
     }
 
-    private fun changeTheme(theme: String) {
+    private fun changePalette(palette: String) {
         val themeManager = ThemeManager(requireContext())
-        if (themeManager.getTheme() != theme) {
-            themeManager.setTheme(theme)
-            activity?.recreate() // Restart activity to apply theme
+        if (themeManager.getPalette() != palette) {
+            themeManager.setPalette(palette)
+            activity?.recreate()
         }
     }
 

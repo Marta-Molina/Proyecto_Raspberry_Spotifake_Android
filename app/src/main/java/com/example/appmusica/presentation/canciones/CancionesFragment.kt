@@ -156,12 +156,8 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
         viewModel.toggleLike(cancion, isCurrentlyLiked)
 
         if (nowLiked) {
-            showLikeConfetti()
+            (activity as? MainActivity)?.showConfetti()
         }
-    }
-
-    private fun showLikeConfetti() {
-        binding.konfettiView.start(com.example.appmusica.util.ConfettiManager(requireContext()).getPartyForCurrentTheme())
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────────

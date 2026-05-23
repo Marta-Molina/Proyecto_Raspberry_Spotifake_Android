@@ -43,12 +43,15 @@ class AlbumSongsFragment : Fragment() {
             list = mutableListOf(),
             delete = { pos -> viewModel.deleteCancion(adapter.getCancion(pos)?.id ?: -1) },
             update = { pos -> /* no-op */ },
-            like = { pos -> 
+            like = { pos ->
                 val cancion = adapter.getCancion(pos)
                 if (cancion != null) {
                     val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
-                    likedSongsManager.toggleLike(cancion.id)
+                    val nowLiked = likedSongsManager.toggleLike(cancion.id)
                     viewModel.toggleLike(cancion, isCurrentlyLiked)
+                    if (nowLiked) {
+                        (activity as? com.example.appmusica.presentation.MainActivity)?.showConfetti()
+                    }
                     adapter.notifyItemChanged(pos)
                 }
             },

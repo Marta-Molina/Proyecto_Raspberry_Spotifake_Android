@@ -118,7 +118,7 @@ class CancionesViewModel @Inject constructor(
             if (fullList.isEmpty()) {
                 fullList = getCancionesUseCase()
             }
-            
+
             var filtered = fullList
 
             // Filtro por texto
@@ -170,7 +170,7 @@ class CancionesViewModel @Inject constructor(
             // Cargar el artista directamente del repo
             val artista = artistaRepository.getArtistaById(artistId)
             _currentArtista.value = artista?.copy(likesTotales = totalLikes)
-            
+
             // Cargar álbumes del artista
             _albums.value = getAlbumsForArtistUseCase(artistId)
         }
@@ -183,7 +183,7 @@ class CancionesViewModel @Inject constructor(
             siguiendo = true,
             seguidores = current.seguidores + 1
         )
-        
+
         viewModelScope.launch {
             val success = socialRepository.followArtista(id)
             if (success) {
@@ -207,7 +207,7 @@ class CancionesViewModel @Inject constructor(
             siguiendo = false,
             seguidores = maxOf(0, current.seguidores - 1)
         )
-        
+
         viewModelScope.launch {
             val success = socialRepository.unfollowArtista(id)
             if (success) {
@@ -363,20 +363,32 @@ class CancionesViewModel @Inject constructor(
     }
 
     // --- Playback Queue Logic ---
-    
+
     fun addToQueue(cancion: Cancion) {
         val currentQueue = _playbackQueue.value?.toMutableList() ?: mutableListOf()
         currentQueue.add(cancion)
         _playbackQueue.value = currentQueue
         queueManager.saveQueue(currentQueue)
+
+        // Notify media session through an event or handle it in DetalleFragment
+        _queueUpdateEvent.value = Pair(QueueAction.ADD, cancion)
     }
 
     fun playNext(cancion: Cancion) {
         val currentQueue = _playbackQueue.value?.toMutableList() ?: mutableListOf()
-        // Insertar al principio de la cola para que sea lo siguiente en sonar
         currentQueue.add(0, cancion)
         _playbackQueue.value = currentQueue
         queueManager.saveQueue(currentQueue)
+
+        _queueUpdateEvent.value = Pair(QueueAction.ADD_NEXT, cancion)
+    }
+
+    enum class QueueAction { ADD, ADD_NEXT, REMOVE }
+    private val _queueUpdateEvent = MutableLiveData<Pair<QueueAction, Cancion>?>()
+    val queueUpdateEvent: LiveData<Pair<QueueAction, Cancion>?> = _queueUpdateEvent
+
+    fun clearQueueEvent() {
+        _queueUpdateEvent.value = null
     }
 
     fun clearQueue() {

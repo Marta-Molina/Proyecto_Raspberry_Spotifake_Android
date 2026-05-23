@@ -646,6 +646,41 @@ class DetalleFragment : Fragment() {
     }
 
     private fun observeLyricsAndMascota() {
+        viewModel.queueUpdateEvent.observe(viewLifecycleOwner) { event ->
+            if (event != null) {
+                val (action, cancion) = event
+                val controller = mediaController ?: return@observe
+
+                val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
+                val audioUrl = if (cancion.urlAudio?.startsWith("http") == true) cancion.urlAudio else baseUrl + (cancion.urlAudio ?: "")
+
+                val mediaItem = androidx.media3.common.MediaItem.Builder()
+                    .setUri(audioUrl)
+                    .setMediaId(cancion.id.toString())
+                    .setMediaMetadata(
+                        androidx.media3.common.MediaMetadata.Builder()
+                            .setTitle(cancion.nombre)
+                            .setArtist(cancion.artista)
+                            .setAlbumTitle(cancion.album)
+                            .setArtworkUri(android.net.Uri.parse(if (cancion.urlPortada?.startsWith("http") == true) cancion.urlPortada else baseUrl + (cancion.urlPortada ?: "")))
+                            .build()
+                    )
+                    .build()
+
+                when (action) {
+                    CancionesViewModel.QueueAction.ADD -> {
+                        controller.addMediaItem(mediaItem)
+                    }
+                    CancionesViewModel.QueueAction.ADD_NEXT -> {
+                        val nextIndex = if (controller.mediaItemCount > 0) controller.currentMediaItemIndex + 1 else 0
+                        controller.addMediaItem(nextIndex, mediaItem)
+                    }
+                    else -> {}
+                }
+                viewModel.clearQueueEvent()
+            }
+        }
+
         viewModel.lyrics.observe(viewLifecycleOwner) { letra ->
             if (letra != null && letra.lineas.isNotEmpty()) {
                 lyricsAdapter.updateLyrics(letra.lineas)

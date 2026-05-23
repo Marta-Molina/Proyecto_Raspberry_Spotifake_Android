@@ -63,6 +63,8 @@ class DetalleFragment : Fragment() {
         }
     }
 
+    private var lastCancionId: Int? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -78,13 +80,12 @@ class DetalleFragment : Fragment() {
             viewModel.selectCancion(position)
         }
 
-        var lastCancionId: Int? = null
         viewModel.selectedCancion.observe(viewLifecycleOwner) { cancion ->
             cancion?.let {
                 updateUI(it)
                 viewModel.loadLyrics(it.id)
-                // Solo reiniciar el reproductor si la canción realmente cambió
-                if (lastCancionId != it.id) {
+                // Solo intentar configurar si el controlador está listo
+                if (mediaController != null && lastCancionId != it.id) {
                     trySetupPlayerWithCurrentList()
                 }
                 lastCancionId = it.id
@@ -361,6 +362,17 @@ class DetalleFragment : Fragment() {
             val controller = controllerFuture?.get() ?: return@addListener
             mediaController = controller
             binding.playerView.player = controller
+
+            // Check if we need to setup playback now that controller is ready
+            val currentSelected = viewModel.selectedCancion.value
+            if (currentSelected != null && lastCancionId != currentSelected.id) {
+                trySetupPlayerWithCurrentList()
+                lastCancionId = currentSelected.id
+            } else if (currentSelected != null && controller.currentMediaItem == null) {
+                // If nothing is playing but we have a selection, try setup
+                trySetupPlayerWithCurrentList()
+            }
+
             controller.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     updatePlayPauseIcon()

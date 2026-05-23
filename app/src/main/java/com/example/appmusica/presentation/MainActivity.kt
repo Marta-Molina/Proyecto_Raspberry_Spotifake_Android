@@ -63,11 +63,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val themeManager = com.example.appmusica.util.ThemeManager(this)
         setTheme(themeManager.getThemeResId())
-        
+
         super.onCreate(savedInstanceState)
-        
+
         checkNotificationPermission()
-        
+
         // Verificar sesión
         if (!authRepository.isLoggedIn()) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val topLevelDestinations = mutableSetOf(R.id.cancionesFragment, R.id.playlistsFragment, R.id.settingsFragment)
+        val topLevelDestinations = mutableSetOf(R.id.cancionesFragment, R.id.playlistsFragment, R.id.settingsFragment, R.id.socialFragment)
         if (authManager.isAdmin()) {
             topLevelDestinations.add(R.id.adminFragment)
         }
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.socialFragment -> {
                     navController.navigate(R.id.socialFragment)
-                    // Sync social if added to bottom nav later
+                    syncBottomNavSelection(R.id.socialFragment)
                     binding.drawerLayout.closeDrawers()
                     true
                 }
@@ -153,15 +153,15 @@ class MainActivity : AppCompatActivity() {
 
         // Setup CurvedBottomNavigation
         setupCurvedBottomNavigation(navController)
-        
+
         // Auto-minimize player on navigation
         navController.addOnDestinationChangedListener { _, _, _ ->
-            if (binding.playerContainer.visibility == View.VISIBLE && 
+            if (binding.playerContainer.visibility == View.VISIBLE &&
                 bottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
             }
         }
-        
+
         // Drawer admin visibility
         binding.navigationView.menu.findItem(R.id.adminFragment)?.isVisible = authManager.isAdmin()
 
@@ -183,16 +183,26 @@ class MainActivity : AppCompatActivity() {
         setupSleepScreen()
         setupConnectivityListener()
 
+        // Restore player state if it was active
+        if (savedInstanceState != null) {
+            val playerVisible = savedInstanceState.getBoolean("player_visible", false)
+            val playerState = savedInstanceState.getInt("player_state", com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN)
+            if (playerVisible) {
+                binding.playerContainer.visibility = View.VISIBLE
+                bottomSheetBehavior.state = playerState
+            }
+        }
+
         // Control del botón atrás del sistema
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // 1. Si el reproductor está expandido, minimizarlo
-                if (binding.playerContainer.visibility == View.VISIBLE && 
+                if (binding.playerContainer.visibility == View.VISIBLE &&
                     bottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
-                    
+
                     bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
-                    
-                    // Si estamos en una pantalla secundaria, volvemos atrás. 
+
+                    // Si estamos en una pantalla secundaria, volvemos atrás.
                     // Si estamos en la principal, solo hemos minimizado el player.
                     if (navController.currentDestination?.id != R.id.cancionesFragment) {
                         checkAndNavigateBack(navController)
@@ -206,6 +216,12 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("player_visible", binding.playerContainer.visibility == View.VISIBLE)
+        outState.putInt("player_state", bottomSheetBehavior.state)
+    }
+
     override fun onStop() {
         super.onStop()
         authManager.updateLastActiveTime()
@@ -216,9 +232,9 @@ class MainActivity : AppCompatActivity() {
 
         // Pantallas "Raíz" o de primer nivel
         val topLevelDestinations = setOf(
-            R.id.cancionesFragment, 
-            R.id.playlistsFragment, 
-            R.id.settingsFragment, 
+            R.id.cancionesFragment,
+            R.id.playlistsFragment,
+            R.id.settingsFragment,
             R.id.adminFragment
         )
 
@@ -262,16 +278,16 @@ class MainActivity : AppCompatActivity() {
     private fun setupCurvedBottomNavigation(navController: androidx.navigation.NavController) {
         val bottomNav = binding.bottomNavigation as np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
         val themeManager = com.example.appmusica.util.ThemeManager(this)
-        
+
         // Transparencia total del fondo para el efecto flotante
         bottomNav.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-        
+
         // Colores de la barra extraídos del tema
         val primaryColor = ContextCompat.getColor(this, R.color.spotify_green)
-        
+
         bottomNav.navBackgroundColor = primaryColor
         bottomNav.fabBackgroundColor = primaryColor
-        
+
         // Mejora de colores según el tema para evitar iconos invisibles
         val currentTheme = themeManager.getTheme()
         if (currentTheme == com.example.appmusica.util.ThemeManager.THEME_LIGHT) {
@@ -281,7 +297,7 @@ class MainActivity : AppCompatActivity() {
             bottomNav.unSelectedColor = android.graphics.Color.WHITE
             bottomNav.selectedColor = android.graphics.Color.BLACK
         }
-        
+
         // Items definition (icon, avdIcon, destinationId)
         val menuItems = mutableListOf(
             np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
@@ -305,7 +321,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.settingsFragment
             )
         )
-        
+
         if (authManager.isAdmin()) {
             menuItems.add(
                 np.com.susanthapa.curved_bottom_navigation.CbnMenuItem(
@@ -339,15 +355,15 @@ class MainActivity : AppCompatActivity() {
             adView.visibility = View.GONE
             return
         }
-        
+
         adView.visibility = View.VISIBLE
         adView.setOnClickListener { showPremiumInfo() }
-        
+
         // Listener para cerrar el anuncio
         binding.adBannerInclude.btnMinimizeAd.setOnClickListener {
             adView.visibility = View.GONE
         }
-        
+
         // Load a "random" ad or just show the default one
         // Ideally we fetch from API: /ads/random
         lifecycleScope.launch {
@@ -357,10 +373,10 @@ class MainActivity : AppCompatActivity() {
                     val ad = response.body()!!
                     binding.adBannerInclude.tvAdTitle.text = ad.titulo
                     binding.adBannerInclude.tvAdDescription.text = ad.descripcion
-                    
+
                     val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
                     val fullUrl = if (ad.urlImagen.startsWith("http")) ad.urlImagen else baseUrl + ad.urlImagen
-                    
+
                     Glide.with(this@MainActivity)
                         .load(fullUrl)
                         .placeholder(R.drawable.placeholder)
@@ -387,7 +403,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomSheet() {
         bottomSheetBehavior = com.google.android.material.bottomsheet.BottomSheetBehavior.from(binding.playerContainer)
         bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
-        
+
         bottomSheetBehavior.addBottomSheetCallback(object : com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: android.view.View, newState: Int) {
                 if (newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN) {
@@ -396,7 +412,7 @@ class MainActivity : AppCompatActivity() {
                     val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
                     fragment?.stopPlayback()
                 }
-                
+
                 // Notify fragment of state change
                 val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
                 fragment?.onBottomSheetStateChanged(newState)
@@ -413,7 +429,7 @@ class MainActivity : AppCompatActivity() {
     fun expandPlayer(position: Int) {
         binding.playerContainer.visibility = android.view.View.VISIBLE
         val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
-        
+
         if (fragment == null) {
             val bundle = Bundle().apply { putInt("position", position) }
             val newFragment = com.example.appmusica.presentation.canciones.DetalleFragment().apply {
@@ -427,7 +443,7 @@ class MainActivity : AppCompatActivity() {
             // Manual sync in case the state doesn't change (e.g. already expanded)
             fragment.onBottomSheetStateChanged(com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED)
         }
-        
+
         bottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -492,7 +508,7 @@ class MainActivity : AppCompatActivity() {
                     // Parar la música
                     val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
                     fragment?.pausePlayback()
-                    
+
                     // Mostrar pantalla de sueño (YouTube Style)
                     binding.tvSleepSummary.text = "Has pasado $sleepMinutesSet minutos dentro de la app."
                     binding.sleepScreenOverlay.visibility = View.VISIBLE
@@ -505,7 +521,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnExitSleep.setOnClickListener {
             binding.sleepScreenOverlay.visibility = View.GONE
         }
-        
+
         binding.btnRemindAgain.setOnClickListener {
             binding.sleepScreenOverlay.visibility = View.GONE
             Toast.makeText(this, "Se volverá a recordar en 15 minutos", Toast.LENGTH_SHORT).show()
@@ -527,17 +543,17 @@ class MainActivity : AppCompatActivity() {
                 binding.offlineScreenOverlay.visibility = View.GONE
                 return@runOnUiThread
             }
-            
+
             // Hide loading if active
             binding.pbConnectivity.visibility = View.GONE
-            
+
             if (binding.offlineScreenOverlay.visibility == View.VISIBLE) {
                 // Animate Out
                 binding.offlineScreenOverlay.animate()
                     .translationY(binding.root.height.toFloat())
                     .setDuration(500)
-                    .withEndAction { 
-                        binding.offlineScreenOverlay.visibility = View.GONE 
+                    .withEndAction {
+                        binding.offlineScreenOverlay.visibility = View.GONE
                     }
                     .start()
 
@@ -551,7 +567,7 @@ class MainActivity : AppCompatActivity() {
                         .translationY(0f)
                         .setDuration(400)
                         .start()
-                    
+
                     postDelayed({
                         animate()
                             .alpha(0f)
@@ -566,20 +582,20 @@ class MainActivity : AppCompatActivity() {
 
         override fun onLost(network: Network) = runOnUiThread {
             isFirstConnectivityCheck = false
-            
+
             // Stop playback on internet loss
             val stopFadeIntent = Intent(this@MainActivity, PlaybackService::class.java).apply {
                 action = "ACTION_STOP_FADE"
             }
             startService(stopFadeIntent)
-            
+
             // 1. Show Progress Bar for 2 seconds
             binding.pbConnectivity.visibility = View.VISIBLE
-            
+
             binding.pbConnectivity.postDelayed({
                 // Check if still offline (callback might have been cancelled)
                 binding.pbConnectivity.visibility = View.GONE
-                
+
                 // 2. Animate In Offline Overlay
                 binding.offlineScreenOverlay.visibility = View.VISIBLE
                 binding.offlineScreenOverlay.translationY = binding.root.height.toFloat()
@@ -597,12 +613,12 @@ class MainActivity : AppCompatActivity() {
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-        
+
         // Initial check
         val activeNetwork = connectivityManager.activeNetwork
         val caps = connectivityManager.getNetworkCapabilities(activeNetwork)
         val isOnline = caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-        
+
         if (isOnline) {
             binding.offlineScreenOverlay.visibility = View.GONE
         } else {
@@ -624,11 +640,11 @@ class MainActivity : AppCompatActivity() {
                     binding.ivMascot.visibility = View.VISIBLE
                     val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
                     val fullUrl = if (activeMascot.urlSprite.startsWith("http")) activeMascot.urlSprite else baseUrl + activeMascot.urlSprite
-                    
+
                     Glide.with(this@MainActivity)
                         .load(fullUrl)
                         .into(binding.ivMascot)
-                    
+
                     startMascotAnimation()
                 } else {
                     binding.ivMascot.visibility = View.GONE
@@ -642,13 +658,13 @@ class MainActivity : AppCompatActivity() {
     private fun startMascotAnimation() {
         val mascot = binding.ivMascot
         val random = java.util.Random()
-        
+
         lifecycleScope.launch {
             while (true) {
                 // Movimiento aleatorio suavizado
                 val nextX = random.nextInt(maxOf(1, binding.root.width - mascot.width)).toFloat()
                 val nextY = random.nextInt(maxOf(1, binding.root.height - mascot.height)).toFloat()
-                
+
                 mascot.animate()
                     .x(nextX)
                     .y(nextY)
@@ -668,7 +684,7 @@ class MainActivity : AppCompatActivity() {
                             }.start()
                     }
                     .start()
-                
+
                 kotlinx.coroutines.delay(8000) // Esperar antes del siguiente movimiento
             }
         }

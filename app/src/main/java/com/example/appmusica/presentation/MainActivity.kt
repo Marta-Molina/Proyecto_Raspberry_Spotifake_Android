@@ -31,6 +31,7 @@ import com.example.appmusica.di.NetworkModule
 import com.example.appmusica.domain.repository.AuthRepository
 import com.example.appmusica.databinding.ActivityMainBinding
 import com.example.appmusica.presentation.login.LoginActivity
+import com.example.appmusica.service.PlaybackService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

@@ -66,7 +66,7 @@ class ArtistaDetalleFragment : Fragment() {
             list = mutableListOf(),
             delete = { /* No delete in artist view */ },
             update = { /* No update in artist view */ },
-            like = { pos -> 
+            like = { pos ->
                 val cancion = popularSongsAdapter.getCancion(pos)
                 cancion?.let { viewModel.addLike(it) }
             },
@@ -121,8 +121,12 @@ class ArtistaDetalleFragment : Fragment() {
                     .centerCrop()
                     .transform(jp.wasabeef.glide.transformations.BlurTransformation(25, 3))
                     .into(binding.imgBanner)
-                
+
                 updateFollowButton(it.siguiendo)
+
+                if (it.siguiendo) {
+                    showFollowConfetti()
+                }
             }
         }
 
@@ -138,27 +142,44 @@ class ArtistaDetalleFragment : Fragment() {
     }
 
     private fun updateFollowButton(isFollowing: Boolean) {
+        val typedValue = android.util.TypedValue()
+        requireContext().theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
+        val primaryColor = typedValue.data
+
         if (isFollowing) {
             binding.btnFollow.text = "SIGUIENDO"
             binding.btnFollow.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            binding.btnFollow.setStrokeColorResource(android.R.color.white)
+            binding.btnFollow.setStrokeColor(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE))
+            binding.btnFollow.setTextColor(android.graphics.Color.WHITE)
         } else {
             binding.btnFollow.text = "SEGUIR"
-            binding.btnFollow.setBackgroundColor(android.graphics.Color.parseColor("#1DB954")) // Spotify Green
-            binding.btnFollow.setStrokeColorResource(android.R.color.transparent)
+            binding.btnFollow.setBackgroundColor(primaryColor)
+            binding.btnFollow.setStrokeColor(android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT))
+            binding.btnFollow.setTextColor(android.graphics.Color.BLACK) // Or white depending on theme? Default is green with black text usually
         }
     }
+
+    private var userTriggeredFollow = false
 
     private fun toggleFollow() {
         val artista = viewModel.currentArtista.value ?: return
         val currentFollowing = artista.siguiendo
-        
+
         if (currentFollowing) {
+            userTriggeredFollow = false
             viewModel.unfollowArtista(artista.id)
         } else {
+            userTriggeredFollow = true
             viewModel.followArtista(artista.id)
         }
         // ViewModel handles optimistic update through LiveData now
+    }
+
+    private fun showFollowConfetti() {
+        if (userTriggeredFollow) {
+            binding.konfettiView.start(com.example.appmusica.util.ConfettiManager(requireContext()).getPartyForCurrentTheme())
+            userTriggeredFollow = false
+        }
     }
 
     override fun onDestroyView() {

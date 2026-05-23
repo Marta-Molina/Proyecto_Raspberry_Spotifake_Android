@@ -295,12 +295,22 @@ class SettingsFragment : Fragment() {
         val ivMascotaArrow = view.findViewById<ImageView>(R.id.ivMascotaArrow)
 
         btnToggleMascotas.setOnClickListener {
-            if (rvMascotas.visibility == View.VISIBLE) {
+            val show = rvMascotas.visibility != View.VISIBLE
+            if (show) {
+                // If it's going to be shown, check if there's data
+                if (mascotaAdapter.itemCount == 0) {
+                    androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Mascotas")
+                        .setMessage("Mascotas en proceso... ¡Vuelve pronto!")
+                        .setPositiveButton("Aceptar", null)
+                        .show()
+                } else {
+                    rvMascotas.visibility = View.VISIBLE
+                    ivMascotaArrow.rotation = 180f
+                }
+            } else {
                 rvMascotas.visibility = View.GONE
                 ivMascotaArrow.rotation = 0f
-            } else {
-                rvMascotas.visibility = View.VISIBLE
-                ivMascotaArrow.rotation = 180f
             }
         }
 
@@ -317,8 +327,8 @@ class SettingsFragment : Fragment() {
             adapter = mascotaAdapter
         }
 
-        settingsViewModel.mascotas.observe(viewLifecycleOwner) {
-            mascotaAdapter.update(it)
+        settingsViewModel.mascotas.observe(viewLifecycleOwner) { lista ->
+            mascotaAdapter.update(lista)
         }
         settingsViewModel.loadMascotas()
     }

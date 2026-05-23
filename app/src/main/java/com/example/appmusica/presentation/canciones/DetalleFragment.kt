@@ -205,30 +205,18 @@ class DetalleFragment : Fragment() {
         val isLiked = likedSongsManager.isLiked(cancionId)
         val icon = if (isLiked) android.R.drawable.btn_star_big_on else android.R.drawable.btn_star_big_off
         binding.btnLike.setImageResource(icon)
-        val color = if (isLiked) resources.getColor(R.color.spotify_green, null) else android.graphics.Color.WHITE
+
+        val typedValue = android.util.TypedValue()
+        requireContext().theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
+        val primaryColor = typedValue.data
+
+        val color = if (isLiked) primaryColor else android.graphics.Color.WHITE
         binding.btnLike.setColorFilter(color)
     }
 
     private fun showLikeConfetti() {
         val konfettiView = (activity as? MainActivity)?.findViewById<nl.dionsegijn.konfetti.xml.KonfettiView>(R.id.konfettiView)
-        konfettiView?.start(
-            nl.dionsegijn.konfetti.core.Party(
-                speed = 0f,
-                maxSpeed = 25f,
-                damping = 0.9f,
-                spread = 360,
-                colors = listOf(
-                    android.graphics.Color.parseColor("#1DB954"),
-                    android.graphics.Color.parseColor("#FFE137"),
-                    android.graphics.Color.parseColor("#FF5C5C")
-                ),
-                shapes = listOf(nl.dionsegijn.konfetti.core.models.Shape.Circle, nl.dionsegijn.konfetti.core.models.Shape.Square),
-                size = listOf(nl.dionsegijn.konfetti.core.models.Size.SMALL, nl.dionsegijn.konfetti.core.models.Size.LARGE),
-                timeToLive = 2000L,
-                emitter = nl.dionsegijn.konfetti.core.emitter.Emitter(duration = 150, java.util.concurrent.TimeUnit.MILLISECONDS).max(100),
-                position = nl.dionsegijn.konfetti.core.Position.Relative(0.5, 0.4)
-            )
-        )
+        konfettiView?.start(com.example.appmusica.util.ConfettiManager(requireContext()).getPartyForCurrentTheme())
     }
 
     private fun setupManualControls() {
@@ -323,39 +311,43 @@ class DetalleFragment : Fragment() {
     private fun trySetupPlayerWithCurrentList() {
         val controller = mediaController ?: return
         val cancionList = viewModel.canciones.value ?: return
+        if (cancionList.isEmpty()) return
+
         val selectedCancion = viewModel.selectedCancion.value
-        val initialPosition = cancionList.indexOfFirst { it.id == selectedCancion?.id }.takeIf { it >= 0 } ?: 0
 
-        if (cancionList.isEmpty() || initialPosition >= cancionList.size) return
-
-        val mediaItems = cancionList.map { song ->
-            val audioUrl = song.urlAudio ?: ""
-            val portadaPath = song.urlPortada ?: ""
-            val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
-            val fullAudioUrl = if (audioUrl.startsWith("http")) audioUrl else baseUrl + audioUrl
-            val fullPortadaUrl = if (portadaPath.startsWith("http")) portadaPath else baseUrl + portadaPath
-
-            val metadata = MediaMetadata.Builder()
-                .setTitle(song.nombre)
-                .setArtist(song.artista)
-                .setAlbumTitle(song.album)
-                .setArtworkUri(android.net.Uri.parse(fullPortadaUrl))
-                .build()
-
-            androidx.media3.common.MediaItem.Builder()
-                .setUri(fullAudioUrl)
-                .setMediaMetadata(metadata)
-                .build()
-        }
-
-        // Check if we already have this list loaded to avoid restarting
+        // Check what's currently playing in the service
         val currentMediaItem = controller.currentMediaItem
         val currentPlayingUri = currentMediaItem?.localConfiguration?.uri?.toString()
-        val targetUri = mediaItems[initialPosition].localConfiguration?.uri?.toString()
 
-        if (currentPlayingUri == targetUri) {
-            // Already playing the correct song! Just return.
-            return
+        if (currentPlayingUri != null) {
+            // Find if the currently playing song is in our list
+            val currentIndexInList = cancionList.indexOfFirst { song ->
+                val songUri = getFullUrl(song.urlAudio ?: "")
+                songUri == currentPlayingUri
+            }
+
+            if (currentIndexInList != -1) {
+                // If it's already playing from this list, we only change it if
+                // the user explicitly selected a DIFFERENT song in the UI.
+                if (selectedCancion != null) {
+                    val targetUri = getFullUrl(selectedCancion.urlAudio ?: "")
+                    if (targetUri == currentPlayingUri) {
+                        // Already playing the right song. DO NOT RESET.
+                        return
+                    }
+                } else {
+                    // Nothing selected but already playing from list. Keep it.
+                    return
+                }
+            }
+        }
+
+        // If we reach here, we need to load the list and jump to the initial position
+        val initialPosition = cancionList.indexOfFirst { it.id == selectedCancion?.id }.takeIf { it >= 0 } ?: 0
+        if (initialPosition >= cancionList.size) return
+
+        val mediaItems = cancionList.map { song ->
+            createMediaItem(song)
         }
 
         controller.setMediaItems(mediaItems, initialPosition, 0)
@@ -705,8 +697,9 @@ class DetalleFragment : Fragment() {
         }
 
         viewModel.lyrics.observe(viewLifecycleOwner) { letra ->
-            if (letra != null && letra.lineas.isNotEmpty()) {
-                lyricsAdapter.updateLyrics(letra.lineas)
+            val lineas = letra?.lineas
+            if (lineas != null && lineas.isNotEmpty()) {
+                lyricsAdapter.updateLyrics(lineas)
                 if (binding.lyricsOverlay.visibility == View.VISIBLE) {
                     binding.tvLyricsStatus.visibility = View.GONE
                     binding.rvLyrics.visibility = View.VISIBLE

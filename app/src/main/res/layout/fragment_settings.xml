@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="0dp"
                     android:text="Cambiar foto de perfil"
-                    android:textColor="@color/spotify_green" />
+                    android:textColor="?attr/colorPrimary" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -205,9 +205,10 @@
             android:layout_marginTop="8dp"
             android:text="Temporizador de apagado"
             android:textAlignment="viewStart"
+            android:textColor="?attr/colorPrimary"
             app:icon="@drawable/ic_timer"
-            app:iconTint="?android:attr/textColorPrimary"
-            app:strokeColor="?attr/colorSurface" />
+            app:iconTint="?attr/colorPrimary"
+            app:strokeColor="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnManageAlarms"
@@ -217,9 +218,10 @@
             android:layout_marginTop="8dp"
             android:text="Gestionar Alarmas"
             android:textAlignment="viewStart"
+            android:textColor="?attr/colorPrimary"
             app:icon="@drawable/ic_alarm"
-            app:iconTint="?android:attr/textColorPrimary"
-            app:strokeColor="?attr/colorSurface" />
+            app:iconTint="?attr/colorPrimary"
+            app:strokeColor="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnResumenAnual"
@@ -229,9 +231,10 @@
             android:layout_marginTop="8dp"
             android:text="Resumen Anual"
             android:textAlignment="viewStart"
+            android:textColor="?attr/colorPrimary"
             app:icon="@drawable/ic_stats"
-            app:iconTint="?android:attr/textColorPrimary"
-            app:strokeColor="?attr/colorSurface" />
+            app:iconTint="?attr/colorPrimary"
+            app:strokeColor="?attr/colorPrimary" />
 
         <View
             android:layout_width="match_parent"
@@ -258,7 +261,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:text="Borrar"
-                android:textColor="@color/spotify_green"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 android:clickable="true"
                 android:focusable="true"/>
@@ -285,7 +288,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cambiar cuenta"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:textColor="?attr/colorPrimary" />
 
             <Button
                 android:id="@+id/btnLogout"
@@ -294,7 +297,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cerrar sesión"
-                android:textColor="#FF4444" />
+                android:textColor="?attr/colorPrimary" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

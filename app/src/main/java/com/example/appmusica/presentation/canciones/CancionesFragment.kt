@@ -151,36 +151,17 @@ class CancionesFragment : Fragment(R.layout.fragment_canciones) {
     private fun handleLike(cancion: Cancion) {
         val isCurrentlyLiked = likedSongsManager.isLiked(cancion.id)
         val nowLiked = likedSongsManager.toggleLike(cancion.id)
-        
+
         // Sync with backend and update global state via ViewModel
         viewModel.toggleLike(cancion, isCurrentlyLiked)
-        
+
         if (nowLiked) {
             showLikeConfetti()
         }
     }
 
     private fun showLikeConfetti() {
-        binding.konfettiView.start(
-            Party(
-                speed = 0f,
-                maxSpeed = 25f,
-                damping = 0.9f,
-                spread = 360,
-                colors = listOf(
-                    android.graphics.Color.parseColor("#1DB954"), // Spotify green
-                    android.graphics.Color.parseColor("#FFE137"), // Golden yellow
-                    android.graphics.Color.parseColor("#FF5C5C"), // Coral red
-                    android.graphics.Color.parseColor("#9B59B6"), // Purple
-                    android.graphics.Color.parseColor("#3498DB")  // Blue
-                ),
-                shapes = listOf(Shape.Circle, Shape.Square),
-                size = listOf(Size.SMALL, Size.LARGE),
-                timeToLive = 2000L,
-                emitter = Emitter(duration = 150, TimeUnit.MILLISECONDS).max(120),
-                position = Position.Relative(0.5, 0.3)
-            )
-        )
+        binding.konfettiView.start(com.example.appmusica.util.ConfettiManager(requireContext()).getPartyForCurrentTheme())
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────────

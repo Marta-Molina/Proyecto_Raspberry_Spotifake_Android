@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (::binding.isInitialized) {
-            outState.putInt("player_visibility", binding.playerContainer.visibility)
+            outState.putBoolean("player_visible", binding.playerContainer.visibility == View.VISIBLE)
         }
         if (::bottomSheetBehavior.isInitialized) {
             outState.putInt("player_state", bottomSheetBehavior.state)
@@ -103,21 +103,16 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        // Setup bottom sheet first
+        // Setup bottom sheet
         setupBottomSheet()
 
-        // Restore player state
+        // Restore player state if it was active
         if (savedInstanceState != null) {
-            val visibility = savedInstanceState.getInt("player_visibility", View.GONE)
-            binding.playerContainer.visibility = visibility
-            if (visibility == View.VISIBLE) {
-                val state = savedInstanceState.getInt("player_state", com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN)
-                binding.playerContainer.post {
-                    bottomSheetBehavior.state = state
-                    // Ensure the fragment is restored if it was there
-                    val fragment = supportFragmentManager.findFragmentById(R.id.playerContainer) as? com.example.appmusica.presentation.canciones.DetalleFragment
-                    fragment?.onBottomSheetStateChanged(state)
-                }
+            val playerVisible = savedInstanceState.getBoolean("player_visible", false)
+            val playerState = savedInstanceState.getInt("player_state", com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN)
+            if (playerVisible) {
+                binding.playerContainer.visibility = View.VISIBLE
+                bottomSheetBehavior.state = playerState
             }
         }
 
@@ -197,6 +192,22 @@ class MainActivity : AppCompatActivity() {
         val header = binding.navigationView.getHeaderView(0)
         header.findViewById<TextView>(R.id.txtUser).text = authManager.getUsername() ?: "Usuario Spotifake"
         val ivUserThumb = header.findViewById<ImageView>(R.id.ivUserThumb)
+        val txtVerPerfil = header.findViewById<TextView>(R.id.txtVerPerfil)
+        val txtUserType = header.findViewById<TextView>(R.id.txtUserType)
+
+        txtVerPerfil.setOnClickListener {
+            navController.navigate(R.id.settingsFragment)
+            syncBottomNavSelection(R.id.settingsFragment)
+            binding.drawerLayout.closeDrawers()
+        }
+
+        // Determine and set user type badge
+        val userTypeStr = when {
+            authManager.isAdmin() -> "Administrador"
+            authManager.isPremium() -> "Premium"
+            else -> "Estándar"
+        }
+        txtUserType.text = userTypeStr
 
         // Observe profile image reactively — updates instantly when changed in Settings
         lifecycleScope.launch {
@@ -205,21 +216,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        setupBottomSheet()
         setupAds()
         setupMascot()
         setupSleepScreen()
         setupConnectivityListener()
-
-        // Restore player state if it was active
-        if (savedInstanceState != null) {
-            val playerVisible = savedInstanceState.getBoolean("player_visible", false)
-            val playerState = savedInstanceState.getInt("player_state", com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN)
-            if (playerVisible) {
-                binding.playerContainer.visibility = View.VISIBLE
-                bottomSheetBehavior.state = playerState
-            }
-        }
 
         // Control del botón atrás del sistema
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
@@ -242,12 +242,6 @@ class MainActivity : AppCompatActivity() {
                 checkAndNavigateBack(navController)
             }
         })
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("player_visible", binding.playerContainer.visibility == View.VISIBLE)
-        outState.putInt("player_state", bottomSheetBehavior.state)
     }
 
     override fun onStop() {
@@ -312,7 +306,7 @@ class MainActivity : AppCompatActivity() {
 
         // Colores de la barra extraídos del tema
         val typedValue = android.util.TypedValue()
-        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
         val primaryColor = typedValue.data
 
         bottomNav.navBackgroundColor = primaryColor

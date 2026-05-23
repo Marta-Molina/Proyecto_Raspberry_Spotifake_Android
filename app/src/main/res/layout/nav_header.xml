@@ -33,9 +33,27 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/txtVerPerfil"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver perfil"
         android:textColor="@color/spotify_light_grey"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground" />
+
+    <TextView
+        android:id="@+id/txtUserType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:background="@drawable/spotify_black_circle"
+        android:backgroundTint="?attr/colorPrimary"
+        android:text="Premium"
+        android:textColor="@color/spotify_black"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 </LinearLayout>

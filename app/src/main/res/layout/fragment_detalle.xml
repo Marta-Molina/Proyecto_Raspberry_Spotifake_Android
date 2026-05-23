@@ -124,6 +124,7 @@
                 android:transformPivotX="30dp"
                 android:transformPivotY="30dp"
                 android:rotation="0"
+                app:tint="?attr/colorPrimary"
                 app:layout_constraintTop_toTopOf="@id/vinylContainer"
                 app:layout_constraintStart_toEndOf="@id/vinylContainer"
                 android:layout_marginTop="-10dp"
@@ -198,8 +199,8 @@
                 android:layout_marginTop="16dp"
                 android:valueFrom="0"
                 android:valueTo="100"
-                app:thumbColor="@color/spotify_green"
-                app:trackColorActive="@color/spotify_green"
+                app:thumbColor="?attr/colorPrimary"
+                app:trackColorActive="?attr/colorPrimary"
                 app:trackColorInactive="?android:attr/textColorSecondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -259,7 +260,7 @@
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/exo_ic_play_circle_filled"
-                    app:tint="@color/spotify_green" />
+                    app:tint="?attr/colorPrimary" />
 
                 <ImageButton
                     android:id="@+id/btnNext"
@@ -455,7 +456,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnMiniNext"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/exo_ic_play_circle_filled"
-            app:tint="@color/spotify_green" />
+            app:tint="?attr/colorPrimary" />
 
         <ImageButton
             android:id="@+id/btnMiniNext"

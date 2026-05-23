@@ -67,7 +67,7 @@
                     android:textColor="@color/spotify_green" />
             </LinearLayout>
         </RelativeLayout>
-        
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
             android:layout_marginTop="8dp"
             android:text="Tema Claro"
             android:textColor="?android:attr/textColorPrimary" />
-        
+
         <!-- Premium: Theme Carousel -->
         <LinearLayout
             android:id="@+id/premiumThemesLayout"
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone">
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,18 +102,18 @@
                 android:textColor="@color/premium_gold"
                 android:textSize="14sp"
                 android:textStyle="italic" />
-                
+
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
-                
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-                    
+
                     <View android:id="@+id/themeDark" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/spotify_black" />
                     <View android:id="@+id/themeGold" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_gold" />
                     <View android:id="@+id/themePink" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="4dp" android:background="@color/premium_pink" />
@@ -149,21 +149,42 @@
             android:orientation="vertical"
             android:layout_marginTop="24dp"
             android:visibility="gone">
-            
-            <TextView
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:id="@+id/btnToggleMascotas"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Elige tu Mascota"
-                android:textColor="@color/premium_gold"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-                
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Elige tu Mascota"
+                    android:textColor="@color/premium_gold"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivMascotaArrow"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_down"
+                    app:tint="@color/premium_gold" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMascotas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>
 

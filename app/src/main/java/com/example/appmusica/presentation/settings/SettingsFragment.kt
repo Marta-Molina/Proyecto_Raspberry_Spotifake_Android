@@ -291,9 +291,20 @@ class SettingsFragment : Fragment() {
         layout.visibility = View.VISIBLE
 
         rvMascotas = view.findViewById(R.id.rvMascotas)
+        val btnToggleMascotas = view.findViewById<View>(R.id.btnToggleMascotas)
+
+        btnToggleMascotas.setOnClickListener {
+            if (rvMascotas.visibility == View.VISIBLE) {
+                rvMascotas.visibility = View.GONE
+            } else {
+                rvMascotas.visibility = View.VISIBLE
+            }
+        }
+
         mascotaAdapter = MascotaAdapter { mascota ->
             if (mascota.premiumDefault || mascota.esComprada) {
                 settingsViewModel.selectMascota(mascota)
+                Toast.makeText(context, "Mascota seleccionada", Toast.LENGTH_SHORT).show()
             } else {
                 showBuyMascotaDialog(mascota)
             }

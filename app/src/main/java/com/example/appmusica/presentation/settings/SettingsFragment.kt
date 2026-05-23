@@ -103,7 +103,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
-        
+
         ivProfile = view.findViewById(R.id.ivUserDetailPhoto)
         rvHistory = view.findViewById(R.id.rvHistory)
         val btnChangeProfile = view.findViewById<Button>(R.id.btnChangeProfile)
@@ -154,7 +154,7 @@ class SettingsFragment : Fragment() {
         btnLogout.setClickAnimation()
 
         btnChangeAccount.setOnClickListener {
-            // El comportamiento de cambiar cuenta es similar al logout, 
+            // El comportamiento de cambiar cuenta es similar al logout,
             // pero podríamos añadir un flag o simplemente ir al login
             authViewModel.logout()
             activity?.finish()
@@ -174,7 +174,7 @@ class SettingsFragment : Fragment() {
         authManager.getUrlImagen()?.let { url ->
             val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullUrl = if (url.startsWith("http")) url else baseUrl + url
-            
+
             Glide.with(this)
                 .load(fullUrl)
                 .error(android.R.drawable.ic_menu_report_image)
@@ -203,7 +203,7 @@ class SettingsFragment : Fragment() {
             view.findViewById<View>(R.id.themePink).setOnClickListener { changeTheme(ThemeManager.THEME_PINK) }
             view.findViewById<View>(R.id.themeBlue).setOnClickListener { changeTheme(ThemeManager.THEME_BLUE) }
             view.findViewById<View>(R.id.themeEmerald).setOnClickListener { changeTheme(ThemeManager.THEME_EMERALD) }
-            
+
             // Add click animations to these views too
             view.findViewById<View>(R.id.themeDark).setClickAnimation()
             view.findViewById<View>(R.id.themeGold).setClickAnimation()
@@ -251,14 +251,14 @@ class SettingsFragment : Fragment() {
                 val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData("imagen", file.name, requestFile)
                 val userId = authManager.getUserId()
-                
+
                 val response = apiService.uploadProfileImage(userId, body)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful && response.body() != null) {
                         val user = response.body()!!
                         authManager.saveUrlImagen(user.urlImagen)
                         Toast.makeText(context, "Imagen de perfil actualizada", Toast.LENGTH_SHORT).show()
-                        
+
                         // Cargar la imagen usando la URL devuelta por el servidor
                         val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
                         val fullUrl = baseUrl + user.urlImagen
@@ -289,7 +289,7 @@ class SettingsFragment : Fragment() {
             return
         }
         layout.visibility = View.VISIBLE
-        
+
         rvMascotas = view.findViewById(R.id.rvMascotas)
         mascotaAdapter = MascotaAdapter { mascota ->
             if (mascota.premiumDefault || mascota.esComprada) {
@@ -334,15 +334,17 @@ class SettingsFragment : Fragment() {
     }
 
     private fun showSleepTimerDialog() {
-        val options = arrayOf("15 minutos", "30 minutos", "45 minutos", "1 hora", "Desactivar")
+        val options = arrayOf("5 minutos", "10 minutos", "15 minutos", "30 minutos", "45 minutos", "1 hora", "Desactivar")
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Temporizador de apagado")
             .setItems(options) { _, which ->
                 val minutes = when (which) {
-                    0 -> 15
-                    1 -> 30
-                    2 -> 45
-                    3 -> 60
+                    0 -> 5
+                    1 -> 10
+                    2 -> 15
+                    3 -> 30
+                    4 -> 45
+                    5 -> 60
                     else -> 0
                 }
                 if (minutes > 0) {
@@ -359,7 +361,7 @@ class SettingsFragment : Fragment() {
     private fun getFileFromUri(uri: Uri): File? {
         val fileName = getFileName(uri) ?: "temp_image.jpg"
         val tempFile = File(requireContext().cacheDir, fileName)
-        
+
         return try {
             requireContext().contentResolver.openInputStream(uri)?.use { input ->
                 tempFile.outputStream().use { output ->

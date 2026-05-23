@@ -283,7 +283,9 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setBackgroundColor(android.graphics.Color.TRANSPARENT)
 
         // Colores de la barra extraídos del tema
-        val primaryColor = ContextCompat.getColor(this, R.color.spotify_green)
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        val primaryColor = typedValue.data
 
         bottomNav.navBackgroundColor = primaryColor
         bottomNav.fabBackgroundColor = primaryColor

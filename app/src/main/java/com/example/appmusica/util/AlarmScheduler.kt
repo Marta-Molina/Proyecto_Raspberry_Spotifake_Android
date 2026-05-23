@@ -40,6 +40,7 @@ class AlarmScheduler(private val context: Context) {
         val timeParts = alarm.hora.split(":")
         if (timeParts.size != 2) return
 
+        val now = Calendar.getInstance()
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
             set(Calendar.MINUTE, timeParts[1].toInt())
@@ -55,39 +56,42 @@ class AlarmScheduler(private val context: Context) {
                 calendar.add(Calendar.DAY_OF_YEAR, 1)
             }
         } else {
-            // Repeating alarm - find next day
-            val currentDayOfWeek = when(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                Calendar.MONDAY -> 1
-                Calendar.TUESDAY -> 2
-                Calendar.WEDNESDAY -> 3
-                Calendar.THURSDAY -> 4
-                Calendar.FRIDAY -> 5
-                Calendar.SATURDAY -> 6
-                Calendar.SUNDAY -> 7
-                else -> 1
-            }
-
-            var daysToAdd = -1
+            // Repeating alarm - find the next valid day starting from today
+            var found = false
             for (i in 0..7) {
-                val dayToCheck = ((currentDayOfWeek + i - 1) % 7) + 1
-                if (selectedDays.contains(dayToCheck)) {
+                val checkCalendar = calendar.clone() as Calendar
+                checkCalendar.add(Calendar.DAY_OF_YEAR, i)
+
+                // Convert current check day to 1-7 (Mon-Sun)
+                val dayOfWeek = when(checkCalendar.get(Calendar.DAY_OF_WEEK)) {
+                    Calendar.MONDAY -> 1
+                    Calendar.TUESDAY -> 2
+                    Calendar.WEDNESDAY -> 3
+                    Calendar.THURSDAY -> 4
+                    Calendar.FRIDAY -> 5
+                    Calendar.SATURDAY -> 6
+                    Calendar.SUNDAY -> 7
+                    else -> 1
+                }
+
+                if (selectedDays.contains(dayOfWeek)) {
                     if (i == 0) {
-                        // It's today. Check if time passed.
-                        if (calendar.timeInMillis > System.currentTimeMillis()) {
-                            daysToAdd = 0
+                        // It's today, check if time has already passed
+                        if (checkCalendar.timeInMillis > System.currentTimeMillis()) {
+                            calendar.timeInMillis = checkCalendar.timeInMillis
+                            found = true
                             break
                         }
                     } else {
-                        daysToAdd = i
+                        calendar.timeInMillis = checkCalendar.timeInMillis
+                        found = true
                         break
                     }
                 }
             }
-            
-            if (daysToAdd != -1) {
-                calendar.add(Calendar.DAY_OF_YEAR, daysToAdd)
-            } else {
-                // Fallback (should not happen)
+
+            if (!found) {
+                // Fallback (should not happen with i in 0..7)
                 if (calendar.timeInMillis <= System.currentTimeMillis()) {
                     calendar.add(Calendar.DAY_OF_YEAR, 1)
                 }
@@ -103,15 +107,16 @@ class AlarmScheduler(private val context: Context) {
             calendar.timeInMillis,
             pendingIntent
         )
-        
-        updateUpcomingAlarmNotification(alarm.hora)
+
+        // Show notification with unique ID per alarm to avoid overwriting
+        updateUpcomingAlarmNotification(alarm.id, alarm.hora)
     }
 
     fun snooze(alarmId: Int, songName: String?, songUrl: String?, artistName: String?, imageUrl: String?) {
         val calendar = Calendar.getInstance().apply {
             add(Calendar.MINUTE, 5)
         }
-        
+
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("ALARM_ID", alarmId)
             putExtra("SONG_NAME", songName)
@@ -120,14 +125,14 @@ class AlarmScheduler(private val context: Context) {
             putExtra("IMAGE_URL", imageUrl)
             putExtra("IS_SNOOZE", true)
         }
-        
+
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            alarmId + 10000, 
+            alarmId + 10000,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        
+
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
@@ -146,30 +151,34 @@ class AlarmScheduler(private val context: Context) {
         if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent)
         }
-        hideUpcomingAlarmNotification()
+        hideUpcomingAlarmNotification(alarmId)
     }
 
-    private fun updateUpcomingAlarmNotification(time: String) {
+    private fun updateUpcomingAlarmNotification(id: Int, time: String) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
         val CHANNEL_ID = "scheduled_alarm_channel"
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = android.app.NotificationChannel(CHANNEL_ID, "Alarmas Programadas", android.app.NotificationManager.IMPORTANCE_LOW)
             notificationManager.createNotificationChannel(channel)
         }
-        
+
         val notification = androidx.core.app.NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(com.example.appmusica.R.drawable.ic_alarm)
             .setContentTitle("Alarma programada")
             .setContentText("Próxima alarma a las $time")
             .setOngoing(true)
             .build()
-            
-        notificationManager.notify(999, notification)
+
+        notificationManager.notify(id + 2000, notification)
     }
 
-    private fun hideUpcomingAlarmNotification() {
+    private fun hideUpcomingAlarmNotification(id: Int) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
-        notificationManager.cancel(999)
+        if (id == -1) {
+            // Cancel all alarm notifications if needed
+            return
+        }
+        notificationManager.cancel(id + 2000)
     }
 }

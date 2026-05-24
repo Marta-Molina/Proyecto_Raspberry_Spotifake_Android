@@ -10,7 +10,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+class NotificationAdapter(
+    private val onClick: (Notificacion) -> Unit
+) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
     private var notifications: List<Notificacion> = emptyList()
 
     fun update(newList: List<Notificacion>) {
@@ -30,7 +32,7 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
         fun bind(notif: Notificacion) {
             binding.txtNotifTitle.text = notif.titulo
             binding.txtNotifMessage.text = notif.mensaje
-            
+
             // Format date/time
             try {
                 val dateTime = LocalDateTime.parse(notif.fecha)
@@ -48,7 +50,7 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
                 else -> R.drawable.ic_nav_music
             }
             binding.ivNotifIcon.setImageResource(iconRes)
-            
+
             // Visual feedback for unread
             if (!notif.leida) {
                 binding.root.alpha = 1.0f
@@ -57,6 +59,8 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
                 binding.root.alpha = 0.7f
                 binding.txtNotifTitle.setTextColor(binding.root.context.getColor(R.color.white))
             }
+
+            binding.root.setOnClickListener { onClick(notif) }
         }
 
         private fun formatRelativeTime(dateTime: LocalDateTime): String {

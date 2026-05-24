@@ -21,6 +21,8 @@ interface SocialRepository {
 
     // Sharing
     suspend fun sharePlaylist(playlistId: Long, userId: Long): Boolean
+    suspend fun getSharedPlaylists(friendId: Long): List<Long>
+    suspend fun getPlaylistById(id: Long): com.example.appmusica.domain.model.Playlist?
 
     suspend fun likeCancion(cancionId: Int): Boolean
     suspend fun unlikeCancion(cancionId: Int): Boolean

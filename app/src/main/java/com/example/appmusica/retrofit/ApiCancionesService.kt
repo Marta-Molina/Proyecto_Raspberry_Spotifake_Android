@@ -237,6 +237,12 @@ interface ApiCancionesService {
     @POST("listas/{id}/share/{userId}")
     suspend fun sharePlaylist(@Path("id") playlistId: Long, @Path("userId") userId: Long): Response<Unit>
 
+    @GET("social/friends/{friendId}/shared-playlists")
+    suspend fun getSharedPlaylists(@Path("friendId") friendId: Long): Response<List<Long>>
+
+    @GET("listas/{id}")
+    suspend fun getPlaylistById(@Path("id") id: Long): Response<com.example.appmusica.domain.model.Playlist>
+
     @GET("usuarios/{id}")
     suspend fun getUsuarioById(@Path("id") id: Long): Response<com.example.appmusica.data.remote.response.UserResponse>
 

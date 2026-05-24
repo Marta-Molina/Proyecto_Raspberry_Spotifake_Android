@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.fragment.findNavController
+import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentNotificationsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,7 +32,31 @@ class NotificationsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        notificationAdapter = NotificationAdapter()
+        notificationAdapter = NotificationAdapter { notif ->
+            viewModel.markNotificationAsRead(notif.id)
+
+            when (notif.tipo) {
+                "friend_request", "friend_accepted" -> {
+                    findNavController().navigate(R.id.socialFragment)
+                }
+                "playlist_shared" -> {
+                    notif.idReferencia?.let { playlistId ->
+                        val bundle = Bundle().apply {
+                            putInt("playlistId", playlistId)
+                            putString("playlistName", "Playlist compartida")
+                        }
+                        findNavController().navigate(R.id.playlistSongsFragment, bundle)
+                    } ?: run {
+                        findNavController().navigate(R.id.socialFragment)
+                    }
+                }
+                "new_release" -> {
+                    // Could navigate to the song/album if idReferencia was set,
+                    // for now just go to main songs
+                    findNavController().navigate(R.id.cancionesFragment)
+                }
+            }
+        }
         binding.rvNotifications.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = notificationAdapter

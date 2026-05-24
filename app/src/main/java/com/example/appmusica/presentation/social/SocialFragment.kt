@@ -9,9 +9,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.appmusica.R
 import com.example.appmusica.databinding.FragmentSocialBinding
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.domain.model.SolicitudAmistad
+import com.example.appmusica.presentation.playlists.PlaylistAdapter
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -95,8 +98,9 @@ class SocialFragment : Fragment() {
 
         friendsAdapter = FriendAdapter(
             onClick = { user ->
-                // TODO: Navigate to user profile if needed
-                Toast.makeText(requireContext(), "Perfil de ${user.username}", Toast.LENGTH_SHORT).show()
+                // Fetch and show shared playlists
+                viewModel.loadSharedPlaylists(user.id)
+                mostrarDialogoPlaylistsCompartidas(user.username)
             },
             onDelete = { user ->
                 androidx.appcompat.app.AlertDialog.Builder(requireContext())
@@ -138,6 +142,53 @@ class SocialFragment : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.swipeRefreshSocial.isRefreshing = isLoading
         }
+    }
+
+    private fun mostrarDialogoPlaylistsCompartidas(friendName: String) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_shared_playlists, null)
+        val rvShared = dialogView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rvSharedPlaylists)
+        val txtNoShared = dialogView.findViewById<android.widget.TextView>(R.id.txtNoSharedPlaylists)
+
+        lateinit var adapter: PlaylistAdapter
+        adapter = PlaylistAdapter(
+            list = mutableListOf(),
+            onClick = { position ->
+                adapter.getPlaylist(position)?.let { playlist ->
+                    val bundle = Bundle().apply {
+                        putInt("playlistId", playlist.id.toInt())
+                        putString("playlistName", playlist.nombre)
+                    }
+                    findNavController().navigate(R.id.playlistSongsFragment, bundle)
+                }
+            },
+            onDelete = { /* Shared playlists shouldn't be deleted from here */ },
+            onEdit = { /* Shared playlists shouldn't be edited from here */ },
+            onShare = { /* No reshare for now */ }
+        )
+
+        rvShared.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = adapter
+        }
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Listas compartidas por $friendName")
+            .setView(dialogView)
+            .setPositiveButton("Cerrar", null)
+            .create()
+
+        viewModel.sharedPlaylists.observe(viewLifecycleOwner) { playlists ->
+            if (playlists.isEmpty()) {
+                txtNoShared.visibility = View.VISIBLE
+                rvShared.visibility = View.GONE
+            } else {
+                txtNoShared.visibility = View.GONE
+                rvShared.visibility = View.VISIBLE
+                adapter.updateList(playlists)
+            }
+        }
+
+        dialog.show()
     }
 
     override fun onDestroyView() {

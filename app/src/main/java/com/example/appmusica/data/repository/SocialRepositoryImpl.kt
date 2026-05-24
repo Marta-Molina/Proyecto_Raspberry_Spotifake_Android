@@ -67,6 +67,16 @@ class SocialRepositoryImpl @Inject constructor(
         return api.sharePlaylist(playlistId, userId).isSuccessful
     }
 
+    override suspend fun getSharedPlaylists(friendId: Long): List<Long> {
+        val response = api.getSharedPlaylists(friendId)
+        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+    }
+
+    override suspend fun getPlaylistById(id: Long): com.example.appmusica.domain.model.Playlist? {
+        val response = api.getPlaylistById(id)
+        return if (response.isSuccessful) response.body() else null
+    }
+
     override suspend fun likeCancion(cancionId: Int): Boolean {
         return api.socialLikeCancion(cancionId).isSuccessful
     }

@@ -37,6 +37,9 @@ class SocialViewModel @Inject constructor(
     private val _notifications = MutableLiveData<List<Notificacion>>()
     val notifications: LiveData<List<Notificacion>> = _notifications
 
+    private val _sharedPlaylists = MutableLiveData<List<com.example.appmusica.domain.model.Playlist>>()
+    val sharedPlaylists: LiveData<List<com.example.appmusica.domain.model.Playlist>> = _sharedPlaylists
+
     private val sentRequestIds = mutableSetOf<Long>()
 
     fun loadSocialData() {
@@ -168,6 +171,34 @@ class SocialViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 socialRepository.sharePlaylist(playlistId, userId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun loadSharedPlaylists(friendId: Long) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val playlistIds = socialRepository.getSharedPlaylists(friendId)
+                val playlists = playlistIds.mapNotNull { id ->
+                    socialRepository.getPlaylistById(id)
+                }
+                _sharedPlaylists.value = playlists
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun markNotificationAsRead(id: Int) {
+        viewModelScope.launch {
+            try {
+                socialRepository.markNotificationAsRead(id)
+                loadSocialData() // Refresh
             } catch (e: Exception) {
                 e.printStackTrace()
             }

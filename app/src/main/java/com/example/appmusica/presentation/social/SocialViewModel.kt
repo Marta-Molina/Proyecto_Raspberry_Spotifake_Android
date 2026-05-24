@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appmusica.domain.model.Notificacion
 import com.example.appmusica.domain.model.SolicitudAmistad
 import com.example.appmusica.domain.repository.SocialRepository
 import com.example.appmusica.data.remote.response.UserResponse
@@ -33,12 +34,18 @@ class SocialViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _notifications = MutableLiveData<List<Notificacion>>()
+    val notifications: LiveData<List<Notificacion>> = _notifications
+
     private val sentRequestIds = mutableSetOf<Long>()
 
     fun loadSocialData() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Load Notifications
+                _notifications.value = socialRepository.getNotifications()
+
                 // Load Friends
                 val friendIds = socialRepository.getFriends()
                 val friendsWithDetails = friendIds.mapNotNull { id ->
@@ -127,6 +134,40 @@ class SocialViewModel @Inject constructor(
                 if (socialRepository.rejectFriendRequest(reqId)) {
                     loadSocialData()
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun deleteFriend(friendId: Long) {
+        viewModelScope.launch {
+            try {
+                if (socialRepository.deleteFriend(friendId)) {
+                    loadSocialData()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun clearNotifications() {
+        viewModelScope.launch {
+            try {
+                if (socialRepository.clearNotifications()) {
+                    _notifications.value = emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun sharePlaylist(playlistId: Long, userId: Long) {
+        viewModelScope.launch {
+            try {
+                socialRepository.sharePlaylist(playlistId, userId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

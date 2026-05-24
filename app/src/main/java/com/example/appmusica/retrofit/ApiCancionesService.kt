@@ -220,6 +220,23 @@ interface ApiCancionesService {
     @GET("social/friend/requests/sent")
     suspend fun getSentRequests(): Response<List<SolicitudAmistad>>
 
+    @DELETE("social/friend/{friendId}")
+    suspend fun deleteFriend(@Path("friendId") friendId: Long): Response<Unit>
+
+    // --- Notifications ---
+    @GET("notifications")
+    suspend fun getNotifications(): Response<List<com.example.appmusica.domain.model.Notificacion>>
+
+    @DELETE("notifications")
+    suspend fun clearNotifications(): Response<Unit>
+
+    @PATCH("notifications/{id}/read")
+    suspend fun markNotificationAsRead(@Path("id") id: Int): Response<Unit>
+
+    // --- Sharing ---
+    @POST("listas/{id}/share/{userId}")
+    suspend fun sharePlaylist(@Path("id") playlistId: Long, @Path("userId") userId: Long): Response<Unit>
+
     @GET("usuarios/{id}")
     suspend fun getUsuarioById(@Path("id") id: Long): Response<com.example.appmusica.data.remote.response.UserResponse>
 

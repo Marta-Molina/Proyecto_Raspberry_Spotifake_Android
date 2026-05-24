@@ -41,9 +41,30 @@ class SocialRepositoryImpl @Inject constructor(
         return api.rejectFriendRequest(reqId).isSuccessful
     }
 
+    override suspend fun deleteFriend(friendId: Long): Boolean {
+        return api.deleteFriend(friendId).isSuccessful
+    }
+
     override suspend fun getUsuarioById(id: Long): com.example.appmusica.data.remote.response.UserResponse? {
         val response = api.getUsuarioById(id)
         return if (response.isSuccessful) response.body() else null
+    }
+
+    override suspend fun getNotifications(): List<com.example.appmusica.domain.model.Notificacion> {
+        val response = api.getNotifications()
+        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+    }
+
+    override suspend fun clearNotifications(): Boolean {
+        return api.clearNotifications().isSuccessful
+    }
+
+    override suspend fun markNotificationAsRead(id: Int): Boolean {
+        return api.markNotificationAsRead(id).isSuccessful
+    }
+
+    override suspend fun sharePlaylist(playlistId: Long, userId: Long): Boolean {
+        return api.sharePlaylist(playlistId, userId).isSuccessful
     }
 
     override suspend fun likeCancion(cancionId: Int): Boolean {

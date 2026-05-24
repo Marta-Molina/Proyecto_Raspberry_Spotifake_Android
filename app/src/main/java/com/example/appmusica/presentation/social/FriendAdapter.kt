@@ -9,7 +9,10 @@ import com.example.appmusica.databinding.ItemFriendBinding
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
 
-class FriendAdapter(private val onClick: (UserResponse) -> Unit) : RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
+class FriendAdapter(
+    private val onClick: (UserResponse) -> Unit,
+    private val onDelete: (UserResponse) -> Unit
+) : RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
     private var friends: List<UserResponse> = emptyList()
 
     fun update(newList: List<UserResponse>) {
@@ -28,10 +31,10 @@ class FriendAdapter(private val onClick: (UserResponse) -> Unit) : RecyclerView.
     inner class ViewHolder(private val binding: ItemFriendBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: UserResponse) {
             binding.txtUsername.text = user.username
-            
+
             val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullUrl = if (user.urlImagen?.startsWith("http") == true) user.urlImagen else baseUrl + (user.urlImagen ?: "")
-            
+
             Glide.with(binding.ivFriendThumb.context)
                 .load(fullUrl)
                 .placeholder(R.drawable.user)
@@ -39,6 +42,7 @@ class FriendAdapter(private val onClick: (UserResponse) -> Unit) : RecyclerView.
                 .circleCrop()
                 .into(binding.ivFriendThumb)
 
+            binding.btnDeleteFriend.setOnClickListener { onDelete(user) }
             itemView.setOnClickListener { onClick(user) }
         }
     }

@@ -67,10 +67,25 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".service.BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".service.AlarmNotificationService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
+
+        <service
+            android:name=".service.AppNotificationService"
+            android:foregroundServiceType="specialUse"
+            android:exported="false"
+            tools:ignore="ForegroundServiceType">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="notifications polling"/>
+        </service>
 
     </application>
 

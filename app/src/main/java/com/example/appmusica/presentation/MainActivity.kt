@@ -102,6 +102,9 @@ class MainActivity : AppCompatActivity() {
         }
         authManager.updateLastActiveTime()
 
+        // Start notification polling service
+        com.example.appmusica.service.AppNotificationService.start(this)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

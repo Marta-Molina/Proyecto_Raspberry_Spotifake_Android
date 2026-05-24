@@ -15,8 +15,9 @@ class NotificationsFragment : Fragment() {
 
     private var _binding: FragmentNotificationsBinding? = null
     private val binding get() = _binding!!
-    
+
     private val viewModel: SocialViewModel by viewModels()
+    private lateinit var notificationAdapter: NotificationAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,14 +29,29 @@ class NotificationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        binding.rvNotifications.layoutManager = LinearLayoutManager(requireContext())
-        // For now, we reuse pending requests as notifications
-        viewModel.pendingRequests.observe(viewLifecycleOwner) { requests ->
-            binding.txtNoNotifications.visibility = if (requests.isEmpty()) View.VISIBLE else View.GONE
-            // TODO: Create a NotificationAdapter
+
+        notificationAdapter = NotificationAdapter()
+        binding.rvNotifications.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = notificationAdapter
         }
-        
+
+        binding.btnClearNotifications.setOnClickListener {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Borrar notificaciones")
+                .setMessage("¿Quieres borrar todas tus notificaciones?")
+                .setPositiveButton("Borrar") { _, _ ->
+                    viewModel.clearNotifications()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+
+        viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
+            binding.txtNoNotifications.visibility = if (notifications.isEmpty()) View.VISIBLE else View.GONE
+            notificationAdapter.update(notifications)
+        }
+
         viewModel.loadSocialData()
     }
 

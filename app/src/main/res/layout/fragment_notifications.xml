@@ -12,7 +12,19 @@
         android:background="?attr/colorPrimary"
         app:title="Notificaciones"
         app:titleTextColor="@color/white"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <ImageButton
+            android:id="@+id/btnClearNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="@color/white" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNotifications"

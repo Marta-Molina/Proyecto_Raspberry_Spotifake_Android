@@ -93,10 +93,22 @@ class SocialFragment : Fragment() {
             adapter = sentRequestAdapter
         }
 
-        friendsAdapter = FriendAdapter { user ->
-            // TODO: Navigate to user profile if needed
-            Toast.makeText(requireContext(), "Perfil de ${user.username}", Toast.LENGTH_SHORT).show()
-        }
+        friendsAdapter = FriendAdapter(
+            onClick = { user ->
+                // TODO: Navigate to user profile if needed
+                Toast.makeText(requireContext(), "Perfil de ${user.username}", Toast.LENGTH_SHORT).show()
+            },
+            onDelete = { user ->
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar amigo")
+                    .setMessage("¿Estás seguro de que quieres eliminar a ${user.username} de tus amigos?")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        viewModel.deleteFriend(user.id)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+        )
         binding.rvFriends.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = friendsAdapter

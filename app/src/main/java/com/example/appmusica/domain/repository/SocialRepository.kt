@@ -11,7 +11,16 @@ interface SocialRepository {
     suspend fun getPendingRequests(): List<SolicitudAmistad>
     suspend fun getSentRequests(): List<SolicitudAmistad>
     suspend fun rejectFriendRequest(reqId: Int): Boolean
+    suspend fun deleteFriend(friendId: Long): Boolean
     suspend fun getUsuarioById(id: Long): com.example.appmusica.data.remote.response.UserResponse?
+
+    // Notifications
+    suspend fun getNotifications(): List<com.example.appmusica.domain.model.Notificacion>
+    suspend fun clearNotifications(): Boolean
+    suspend fun markNotificationAsRead(id: Int): Boolean
+
+    // Sharing
+    suspend fun sharePlaylist(playlistId: Long, userId: Long): Boolean
 
     suspend fun likeCancion(cancionId: Int): Boolean
     suspend fun unlikeCancion(cancionId: Int): Boolean

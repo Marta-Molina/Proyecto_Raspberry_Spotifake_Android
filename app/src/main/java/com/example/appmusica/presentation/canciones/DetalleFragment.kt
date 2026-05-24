@@ -105,6 +105,13 @@ class DetalleFragment : Fragment() {
             updatePlayerQueue(queue)
         }
 
+        viewModel.canciones.observe(viewLifecycleOwner) { _ ->
+            // Si llegan las canciones y ya tenemos una seleccionada, intentamos configurar
+            if (mediaController != null && viewModel.selectedCancion.value != null) {
+                trySetupPlayerWithCurrentList()
+            }
+        }
+
         setupManualControls()
         setupMiniPlayerControls()
         setupTonearm()
@@ -305,45 +312,41 @@ class DetalleFragment : Fragment() {
 
     private fun trySetupPlayerWithCurrentList() {
         val controller = mediaController ?: return
-        val cancionList = viewModel.canciones.value ?: return
-        if (cancionList.isEmpty()) return
-
+        val cancionList = viewModel.canciones.value
         val selectedCancion = viewModel.selectedCancion.value
+
+        // CRITICAL: If selection is not yet restored or list is empty, DO NOTHING.
+        // Doing anything here would risk resetting the player to the first song (index 0).
+        if (cancionList == null || cancionList.isEmpty() || selectedCancion == null) {
+            return
+        }
 
         // Check what's currently playing in the service
         val currentMediaItem = controller.currentMediaItem
         val currentPlayingUri = currentMediaItem?.localConfiguration?.uri?.toString()
+        val targetUri = getFullUrl(selectedCancion.urlAudio ?: "")
 
         if (currentPlayingUri != null) {
-            // Find if the currently playing song is in our list
-            val currentIndexInList = cancionList.indexOfFirst { song ->
-                val songUri = getFullUrl(song.urlAudio ?: "")
-                songUri == currentPlayingUri
+            // If the controller is already playing exactly what we want, don't touch it!
+            // This preserves playback position across theme changes.
+            if (currentPlayingUri == targetUri) {
+                return
             }
 
-            if (currentIndexInList != -1) {
+            // If the controller is playing something else, check if it's part of our current list
+            val isPlayingFromCurrentList = cancionList.any { getFullUrl(it.urlAudio ?: "") == currentPlayingUri }
+            if (isPlayingFromCurrentList) {
                 // If it's already playing from this list, we only change it if
                 // the user explicitly selected a DIFFERENT song in the UI.
-                if (selectedCancion != null) {
-                    val targetUri = getFullUrl(selectedCancion.urlAudio ?: "")
-                    if (targetUri == currentPlayingUri) {
-                        // Already playing the right song. DO NOT RESET.
-                        return
-                    }
-                } else {
-                    // Nothing selected but already playing from list. Keep it.
-                    return
-                }
+                // For a theme change, selectedCancion matches currentPlayingUri, so we returned above.
+                return
             }
         }
 
-        // If we reach here, we need to load the list and jump to the initial position
-        val initialPosition = cancionList.indexOfFirst { it.id == selectedCancion?.id }.takeIf { it >= 0 } ?: 0
-        if (initialPosition >= cancionList.size) return
-
-        val mediaItems = cancionList.map { song ->
-            createMediaItem(song)
-        }
+        // If we reach here, the player is either empty or playing something completely different.
+        // Load the current list and jump to the selected song.
+        val initialPosition = cancionList.indexOfFirst { it.id == selectedCancion.id }.takeIf { it >= 0 } ?: 0
+        val mediaItems = cancionList.map { createMediaItem(it) }
 
         controller.setMediaItems(mediaItems, initialPosition, 0)
         controller.prepare()

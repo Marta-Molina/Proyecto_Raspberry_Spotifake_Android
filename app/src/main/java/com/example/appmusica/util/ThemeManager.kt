@@ -38,7 +38,7 @@ class ThemeManager(context: Context) {
                 THEME_GOLD -> PALETTE_GOLD
                 THEME_PINK -> PALETTE_PINK
                 THEME_BLUE -> PALETTE_BLUE
-                THEME_EMERALD -> PALETTE_PURPLE
+                THEME_EMERALD -> PALETTE_SPOTIFY // Emerald was green, Spotify is also green
                 else -> PALETTE_SPOTIFY
             }
             setPalette(palette)

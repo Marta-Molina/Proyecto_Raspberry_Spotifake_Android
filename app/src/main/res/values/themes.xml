@@ -10,6 +10,7 @@
     </style>
 
     <style name="Theme.AppMusica" parent="Base.Theme.AppMusica">
+        <item name="colorPrimary">@color/spotify_green</item>
         <item name="android:statusBarColor">@color/spotify_black</item>
         <item name="android:navigationBarColor">@color/spotify_black</item>
         <item name="android:windowLightStatusBar">false</item>
@@ -17,6 +18,7 @@
 
     <!-- Theme Variations -->
     <style name="Theme.AppMusica.Light" parent="Theme.AppMusica">
+        <item name="colorPrimary">@color/spotify_green</item>
         <item name="android:windowBackground">@color/theme_light_background</item>
         <item name="colorSurface">@color/theme_light_surface</item>
         <item name="android:textColorPrimary">@color/theme_light_text</item>

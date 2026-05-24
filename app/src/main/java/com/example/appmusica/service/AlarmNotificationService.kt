@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.content.pm.ServiceInfo
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -28,7 +29,7 @@ class AlarmNotificationService : Service() {
             .setUsage(androidx.media3.common.C.USAGE_ALARM)
             .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_SONIFICATION)
             .build()
-            
+
         player = ExoPlayer.Builder(this)
             .setAudioAttributes(audioAttributes, false)
             .build().apply {
@@ -46,16 +47,28 @@ class AlarmNotificationService : Service() {
 
         // Call startForeground ASAP (Android 12+ requirement)
         val initialNotification = createNotification(songName, artistName, imageUrl, alarmId, songUrl)
-        startForeground(NOTIFICATION_ID, initialNotification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                NOTIFICATION_ID,
+                initialNotification,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                } else {
+                    0
+                }
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, initialNotification)
+        }
 
         if (intent?.action == "STOP_ALARM") {
             player?.stop()
             player?.release()
             player = null
-            
+
             // Notify activity to finish
             sendBroadcast(Intent("ACTION_STOP_ALARM_ACTIVITY"))
-            
+
             stopForeground(true)
             stopSelf()
             return START_NOT_STICKY
@@ -74,14 +87,14 @@ class AlarmNotificationService : Service() {
             try {
                 val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
                 val fullUrl = if (songUrl.startsWith("http")) songUrl else baseUrl + songUrl
-                
+
                 // Using ngrok headers to skip warning page AND Authorization for the API
                 val dataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
                     .setDefaultRequestProperties(mapOf(
                         "ngrok-skip-browser-warning" to "true",
                         "Authorization" to "Bearer ${authManager.getToken() ?: ""}"
                     ))
-                
+
                 val mediaSource = androidx.media3.exoplayer.source.DefaultMediaSourceFactory(this)
                     .setDataSourceFactory(dataSourceFactory)
                     .createMediaSource(MediaItem.fromUri(fullUrl))
@@ -97,10 +110,10 @@ class AlarmNotificationService : Service() {
     }
 
     private fun createNotification(
-        songName: String, 
-        artistName: String, 
-        imageUrl: String?, 
-        alarmId: Int, 
+        songName: String,
+        artistName: String,
+        imageUrl: String?,
+        alarmId: Int,
         songUrl: String?
     ): Notification {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -108,7 +121,7 @@ class AlarmNotificationService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(CHANNEL_ID, "Alarmas", NotificationManager.IMPORTANCE_HIGH).apply {
                 description = "Notificaciones de alarma sonando"
-                setSound(null, null) 
+                setSound(null, null)
                 enableVibration(true)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
@@ -118,7 +131,7 @@ class AlarmNotificationService : Service() {
         val stopIntent = Intent(this, AlarmNotificationService::class.java).apply {
             action = "STOP_ALARM"
         }
-        val stopPendingIntent = PendingIntent.getService(this, 1, stopIntent, 
+        val stopPendingIntent = PendingIntent.getService(this, 1, stopIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val fullScreenIntent = Intent(this, com.example.appmusica.presentation.settings.AlarmActivity::class.java).apply {

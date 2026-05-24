@@ -14,11 +14,14 @@
         android:orientation="vertical"
         android:padding="32dp">
 
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieLogo"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_marginBottom="48dp"
-            android:src="@drawable/spotifake_icon_transparent_background" />
+            app:lottie_rawRes="@raw/splash_animation"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
 
         <TextView
             android:layout_width="match_parent"

@@ -30,6 +30,8 @@ class SocialViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val sentRequestIds = mutableSetOf<Long>()
+
     fun loadSocialData() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -74,14 +76,22 @@ class SocialViewModel @Inject constructor(
     }
 
     fun sendFriendRequest(userId: Long) {
+        sentRequestIds.add(userId)
+        // Actualizar resultados de búsqueda si existen para reflejar el estado inmediatamente
+        _searchResults.value = _searchResults.value
+
         viewModelScope.launch {
             try {
                 socialRepository.sendFriendRequest(userId)
             } catch (e: Exception) {
+                sentRequestIds.remove(userId)
+                _searchResults.value = _searchResults.value
                 e.printStackTrace()
             }
         }
     }
+
+    fun isRequestSent(userId: Long): Boolean = sentRequestIds.contains(userId)
 
     fun acceptFriend(reqId: Int) {
         viewModelScope.launch {

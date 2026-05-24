@@ -32,4 +32,13 @@
 
     </group>
 
+    <item android:title="Cuenta">
+        <menu>
+            <item
+                android:id="@+id/menu_drawer_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="Cerrar sesión" />
+        </menu>
+    </item>
+
 </menu>

@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                     binding.drawerLayout.closeDrawers()
                     true
                 }
-                R.id.menu_logout -> {
+                R.id.menu_logout, R.id.menu_drawer_logout -> {
                     authRepository.logout()
                     startActivity(Intent(this, LoginActivity::class.java))
                     finish()
@@ -525,11 +525,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_logout) {
-            authRepository.logout()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-            return true
+        when (item.itemId) {
+            R.id.menu_logout -> {
+                authRepository.logout()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                return true
+            }
+            R.id.menu_notifications -> {
+                val navHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.navController
+                navController.navigate(R.id.socialFragment) // For now, notifications take you to Community/Social
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }

@@ -61,10 +61,15 @@ class SocialFragment : Fragment() {
     }
 
     private fun setupLists() {
-        searchAdapter = UserSearchAdapter { user ->
-            viewModel.sendFriendRequest(user.id)
-            Toast.makeText(requireContext(), "Solicitud enviada a ${user.username}", Toast.LENGTH_SHORT).show()
-        }
+        searchAdapter = UserSearchAdapter(
+            onAddClick = { user ->
+                viewModel.sendFriendRequest(user.id)
+                Toast.makeText(requireContext(), "Solicitud enviada a ${user.username}", Toast.LENGTH_SHORT).show()
+            },
+            isSentCheck = { userId ->
+                viewModel.isRequestSent(userId)
+            }
+        )
         binding.rvUserSearch.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = searchAdapter

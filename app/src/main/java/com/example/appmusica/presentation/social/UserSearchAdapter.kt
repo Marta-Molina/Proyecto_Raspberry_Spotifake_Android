@@ -9,21 +9,15 @@ import com.example.appmusica.databinding.ItemUserSearchBinding
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
 
-class UserSearchAdapter(private val onAddClick: (UserResponse) -> Unit) : RecyclerView.Adapter<UserSearchAdapter.ViewHolder>() {
+class UserSearchAdapter(
+    private val onAddClick: (UserResponse) -> Unit,
+    private val isSentCheck: (Long) -> Boolean
+) : RecyclerView.Adapter<UserSearchAdapter.ViewHolder>() {
     private var users: List<UserResponse> = emptyList()
-    private val sentRequests = mutableSetOf<Long>()
 
     fun update(newList: List<UserResponse>) {
         users = newList
         notifyDataSetChanged()
-    }
-
-    fun markAsSent(userId: Long) {
-        sentRequests.add(userId)
-        val index = users.indexOfFirst { it.id == userId }
-        if (index != -1) {
-            notifyItemChanged(index)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -50,10 +44,9 @@ class UserSearchAdapter(private val onAddClick: (UserResponse) -> Unit) : Recycl
 
             binding.btnAddFriend.setOnClickListener {
                 onAddClick(user)
-                markAsSent(user.id)
             }
 
-            if (sentRequests.contains(user.id)) {
+            if (isSentCheck(user.id)) {
                 binding.btnAddFriend.text = "Enviada"
                 binding.btnAddFriend.isEnabled = false
                 binding.btnAddFriend.setBackgroundColor(android.graphics.Color.GRAY)

@@ -101,6 +101,9 @@ dependencies {
 
     // Modern Curved Navigation (Via Maven Central)
     implementation("np.com.susanthapa:curved_bottom_navigation:0.6.5")
+
+    // Lottie
+    implementation("com.airbnb.android:lottie:6.1.0")
 }
 
 android {

@@ -32,6 +32,11 @@ class SocialRepositoryImpl @Inject constructor(
         return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
     }
 
+    override suspend fun getSentRequests(): List<SolicitudAmistad> {
+        val response = api.getSentRequests()
+        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+    }
+
     override suspend fun rejectFriendRequest(reqId: Int): Boolean {
         return api.rejectFriendRequest(reqId).isSuccessful
     }

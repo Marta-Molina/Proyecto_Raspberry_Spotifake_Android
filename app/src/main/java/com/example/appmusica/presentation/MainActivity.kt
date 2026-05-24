@@ -179,14 +179,15 @@ class MainActivity : AppCompatActivity() {
                     binding.drawerLayout.closeDrawers()
                     true
                 }
-                R.id.menu_logout, R.id.menu_drawer_logout -> {
-                    authRepository.logout()
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
-                    true
-                }
                 else -> false
             }
+        }
+
+        // Custom listener for manual logout button at bottom of drawer
+        findViewById<View>(R.id.menu_drawer_logout)?.setOnClickListener {
+            authRepository.logout()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
 
         // Setup CurvedBottomNavigation
@@ -521,22 +522,44 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
+
+        // Setup profile icon in toolbar
+        val profileItem = menu.findItem(R.id.menu_profile)
+        val urlImagen = authManager.getUrlImagen()
+
+        val profileView = layoutInflater.inflate(R.layout.layout_profile_icon, null)
+        val ivProfile = profileView.findViewById<com.google.android.material.imageview.ShapeableImageView>(R.id.ivProfile)
+
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
+        val fullUrl = if (urlImagen?.startsWith("http") == true) urlImagen else baseUrl + (urlImagen ?: "")
+
+        com.bumptech.glide.Glide.with(this)
+            .load(fullUrl)
+            .placeholder(R.drawable.user)
+            .error(R.drawable.user)
+            .circleCrop()
+            .into(ivProfile)
+
+        profileItem.actionView = profileView
+        profileView.setOnClickListener {
+            onOptionsItemSelected(profileItem)
+        }
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_logout -> {
-                authRepository.logout()
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+            R.id.menu_profile -> {
+                // Profile clicked, can navigate to profile or show mini menu
+                binding.drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
                 return true
             }
             R.id.menu_notifications -> {
                 val navHostFragment = supportFragmentManager
                     .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
                 val navController = navHostFragment.navController
-                navController.navigate(R.id.socialFragment) // For now, notifications take you to Community/Social
+                navController.navigate(R.id.notificationsFragment)
                 return true
             }
         }

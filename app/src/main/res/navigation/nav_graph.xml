@@ -149,4 +149,9 @@
         android:id="@+id/resumenAnualFragment"
         android:name="com.example.appmusica.presentation.settings.ResumenAnualFragment"
         android:label="Resumen Anual" />
+
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.appmusica.presentation.social.NotificationsFragment"
+        android:label="Notificaciones" />
 </navigation>

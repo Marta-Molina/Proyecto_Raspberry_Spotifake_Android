@@ -39,13 +39,17 @@
             android:turnScreenOn="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AppMusica" />
-        <activity android:name=".presentation.login.LoginActivity"
+        <activity
+            android:name=".presentation.login.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".presentation.login.LoginActivity"
+            android:exported="true" />
 
         <service
             android:name=".service.PlaybackService"
@@ -63,7 +67,7 @@
             </intent-filter>
         </receiver>
 
-        <service 
+        <service
             android:name=".service.AlarmNotificationService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />

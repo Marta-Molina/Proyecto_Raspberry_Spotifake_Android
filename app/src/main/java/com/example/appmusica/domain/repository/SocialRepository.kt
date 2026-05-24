@@ -9,9 +9,10 @@ interface SocialRepository {
     suspend fun acceptFriendRequest(reqId: Int): Boolean
     suspend fun getFriends(): List<Long>
     suspend fun getPendingRequests(): List<SolicitudAmistad>
+    suspend fun getSentRequests(): List<SolicitudAmistad>
     suspend fun rejectFriendRequest(reqId: Int): Boolean
     suspend fun getUsuarioById(id: Long): com.example.appmusica.data.remote.response.UserResponse?
-    
+
     suspend fun likeCancion(cancionId: Int): Boolean
     suspend fun unlikeCancion(cancionId: Int): Boolean
     suspend fun followArtista(artistaId: Int): Boolean

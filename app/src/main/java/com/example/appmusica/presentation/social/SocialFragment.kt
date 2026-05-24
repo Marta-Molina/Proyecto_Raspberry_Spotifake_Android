@@ -24,6 +24,7 @@ class SocialFragment : Fragment() {
 
     private lateinit var searchAdapter: UserSearchAdapter
     private lateinit var requestAdapter: FriendRequestAdapter
+    private lateinit var sentRequestAdapter: SentRequestAdapter
     private lateinit var friendsAdapter: FriendAdapter
 
     override fun onCreateView(
@@ -84,6 +85,14 @@ class SocialFragment : Fragment() {
             adapter = requestAdapter
         }
 
+        sentRequestAdapter = SentRequestAdapter { req ->
+            viewModel.rejectFriend(req.id) // Use reject/delete endpoint to cancel sent request
+        }
+        binding.rvSentRequests.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = sentRequestAdapter
+        }
+
         friendsAdapter = FriendAdapter { user ->
             // TODO: Navigate to user profile if needed
             Toast.makeText(requireContext(), "Perfil de ${user.username}", Toast.LENGTH_SHORT).show()
@@ -103,6 +112,11 @@ class SocialFragment : Fragment() {
         viewModel.pendingRequests.observe(viewLifecycleOwner) { requests ->
             requestAdapter.update(requests)
             binding.txtNoRequests.visibility = if (requests.isEmpty()) View.VISIBLE else View.GONE
+        }
+
+        viewModel.sentRequests.observe(viewLifecycleOwner) { requests ->
+            sentRequestAdapter.update(requests)
+            binding.txtNoSentRequests.visibility = if (requests.isEmpty()) View.VISIBLE else View.GONE
         }
 
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->

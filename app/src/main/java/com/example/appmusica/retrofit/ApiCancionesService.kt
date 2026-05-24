@@ -217,6 +217,9 @@ interface ApiCancionesService {
     @DELETE("social/friend/request/{requestId}")
     suspend fun rejectFriendRequest(@Path("requestId") requestId: Int): Response<Unit>
 
+    @GET("social/friend/requests/sent")
+    suspend fun getSentRequests(): Response<List<SolicitudAmistad>>
+
     @GET("usuarios/{id}")
     suspend fun getUsuarioById(@Path("id") id: Long): Response<com.example.appmusica.data.remote.response.UserResponse>
 

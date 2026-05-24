@@ -10,9 +10,9 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_logout"
-        android:title="Cerrar sesión"
-        app:showAsAction="never" />
+        android:id="@+id/menu_profile"
+        android:title="Perfil"
+        app:showAsAction="always" />
 
 </menu>
 

@@ -30,24 +30,28 @@ class SentRequestAdapter(
         fun bind(item: Pair<SolicitudAmistad, UserResponse?>) {
             val request = item.first
             val user = item.second
-            
+
             binding.txtReceiverName.text = user?.username ?: "Usuario ${request.destinatarioId}"
-            
+
             when (request.estado.lowercase()) {
                 "rechazada" -> {
                     binding.txtStatus.text = "Rechazada"
                     binding.txtStatus.setTextColor(android.graphics.Color.RED)
                 }
-                "pendiente" -> {
+                "pendiente", "esperando" -> {
                     binding.txtStatus.text = "Pendiente"
                     binding.txtStatus.setTextColor(android.graphics.Color.GRAY)
+                }
+                "aceptada" -> {
+                    binding.txtStatus.text = "Aceptada"
+                    binding.txtStatus.setTextColor(android.graphics.Color.GREEN)
                 }
                 else -> {
                     binding.txtStatus.text = request.estado
                     binding.txtStatus.setTextColor(android.graphics.Color.GRAY)
                 }
             }
-            
+
             binding.btnDeleteRequest.setOnClickListener { onDelete(request) }
         }
     }

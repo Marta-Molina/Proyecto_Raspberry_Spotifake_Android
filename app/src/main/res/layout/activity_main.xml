@@ -296,7 +296,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:paddingBottom="16dp">
+            android:paddingBottom="48dp">
 
             <View
                 android:layout_width="match_parent"

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.content.pm.ServiceInfo
 import androidx.core.app.NotificationCompat
 import com.example.appmusica.R
 import com.example.appmusica.domain.repository.SocialRepository
@@ -26,7 +27,7 @@ class AppNotificationService : Service() {
         private const val CHANNEL_ID = "app_notifications_channel"
         private const val NOTIFICATION_ID = 888
         private const val POLL_INTERVAL = 30000L // 30 seconds
-        
+
         fun start(context: Context) {
             val intent = Intent(context, AppNotificationService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -40,7 +41,19 @@ class AppNotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createPersistentNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                NOTIFICATION_ID,
+                createPersistentNotification(),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                } else {
+                    0
+                }
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, createPersistentNotification())
+        }
         startPolling()
     }
 
@@ -79,7 +92,7 @@ class AppNotificationService : Service() {
                 try {
                     val notifications = socialRepository.getNotifications()
                     val unread = notifications.filter { !it.leida }
-                    
+
                     unread.forEach { notification ->
                         showSystemNotification(notification)
                         socialRepository.markNotificationAsRead(notification.id)

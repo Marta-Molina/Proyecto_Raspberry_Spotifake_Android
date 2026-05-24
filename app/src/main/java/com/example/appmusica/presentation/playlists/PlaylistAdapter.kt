@@ -20,28 +20,43 @@ class PlaylistViewHolder(
 
     fun bind(playlist: Playlist) {
         binding.txtviewPlaylistNombre.text = playlist.nombre
-        
+        binding.txtviewSongCount.text = playlist.numCanciones.toString()
+
+        val baseUrl = com.example.appmusica.di.NetworkModule.BASE_API_URL.removeSuffix("/")
+        val fullUrl = if (playlist.portadaUrl?.startsWith("http") == true) {
+            playlist.portadaUrl
+        } else if (!playlist.portadaUrl.isNullOrEmpty()) {
+            baseUrl + playlist.portadaUrl
+        } else {
+            null
+        }
+
+        com.bumptech.glide.Glide.with(itemView.context)
+            .load(fullUrl)
+            .placeholder(R.drawable.portada_generica)
+            .into(binding.ivPlaylist)
+
         binding.btnSharePlaylist.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 onShare(bindingAdapterPosition)
             }
         }
         binding.btnSharePlaylist.setClickAnimation()
-        
+
         binding.btnDeletePlaylist.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 onDelete(bindingAdapterPosition)
             }
         }
         binding.btnDeletePlaylist.setClickAnimation()
-        
+
         binding.btnEditPlaylist.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 onEdit(bindingAdapterPosition)
             }
         }
         binding.btnEditPlaylist.setClickAnimation()
-        
+
         itemView.setOnClickListener {
             if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                 onClick(bindingAdapterPosition)
@@ -75,6 +90,6 @@ class PlaylistAdapter(
         list.addAll(newList)
         notifyDataSetChanged()
     }
-    
+
     fun getPlaylist(position: Int): Playlist? = if (position in list.indices) list[position] else null
 }

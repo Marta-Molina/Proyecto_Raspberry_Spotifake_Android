@@ -23,6 +23,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
 
     private lateinit var binding: FragmentPlaylistsBinding
     private val viewModel: PlaylistViewModel by viewModels()
+    private val socialViewModel: com.example.appmusica.presentation.social.SocialViewModel by viewModels()
     private lateinit var adapter: PlaylistAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,12 +70,13 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
         }
 
         viewModel.loadPlaylists(authManager.getUserId().toInt())
+        socialViewModel.loadSocialData()
     }
 
     private fun mostrarDialogoCrear() {
         val editText = EditText(requireContext())
         editText.hint = "Nombre de la lista"
-        
+
         AlertDialog.Builder(requireContext())
             .setTitle("Nueva Lista")
             .setView(editText)
@@ -91,7 +93,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
     private fun mostrarDialogoEditar(id: Int, nombreActual: String, userId: Int) {
         val editText = EditText(requireContext())
         editText.setText(nombreActual)
-        
+
         AlertDialog.Builder(requireContext())
             .setTitle("Editar Lista")
             .setView(editText)
@@ -117,15 +119,45 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
     }
 
     private fun compartirPlaylist(playlist: com.example.appmusica.domain.model.Playlist) {
+        val options = arrayOf("Compartir enlace externo", "Enviar a un amigo")
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Compartir '${playlist.nombre}'")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> compartirEnlaceExterno(playlist)
+                    1 -> mostrarDialogoEnviarAFriend(playlist)
+                }
+            }
+            .show()
+    }
+
+    private fun compartirEnlaceExterno(playlist: com.example.appmusica.domain.model.Playlist) {
         val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(android.content.Intent.EXTRA_SUBJECT, "Spotifake Playlist: ${playlist.nombre}")
-            val shareUrl = "https://spotifake.app/playlist/${playlist.id}" // Simulando un enlace externo
+            val shareUrl = "https://spotifake.app/playlist/${playlist.id}"
             putExtra(android.content.Intent.EXTRA_TEXT, "¡Escucha mi playlist '${playlist.nombre}' en Spotifake!\n$shareUrl")
         }
-        startActivity(android.content.Intent.createChooser(shareIntent, "Compartir playlist via"))
-        
-        // TODO: Implementar sistema interno de compartir (enviar a un amigo específico en la app)
-        Toast.makeText(requireContext(), "Enlace generado para compartir", Toast.LENGTH_SHORT).show()
+        startActivity(android.content.Intent.createChooser(shareIntent, "Compartir via"))
+    }
+
+    private fun mostrarDialogoEnviarAFriend(playlist: com.example.appmusica.domain.model.Playlist) {
+        val friends = socialViewModel.friends.value ?: emptyList()
+        if (friends.isEmpty()) {
+            Toast.makeText(requireContext(), "No tienes amigos agregados aún", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val friendNames = friends.map { it.username }.toTypedArray()
+        AlertDialog.Builder(requireContext())
+            .setTitle("Enviar a...")
+            .setItems(friendNames) { _, which ->
+                val selectedFriend = friends[which]
+                // Simulando el envío ya que no hay endpoint específico de mensajes/notificaciones
+                Toast.makeText(requireContext(), "¡Playlist enviada a ${selectedFriend.username}!", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 }

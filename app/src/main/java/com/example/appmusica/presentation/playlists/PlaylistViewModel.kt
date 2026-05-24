@@ -31,7 +31,15 @@ class PlaylistViewModel @Inject constructor(
 
     fun loadUserPlaylists(userId: Int) {
         viewModelScope.launch {
-            _playlists.value = getUserPlaylistsUseCase(userId)
+            val basePlaylists = getUserPlaylistsUseCase(userId)
+            val enrichedPlaylists = basePlaylists.map { playlist ->
+                val songs = getPlaylistCancionesUseCase(playlist.id)
+                playlist.copy(
+                    portadaUrl = songs.firstOrNull()?.urlPortada,
+                    numCanciones = songs.size
+                )
+            }
+            _playlists.value = enrichedPlaylists
         }
     }
 
@@ -50,7 +58,7 @@ class PlaylistViewModel @Inject constructor(
         return getPlaylistsUseCase() // Verificaremos si el caso de uso es correcto o necetamos inyectar el de usuario
     }
 
-    fun createPlaylist(nombre: String, userId: Int) { 
+    fun createPlaylist(nombre: String, userId: Int) {
         viewModelScope.launch {
             val result = createPlaylistUseCase(Playlist(nombre = nombre, idUsuario = userId))
             if (result != null) {

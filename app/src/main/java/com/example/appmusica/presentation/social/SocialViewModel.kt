@@ -27,8 +27,12 @@ class SocialViewModel @Inject constructor(
     private val _pendingRequests = MutableLiveData<List<Pair<SolicitudAmistad, UserResponse?>>>()
     val pendingRequests: LiveData<List<Pair<SolicitudAmistad, UserResponse?>>> = _pendingRequests
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun loadSocialData() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 // Load Friends
                 val friendIds = socialRepository.getFriends()
@@ -36,7 +40,7 @@ class SocialViewModel @Inject constructor(
                     socialRepository.getUsuarioById(id)
                 }
                 _friends.value = friendsWithDetails
-                
+
                 // Load Pending Requests with Requester Details
                 val requests = socialRepository.getPendingRequests()
                 val requestsWithDetails = requests.map { req ->
@@ -46,6 +50,8 @@ class SocialViewModel @Inject constructor(
                 _pendingRequests.value = requestsWithDetails
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                _isLoading.value = false
             }
         }
     }

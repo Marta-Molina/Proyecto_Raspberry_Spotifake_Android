@@ -11,10 +11,19 @@ import com.example.appmusica.di.NetworkModule
 
 class UserSearchAdapter(private val onAddClick: (UserResponse) -> Unit) : RecyclerView.Adapter<UserSearchAdapter.ViewHolder>() {
     private var users: List<UserResponse> = emptyList()
+    private val sentRequests = mutableSetOf<Long>()
 
     fun update(newList: List<UserResponse>) {
         users = newList
         notifyDataSetChanged()
+    }
+
+    fun markAsSent(userId: Long) {
+        sentRequests.add(userId)
+        val index = users.indexOfFirst { it.id == userId }
+        if (index != -1) {
+            notifyItemChanged(index)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,10 +37,10 @@ class UserSearchAdapter(private val onAddClick: (UserResponse) -> Unit) : Recycl
     inner class ViewHolder(private val binding: ItemUserSearchBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: UserResponse) {
             binding.txtUsername.text = user.username
-            
+
             val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             val fullUrl = if (user.urlImagen?.startsWith("http") == true) user.urlImagen else baseUrl + (user.urlImagen ?: "")
-            
+
             Glide.with(binding.ivUserThumb.context)
                 .load(fullUrl)
                 .placeholder(R.drawable.user)
@@ -39,7 +48,22 @@ class UserSearchAdapter(private val onAddClick: (UserResponse) -> Unit) : Recycl
                 .circleCrop()
                 .into(binding.ivUserThumb)
 
-            binding.btnAddFriend.setOnClickListener { onAddClick(user) }
+            binding.btnAddFriend.setOnClickListener {
+                onAddClick(user)
+                markAsSent(user.id)
+            }
+
+            if (sentRequests.contains(user.id)) {
+                binding.btnAddFriend.text = "Enviada"
+                binding.btnAddFriend.isEnabled = false
+                binding.btnAddFriend.setBackgroundColor(android.graphics.Color.GRAY)
+            } else {
+                binding.btnAddFriend.text = "Añadir"
+                binding.btnAddFriend.isEnabled = true
+                val typedValue = android.util.TypedValue()
+                itemView.context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
+                binding.btnAddFriend.setBackgroundColor(typedValue.data)
+            }
         }
     }
 }

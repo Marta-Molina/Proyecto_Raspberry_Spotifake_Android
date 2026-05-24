@@ -42,6 +42,10 @@ class SocialFragment : Fragment() {
         observeViewModel()
 
         viewModel.loadSocialData()
+
+        binding.swipeRefreshSocial.setOnRefreshListener {
+            viewModel.loadSocialData()
+        }
     }
 
     private fun setupSearch() {
@@ -98,6 +102,10 @@ class SocialFragment : Fragment() {
 
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->
             searchAdapter.update(results)
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.swipeRefreshSocial.isRefreshing = isLoading
         }
     }
 

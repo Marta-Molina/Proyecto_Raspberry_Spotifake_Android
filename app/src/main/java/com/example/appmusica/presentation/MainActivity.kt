@@ -91,10 +91,10 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // Session persistence: 30 minutes timeout
+        // Session persistence: 7 days timeout (instead of 30 minutes)
         val lastActive = authManager.getLastActiveTime()
-        val thirtyMinutesMillis = 30 * 60 * 1000L
-        if (lastActive > 0 && System.currentTimeMillis() - lastActive > thirtyMinutesMillis) {
+        val sevenDaysMillis = 7 * 24 * 60 * 60 * 1000L
+        if (lastActive > 0 && System.currentTimeMillis() - lastActive > sevenDaysMillis) {
             authRepository.logout()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()

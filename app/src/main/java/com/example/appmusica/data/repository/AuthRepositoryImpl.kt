@@ -8,6 +8,7 @@ import com.example.appmusica.retrofit.ApiCancionesService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,20 +29,27 @@ class AuthRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val user = response.body()!!
                     authManager.saveToken(user.token ?: "")
-                    authManager.saveUserId(user.id)
-                    authManager.saveIsAdmin(user.admin)
+                    authManager.saveUserId(user.id ?: -1L)
+                    authManager.saveIsAdmin(user.admin ?: false)
                     authManager.saveUrlImagen(user.urlImagen)
-                    authManager.saveUsername(user.username)
-                    authManager.saveIsPremium(user.premium)
+                    authManager.saveUsername(user.username ?: "Usuario")
+                    authManager.saveIsPremium(user.premium ?: false)
                     
-                    recordSession(user.id, user.token ?: "", "Login")
+                    recordSession(user.id ?: -1L, user.token ?: "", "Login")
                     
-                    callback(true, null)
+                    withContext(Dispatchers.Main) {
+                        callback(true, null)
+                    }
                 } else {
-                    callback(false, "Login fallido: ${response.message()}")
+                    withContext(Dispatchers.Main) {
+                        val errorMsg = if (response.code() == 401) "Correo o contraseña incorrectos" else "Error ${response.code()}: ${response.message()}"
+                        callback(false, errorMsg)
+                    }
                 }
             } catch (e: Exception) {
-                callback(false, "Error: ${e.localizedMessage}")
+                withContext(Dispatchers.Main) {
+                    callback(false, "Error de conexión: ${e.localizedMessage}")
+                }
             }
         }
     }
@@ -59,20 +67,26 @@ class AuthRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val user = response.body()!!
                     authManager.saveToken(user.token ?: "")
-                    authManager.saveUserId(user.id)
-                    authManager.saveIsAdmin(user.admin)
+                    authManager.saveUserId(user.id ?: -1L)
+                    authManager.saveIsAdmin(user.admin ?: false)
                     authManager.saveUrlImagen(user.urlImagen)
-                    authManager.saveUsername(user.username)
-                    authManager.saveIsPremium(user.premium)
+                    authManager.saveUsername(user.username ?: "Usuario")
+                    authManager.saveIsPremium(user.premium ?: false)
 
-                    recordSession(user.id, user.token ?: "", "Register")
+                    recordSession(user.id ?: -1L, user.token ?: "", "Register")
 
-                    callback(true, null)
+                    withContext(Dispatchers.Main) {
+                        callback(true, null)
+                    }
                 } else {
-                    callback(false, "Registro fallido: ${response.message()}")
+                    withContext(Dispatchers.Main) {
+                        callback(false, "Registro fallido: ${response.message()}")
+                    }
                 }
             } catch (e: Exception) {
-                callback(false, "Error: ${e.localizedMessage}")
+                withContext(Dispatchers.Main) {
+                    callback(false, "Error: ${e.localizedMessage}")
+                }
             }
         }
     }

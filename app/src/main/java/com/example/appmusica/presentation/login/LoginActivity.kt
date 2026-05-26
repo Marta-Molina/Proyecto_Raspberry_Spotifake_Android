@@ -28,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val btnToggleLogin = findViewById<android.widget.TextView>(R.id.btnToggleLogin)
+        val btnRecover = findViewById<android.widget.TextView>(R.id.btnRecover)
 
         btnLogin.setOnClickListener {
             val user = etUser.text.toString().trim()
@@ -47,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
             if (tilUsername.visibility == android.view.View.GONE) {
                 tilUsername.visibility = android.view.View.VISIBLE
                 btnToggleLogin.visibility = android.view.View.VISIBLE
+                btnRecover.visibility = android.view.View.GONE
                 btnRegister.text = "Confirmar registro"
                 btnLogin.visibility = android.view.View.GONE
                 return@setOnClickListener
@@ -69,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
         btnToggleLogin.setOnClickListener {
             tilUsername.visibility = android.view.View.GONE
             btnToggleLogin.visibility = android.view.View.GONE
+            btnRecover.visibility = android.view.View.VISIBLE
             btnLogin.visibility = android.view.View.VISIBLE
             btnRegister.text = "Registrarse gratis"
         }

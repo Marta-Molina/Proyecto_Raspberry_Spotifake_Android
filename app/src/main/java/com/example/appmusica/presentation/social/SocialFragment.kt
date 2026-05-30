@@ -67,7 +67,7 @@ class SocialFragment : Fragment() {
     private fun setupLists() {
         searchAdapter = UserSearchAdapter(
             onAddClick = { user ->
-                viewModel.sendFriendRequest(user.id)
+                viewModel.sendFriendRequest(user.id ?: 0L)
                 Toast.makeText(requireContext(), "Solicitud enviada a ${user.username}", Toast.LENGTH_SHORT).show()
             },
             isSentCheck = { userId ->
@@ -99,15 +99,15 @@ class SocialFragment : Fragment() {
         friendsAdapter = FriendAdapter(
             onClick = { user ->
                 // Fetch and show shared playlists
-                viewModel.loadSharedPlaylists(user.id)
-                mostrarDialogoPlaylistsCompartidas(user.username)
+                viewModel.loadSharedPlaylists(user.id ?: 0L)
+                mostrarDialogoPlaylistsCompartidas(user.username ?: "")
             },
             onDelete = { user ->
                 androidx.appcompat.app.AlertDialog.Builder(requireContext())
                     .setTitle("Eliminar amigo")
                     .setMessage("¿Estás seguro de que quieres eliminar a ${user.username} de tus amigos?")
                     .setPositiveButton("Eliminar") { _, _ ->
-                        viewModel.deleteFriend(user.id)
+                        viewModel.deleteFriend(user.id ?: 0L)
                     }
                     .setNegativeButton("Cancelar", null)
                     .show()

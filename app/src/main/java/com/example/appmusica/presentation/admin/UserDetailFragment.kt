@@ -13,8 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 import com.example.appmusica.R
 import com.example.appmusica.data.remote.response.UserResponse
 import com.example.appmusica.di.NetworkModule
@@ -42,7 +40,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         setupRecyclerView(view)
         observePlaylists()
 
-        user?.let { playlistViewModel.loadUserPlaylists(it.id.toInt()) }
+        user?.let { playlistViewModel.loadUserPlaylists(it.id?.toInt() ?: 0) }
     }
 
     private fun setupUserInfo(view: View) {
@@ -54,7 +52,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         user?.let {
             tvName.text = it.username
             tvEmail.text = it.correo
-            tvRole.text = if (it.admin) "Administrador" else "Usuario Estándar"
+            tvRole.text = if (it.admin == true) "Administrador" else "Usuario Estándar"
             
             val baseUrl = NetworkModule.BASE_API_URL.removeSuffix("/")
             it.urlImagen?.let { url ->
@@ -114,7 +112,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             .setMessage("¿Estás seguro de que quieres eliminar esta lista?")
             .setPositiveButton("Eliminar") { _, _ ->
                 user?.let { u ->
-                    playlistViewModel.deletePlaylist(playlistId, u.id.toInt())
+                    playlistViewModel.deletePlaylist(playlistId, u.id?.toInt() ?: 0)
                 }
                 Toast.makeText(context, "Playlist eliminada", Toast.LENGTH_SHORT).show()
             }

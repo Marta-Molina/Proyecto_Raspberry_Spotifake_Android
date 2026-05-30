@@ -154,7 +154,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
             .setTitle("Enviar a...")
             .setItems(friendNames) { _, which ->
                 val selectedFriend = friends[which]
-                socialViewModel.sharePlaylist(playlist.id.toLong(), selectedFriend.id)
+                socialViewModel.sharePlaylist(playlist.id.toLong(), selectedFriend.id ?: 0L)
                 Toast.makeText(requireContext(), "¡Playlist enviada a ${selectedFriend.username}!", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancelar", null)

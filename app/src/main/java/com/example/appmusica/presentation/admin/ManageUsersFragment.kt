@@ -83,12 +83,12 @@ class ManageUsersFragment : Fragment() {
                 // Preparamos el request con admin = true
                 val updateRequest = UserRequest(
                     username = user.username,
-                    correo = user.correo,
+                    correo = user.correo ?: "",
                     pass = "", // La API no debería cambiar la pass si viene vacía o nula en este endpoint de admin
                     admin = true,
                     premium = user.premium
                 )
-                val response = apiService.updateUsuario(user.id, updateRequest)
+                val response = apiService.updateUsuario(user.id ?: 0L, updateRequest)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         Toast.makeText(context, "${user.username} ahora es administrador", Toast.LENGTH_SHORT).show()
@@ -112,7 +112,7 @@ class ManageUsersFragment : Fragment() {
             .setPositiveButton("Eliminar") { _, _ ->
                 scope.launch {
                     try {
-                        val response = apiService.deleteUsuario(user.id)
+                        val response = apiService.deleteUsuario(user.id ?: 0L)
                         withContext(Dispatchers.Main) {
                             if (response.isSuccessful) {
                                 Toast.makeText(context, "Usuario eliminado", Toast.LENGTH_SHORT).show()

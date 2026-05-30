@@ -46,7 +46,7 @@ class UserSearchAdapter(
                 onAddClick(user)
             }
 
-            if (isSentCheck(user.id)) {
+            if (isSentCheck(user.id ?: 0L)) {
                 binding.btnAddFriend.text = "Enviada"
                 binding.btnAddFriend.isEnabled = false
                 binding.btnAddFriend.setBackgroundColor(android.graphics.Color.GRAY)

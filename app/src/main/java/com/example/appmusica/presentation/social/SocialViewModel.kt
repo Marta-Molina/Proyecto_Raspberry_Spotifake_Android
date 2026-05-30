@@ -76,9 +76,6 @@ class SocialViewModel @Inject constructor(
                 sentRequestIds.clear()
                 sent.forEach { sentRequestIds.add(it.destinatarioId) }
 
-                // Forzar actualización de la búsqueda para reflejar cambios en estados de solicitud
-                _searchResults.value = _searchResults.value
-
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -111,12 +108,7 @@ class SocialViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                if (socialRepository.sendFriendRequest(userId)) {
-                    loadSocialData() // Recargar para confirmar el estado desde el servidor
-                } else {
-                    sentRequestIds.remove(userId)
-                    _searchResults.value = _searchResults.value
-                }
+                socialRepository.sendFriendRequest(userId)
             } catch (e: Exception) {
                 sentRequestIds.remove(userId)
                 _searchResults.value = _searchResults.value
